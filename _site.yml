@@ -1,8 +1,13 @@
 name: "my-website"
+output_dir: docs
 navbar:
-  title: "My Website"
+  title: "Cordell"
   left:
-    - text: "Home"
+    - text: "RNA-Seq"
       href: index.html
-    - text: "About"
-      href: about.html
+    - text: "Functional Analysis"
+      href: functional.html
+    - text: "ChIP-Seq"
+      href: ChIP.html
+    - text: "GitHub"
+      href: https://github.com/C0RD3LL/Portfolio
