@@ -11,3 +11,13 @@ navbar:
       href: ChIP.html
     - text: "GitHub"
       href: https://github.com/C0RD3LL/Portfolio
+    - text: "Archive"
+      menu:
+      - text: "RNA-Seq (Original)"
+        href: https://c0rd3ll.github.io/RNAseq/
+      - text: "Place Holder 1"
+      - text: "Place Holder 2"
+      - text: "Place Holder 3"
+
+
+        
