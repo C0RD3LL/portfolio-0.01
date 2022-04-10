@@ -1,45 +1,454 @@
 ---
-title: "ChIP-Seq Analysis"
+title: "RNA-Seq Analysis"
 author: "Cordell Browne"
-date: "4/6/2022"
+date: "cordell@knights.ucf.edu"
 output:
   html_document:
+    highlight: pygments
     theme: flatly
     toc: yes
     toc_float: yes
 ---
+<br>
+
+Email me to view source code.
+
+<br>
+```{r,message=FALSE,echo=FALSE,warning=FALSE}
+library(DT)
+library(plotly)
+library(readr)
+library(tibble)
+library(kableExtra) #Fancy tables 
+library(ggplot2)
+library(Glimma)
+```
+
+```{r,message=FALSE,echo=FALSE,warning=FALSE,include=FALSE}
+count <- read_table("~/Downloads/bioinfo/count-2.out", col_names= FALSE,skip = 1)
+count <- count[,-c(2:6)] # Get rid of columns (2-6)
+names(count) <- count[1,]; count <- count[-1,] #Row to columnnames
+count[,2:10] <- sapply(count[, 2:10], as.numeric) #Change column type from char to numeric.
+count <- column_to_rownames(count, var="Geneid")
+#Sample names becomes columns. M for positive metastasis, NM for negative metastasis.
+colnames(count) <-  c(
+  "Sample_1_M","Sample_2_M","Sample_3_M",
+  "Sample_4_NM","Sample_5_NM","Sample_6_NM",
+  "Sample_7_M","Sample_8_M","Sample_9_NM"
+)
+# filter rows with sums less than 25.
+count <- count[which(rowSums(count) > 25),]
+#Metadata
+condition <- factor(c("M","M","M",
+                      "NM","NM","NM",
+                      "M","M","NM"))
+coldata <- data.frame(row.names=  colnames(count), condition)
+#Annotations
+library("AnnotationDbi")
+library("org.Hs.eg.db")
+#Get gene symbols
+columns(org.Hs.eg.db)
+```
+
+##  {.tabset .tabset-fade}
+### About The Data
+
+The data was selected via  GEO browser, so no analytical insight was provided outside of the following information. 
+
+Comparing the differentially expressed genes between OSCC tumors with lymph-node metastasis (LNM) and those without LNM, which were obtained though NGS, we found that immune response plays an important role in the process of OSCC LNM and the candidate genes involved in the anti-tumor immunity were validated with qRT-PCR.
+
+- 9 oral squamous cell carcinoma (OSCC) samples were obtained, 5 with lymph node metastasis (LNM) and 4 without LNM. 
+
+- Once the tumor samples were collected from host they were put on ice, then treated with a trizol reagent to extract RNA. The RNA was than sequenced (paired-end reads) using a standard illumina protocol.
+
+- The lab that published the samples data state that when comparing the differentially expressed genes between OSCC, samples with LNM and those without were determined that immune response is an important factor in OSCC LNM, also using qRT-PCR candidate genes involved in anti tumor immunity were confirmed. 
+
+- Conditions: Lymph-node metastasis ( __M__ ) and No lymph-node metastasis ( __NM__ )
+
+_Reference_: https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE176221
+
+ <br> 
+ <br> 
+
+### Multiqc Report
+
+
+#### [Click Here](./multiqc_report.html)
+
+_Multiqc report not representative of preprocessing data for this analysis._
+
+ <br> 
+ <br> 
+ 
+ 
+### Pre-processing Steps
+
+`fasterq-dump` is a tool for downloading sequencing reads from NCBI’s Sequence Read Archive (SRA). These sequence reads will be downloaded as FASTQ files. How these FASTQ files are formatted depends on the `fasterq-dump` options used.
+
+```{r, engine = 'bash', eval = FALSE}
+for ((i = 26; i <= 34; i++))
+  do
+  fasterq-dump SRR147406$i
+done
+```
+
+Generating a genome indices from ensembl GRCh38 file and annotations.
+
+```{r, engine = 'bash', eval = FALSE}
+STAR --runThreadN 16 \
+--runMode genomeGenerate \
+--genomeDir ref \
+--genomeFastaFiles ref/GRCh38.primary_assembly.genome.fa \
+--sjdbGTFile ref/ensembl.v39.annotation.gtf 
+```
+
+Align Reads  __(fastq --> BAMs)__
+
+```{r, engine = 'bash', eval = FALSE}
+for file in *1.fastq; do name=$(basename ${file} 1.fastq)
+  STAR --runMode alignReads --genomeDir ../index/ \
+  --outSAMtype BAM SortedByCoordinate \ 
+  --readFilesIn ${name}1.fastq ${name}2.fastq \
+  --runThreadN 12 \
+  --outFileNamePrefix ../mapped/${name}
+;done
+```
+
+featureCounts is a general-purpose read summarization function, which assigns to the genomic features (or meta-features) the mapped reads that were generated from genomic DNA and RNA sequencing.   __(BAMs --> count matrix)__
+
+```{r, engine = 'bash', eval = FALSE}
+featureCounts -a ref/gencode.v39.annotation.gtf -o count.out -T 8 -p bams/*.bam
+```
+
+ <br> 
+ <br> 
+ 
+### Count Matrix
+
+We will work with a count matrix, which has genes along the rows and samples along the columns. The elements in the matrix give the number of reads which could be uniquely aligned to a given gene for a given sample.
+
+```{r,echo=FALSE}
+kbl(head(count))  %>%
+  kable_paper() %>%
+  scroll_box(width = "100%", height = "200px")
+```
+<br>
+<br>
+
+
+# Exploratory Data Analysis
+
+<br>
+<br>
+
+```{r, include=FALSE}
+suppressMessages(library(DESeq2))
+dds <- suppressMessages(DESeqDataSetFromMatrix(countData = count, colData = coldata, design = ~condition))
+rld <-rlog(dds)
+dds <- estimateSizeFactors(dds)
+```
+
+__Multidimensional scaling (MDS)__ is a popular approach for graphically representing relationships between objects (e.g. plots or samples) in multidimensional space. Dimension reduction via MDS is achieved by taking the original set of samples and calculating a dissimilarity (distance) measure for each pairwise comparison of samples. The samples are then usually represented graphically in two dimensions such that the distance between points on the plot approximates their multivariate dissimilarity as closely as possible.
+
+```{r,echo=FALSE}
+glimmaMDS(dds, width=800, height=450)
+```
+ 
+ <br> 
+ <br> 
+ 
+## Normalization {.tabset .tabset-fade}
+
+Once the count matrix is successfully generated the rest of the workflow can be sectioned into three distinct phase (highlighted in the table of contents) EDA, Differential Expression, and co-expression analysis. EDA is performed firstly to understand the makeup of our data, checking for inconsistency, noise and more.
+
+Does normalization help adjust global differences between the samples? The influence of the sequencing depth normalization, can be seen in graphic below.
+
+### i.
+```{r,echo=FALSE,fig.width = 10, fig.height = 5}
+par(mfrow=c(1,2))
+SumNorm <- colSums(counts(dds, normalize= TRUE))
+Sum <- colSums(counts(dds))
+barplot(Sum,main = "Non-normalized read counts")
+barplot(SumNorm,main = "Size-factor-normalized read counts")
+```
+
+### ii.
+```{r,echo=FALSE,fig.width = 10, fig.height = 5}
+par(mfrow=c(1,2))
+boxplot(log2(counts(dds)+1), 
+        notch=TRUE, 
+        main = "Non-normalized read counts", 
+        ylab="log2(read counts)", cex = .6)
+boxplot(log2(counts(dds, normalize= TRUE) +1), 
+        notch=TRUE, 
+        main = "Size-factor-normalized read counts", 
+        ylab="log2(read counts)", cex = .6)
+```
+
+### iii.
+```{r,echo=FALSE,fig.width = 10, fig.height = 5, warning=FALSE,message=FALSE}
+dds <- suppressMessages(DESeq(dds))
+res <- results(dds)
+resDF <- as.data.frame(res)
+vsdata <- vst(dds)
+vassay <- assay(vsdata)
+#Gene Symbols
+geneSymbols <- mapIds(org.Hs.eg.db, keys=rownames(count), column="SYMBOL", keytype="ENSEMBL", multiVals="first")
+geneSymbols <- as.data.frame(geneSymbols)
+#res to dataframe with gene symbols included
+symbol_df <- merge(geneSymbols, resDF,
+                          by = 'row.names', all = TRUE)
+colnames(symbol_df)[1] <- "Gene_Ids"
+symbol_df <- column_to_rownames(symbol_df, var="Gene_Ids")
+par(mfrow=c(1,3))
+plot(log2(counts(dds)[,1:2] + 1),pch=16, cex=0.3,main="log")
+rldassay <- assay(rld)
+plot(rldassay[,1:2],pch=16, cex=0.3,main="rlog")
+plot(vassay[,1:2],pch=16, cex=0.3,main="vst")
+```
+
+We can see how genes with low counts are excessively variable on the logarithmic scale and somewhat with variance stabilizing transformation (VST), while the rlog transform compresses variance of low count genes.The fanning out of the points in the lower left corner indicates that read counts correlate less well between replicates when they are low. This observation indicates that the standard deviation of the expression levels may depend on the mean: the lower the mean read counts per gene, the higher the standard deviation.
+
+One thing to note from the three scatter plots above is VST (right) is shifted upwards about 5 square units. It isnt on the same scale as log 2 transformation(left) and rlog(middle) which are both roughly the same scaling.The deviation in y to x shown in the scatter plots contribute to the distance calculation that is used in principal component analysis..
+
+# Differential Expression
+
+<br>
+<br>
+
+## Gene Clustering 
+
+<br>
+Heatmaps can be of great use in assessing differentially expressed genes and performing unsupervised clustering on the underlying data of the heatmap to determine sub-categories .The dendrogram at the top of our heatmaps shows a hierarchical clustering of the samples, and the one on the side is of the genes. Clustering is only relevant for genes that actually carry a signal. However, the heatmap becomes more interesting if we don’t focus on absolute expression strength but rather at how much each gene deviates in a specific sample from the gene’s average across all samples.
+
+```{r,fig.width = 10, fig.height = 5,echo=FALSE,message=FALSE,warning=FALSE}
+dds <- suppressMessages(DESeq(dds))
+library("genefilter")
+library("pheatmap")
+DGE.results.sorted <- res[order(res$padj),]
+DGEgenes <- rownames(subset(DGE.results.sorted, padj < .5)) #Set my pvalue high in order to get more data (to fit my bias)
+rlog.dge <- dds[DGEgenes,] %>% assay
+pheatmap(rlog.dge, scale="row", show_rownames = FALSE, main = " ")
+```
+
+<br>
+
+## Interactive Volcano Plot 
+
+[Click Here](./volcanoplot.html)
+
+<br>
+A volcano plot shows p-value over fold change, so our x axis shows group similarity while y is statistical significance. Ultimately giving us which genes are most down-regulated(left) and up-regulated(right) and their significance.
+<br>
+```{r,echo=FALSE,fig.width = 10, fig.height = 10,message=FALSE}
+res <- results(dds)
+library("EnhancedVolcano")
+EnhancedVolcano(res,
+    lab = symbol_df$geneSymbols,
+    x = 'log2FoldChange',
+    y = 'pvalue')
+```
+
+<br>
+
+## Interactive MA Plot 
+
+[Click Here](glimmaMA.html)
+
+<br>
+
+An MA plot visualizes the differences between measurements taken in two samples by transforming data onto M(log ratio) and A (mean average), then plotting those values.The red points indicate genes for which the log2 fold change was significantly higher than 1 or less than -1 with padj less than 0.1. Blue indicates genes with lower padj.To improve the fold change estimates for our data, we want to take our results and shrink the log2 fold changes using the lfcShrink() function. The shrunken log fold changes are useful for ranking and visualization, without the need for arbitrary filters on low count genes.
+
+<br>
+
+```{r,fig.width = 10, fig.height = 6,echo=FALSE,message=FALSE}
+library(scales) # needed for oob parameter
+library(viridis)
+resDF <- as.data.frame(res)
+res$significant <- ifelse(res$padj, "Significant", NA)
+ggplot(resDF, aes(baseMean, log2FoldChange, colour=padj))+
+  geom_point(size=1)+
+  scale_y_continuous(limits=c(-4, 4), oob=squish)+
+  scale_x_log10()+
+  geom_hline(yintercept = 0, colour="darkorchid4", size=1, linetype="longdash")+
+  labs(x="mean of normalized counts", y="log fold change")+
+  scale_colour_viridis(direction=-1, trans='sqrt')+
+  theme_bw()
+```
+
+<br>
+
+## Differential Expression Tables{.tabset .tabset-fade}
+
+```{r,include=FALSE}
+#res to dataframe with gene symbols included
+symbol_df <- merge(geneSymbols, resDF,
+                          by = 'row.names', all = TRUE)
+colnames(symbol_df)[1] <- "Gene_Ids"
+symbol_df <- column_to_rownames(symbol_df, var="Gene_Ids")
+one <- symbol_df[symbol_df$pvalue <= 0.05,]
+one<- na.omit(one)
+rownames(one) <- c()
+two <- one[-c(4,5,7,8)]
+three <-one[-c(2,3,8)]
+```
+
+### Table One
+```{r,echo=FALSE}
+datatable(two, options = list(pageLength = 10))
+```
+
+### Table Two 
+```{r,echo=FALSE}
+datatable(three, options = list(pageLength = 10))
+```
+
+# Co-expression
+
+Why Networks? 
+
+1. Gene products don't act indepently in cells 
+
+2. Most tissues are complex hierarchical networks that are spatio-temporally linked through structure and functions.
+
+3. The generation of a network provides insight for understanding predisposition to disease, etiology of organ or behavioral pathology, and response to medications or toxins. 
+
+4. To better understand system level functionality of our genes, modular co-expression provides  information like relevant molecular pathways that relate to phenotype.
+
+
+The R package cemitools can identify co-expressed gene modules and is meant to be a user-friendly "replacement" to WGCNA. It has the capabilities to perform Over-representation analysis (ORA) and  gene set enrichment analysis (GSEA) as well.
+
+_reference:_ https://bmcbioinformatics.biomedcentral.com/articles/10.1186/s12859-018-2053-1
+
+**Creating a Network** 
+
+To create the network, the correlation values are corrected based on a correction factor. This factor enhances the differences between strong and weak correlations. Weak values become closer to zero. This power value must produce a graph similar to a scale-free network. We can also look at the mean connectivity graphic to help.
+
+
+```{r,include=FALSE}
+library("CEMiTool")
+#coldata index to colum 
+sample_annot <- cbind(SampleName =rownames(coldata), coldata)
+rownames(sample_annot) <- 1:nrow(sample_annot)
+names(sample_annot)[2] <- "Class"
+#Turn array to dataframe 
+sample_annot <- as.data.frame(sample_annot)
+vassay <- as.data.frame(vassay)
+# cemitool
+cem <- suppressMessages(cemitool(vassay,sample_annot))
+```
+
+Gene Set Enrichment Analysis (GSEA) is a computational method that determines whether a prior defined set of genes shows statistically 
+significant, concordant differences between two biological states. Enrichment score (ES) reflects level that genes in a gene set are over represented at the top or bottom of the entire ranked list of genes (NES, Normalized enrichment score). Higher the ES score, it more likely for a gene set to shift towards either end of the ranked list L.
+
+```{r,fig.height=7,warning=FALSE,echo=FALSE}
+# generate heatmap of gene set enrichment analysis
+cem <- mod_gsea(cem)
+cem <- plot_gsea(cem)
+show_plot(cem, "gsea")
+```
+
+#### **Show expression pattern across module** {.tabset .tabset-fade}
+
+##### M12
+
+```{r,fig.width = 15, fig.height = 8,warning=FALSE,echo=FALSE}
+cem <- plot_profile(cem)
+plots <- show_plot(cem, "profile")
+plots[12]
+```
+
+##### M11
+
+```{r,fig.width = 15, fig.height = 8,warning=FALSE,echo=FALSE}
+plots[11]
+```
+
+##### M10
+
+```{r,fig.width = 15, fig.height = 8,warning=FALSE,echo=FALSE}
+plots[10]
+```
+
+##### M6
+
+```{r,fig.width = 15, fig.height = 8,warning=FALSE,echo=FALSE}
+plots[6]
+```
+
+##### M8
+```{r,fig.width = 15, fig.height = 8,warning=FALSE,echo=FALSE}
+plots[8]
+```
+
+##### M9
+```{r,fig.width = 15, fig.height = 8,warning=FALSE,echo=FALSE}
+plots[9]
+```
+
+##### M3
+```{r,fig.width = 15, fig.height = 8,warning=FALSE,echo=FALSE}
+plots[3]
+```
+
+##### M13
+```{r,fig.width = 15, fig.height = 8,warning=FALSE,echo=FALSE}
+plots[13]
+```
+
+##### M4
+```{r,fig.width = 15, fig.height = 8,warning=FALSE,echo=FALSE}
+plots[4]
+```
+
+##### M1
+```{r,fig.width = 15, fig.height = 8,warning=FALSE,echo=FALSE}
+plots[1]
+```
 
 
 
-# Chapter One
 
-## How does Chipseq data analysis work? 
+##### Hubs
 
-Where are the binding sites? 
+**What genes make up the modules?** 
 
-- Peak calling allows us to determine this.
+_The list show genes (5) in the hubs with the highest levels of connectivity._
 
-What genes are they associated with?
+```{r,warning=FALSE,echo=FALSE}
+hubs <- get_hubs(cem)
+hubs
+```
 
-- Peak annotation 
+<br>
 
-How did the changes in conditions affect the binding?
+# Citations {.tabset .tabset-fade}
 
-- Differential Expression
+## Articles 
+- M. I. Love, W. Huber, S. Anders: Moderated estimation of fold change and dispersion for RNA-Seq data with DESeq2. bioRxiv (2014). doi:10.1101/002832 [1]
+ 
+- Zhu, A., Ibrahim, J.G., Love, M.I. (2018) Heavy-tailed prior distributions for sequence count data: removing the noise and preserving large differences. Bioinformatics. 10.1093/bioinformatics/bty895
 
-We are leaking for peaks that represent immunoprecipitation (IP) fragments - Peak Calling.
+- Lever, J., Krzywinski, M. & Altman, N. Principal component analysis. Nat Methods 14, 641–642 (2017). https://doi.org/10.1038/nmeth.4346
 
-- Good ChIP experiment produces more reads from IP fragemnts.
+- Stephens, M. (2016) False discovery rates: a new deal. Biostatistics, 18:2. 10.1093/biostatistics/kxw041
+
+- Lauren Ashlock, Computational Biology Spring 2017, DESeq2 tutorial: https://lashlock.github.io/compbio/R_presentation.html
+
+- https://www.bioconductor.org/packages/release/bioc/vignettes/EnhancedVolcano/inst/doc/EnhancedVolcano.html
+
+- https://bioc.ism.ac.jp/packages/2.14/bioc/vignettes/DESeq2/inst/doc/beginner.pdf
+
+- Zhao, Y., Li, MC., Konaté, M.M. et al. TPM, FPKM, or Normalized Counts? A Comparative Study of Quantification Measures for the Analysis of RNA-seq Data from the NCI Patient-Derived Models Repository. J Transl Med 19, 269 (2021). https://doi.org/10.1186/s12967-021-02936-w
+
+- Front. Oncol., 22 April 2021 | https://doi.org/10.3389/fonc.2021.660615
+
+- Russo PST, Ferreira GR, Cardozo LE, Bürger MC, Arias-Carrasco R, Maruyama SR, Hirata TDC, Lima DS, Passos FM, Fukutani KF, Lever M, Silva JS, Maracaja-Coutinho V, Nakaya HI. CEMiTool: a Bioconductor package for performing comprehensive modular co-expression analyses. BMC Bioinformatics. 2018 Feb 20;19(1):56. doi: 10.1186/s12859-018-2053-1. PMID: 29458351; PMCID: PMC5819234.
 
 
+## Session Info 
 
-# Chapter Two
-ChIP-Seq Workflow.
-
-1. Quality Control (Trim adapters if necessary)
-2. Align to genenome or transcriptome
-3. ChIP specific quality control
-4. Peak Calling (MACS2) on alignments(BAM/SAM) to generate a list of peaks.
-
-
-# Chapter Three 
+```{r}
+# Print session info
+sessioninfo::session_info()
+```

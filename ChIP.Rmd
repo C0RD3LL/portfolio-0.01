@@ -1,0 +1,45 @@
+---
+title: "ChIP-Seq Analysis"
+author: "Cordell Browne"
+date: "4/6/2022"
+output:
+  html_document:
+    theme: flatly
+    toc: yes
+    toc_float: yes
+---
+
+
+
+# Chapter One
+
+## How does Chipseq data analysis work? 
+
+Where are the binding sites? 
+
+- Peak calling allows us to determine this.
+
+What genes are they associated with?
+
+- Peak annotation 
+
+How did the changes in conditions affect the binding?
+
+- Differential Expression
+
+We are leaking for peaks that represent immunoprecipitation (IP) fragments - Peak Calling.
+
+- Good ChIP experiment produces more reads from IP fragemnts.
+
+
+
+# Chapter Two
+ChIP-Seq Workflow.
+
+1. Quality Control (Trim adapters if necessary)
+2. Align to genenome or transcriptome
+3. ChIP specific quality control
+4. Peak Calling (MACS2) on alignments(BAM/SAM) to generate a list of peaks.
+
+
+# Chapter Three 
