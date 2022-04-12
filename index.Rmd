@@ -5,7 +5,7 @@ date: "cordell@knights.ucf.edu"
 output:
   html_document:
     highlight: pygments
-    theme: flatly
+    theme: cosmo
     toc: yes
     toc_float: yes
 ---
