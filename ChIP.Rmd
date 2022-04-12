@@ -1,7 +1,7 @@
 ---
 title: "ChIP-Seq Analysis"
 author: "Cordell Browne"
-date: "4/6/2022"
+date: "cordell@knights.ucf.edu"
 output:
   html_document:
     theme: cosmo
