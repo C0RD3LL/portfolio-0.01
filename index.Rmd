@@ -50,7 +50,7 @@ columns(org.Hs.eg.db)
 ##  {.tabset .tabset-fade}
 ### About The Data
 
-The data was selected via  GEO browser, so no analytical insight was provided outside of the following information. 
+The data was selected via  GEO browser.
 
 Comparing the differentially expressed genes between OSCC tumors with lymph-node metastasis (LNM) and those without LNM, which were obtained though NGS, we found that immune response plays an important role in the process of OSCC LNM and the candidate genes involved in the anti-tumor immunity were validated with qRT-PCR.
 
