@@ -8,7 +8,224 @@ output:
     toc: yes
     toc_float: yes
 ---
-```{r}
 
+<br>
+
+# Enrichr
+
+
+Enrichr is employed for genes with negatively correlated expression and positively correlated expression to rbS9.6, respectively.
+
+There are about 19,117 genes that obtained a p-value (not NA) for the correlation, and 3,263 of these obtained a p-value below 0.05 (not adjusted). Enrichr was used to determine which databases would be of most interest, mainly from their adjusted p-values and combined score, then the enrichr R package was used to load these results (1).
+
+https://cran.r-project.org/web/packages/enrichR/vignettes/enrichR.html
+
+
+```{r,echo=FALSE}
+library(enrichR)
+library(plotly)
+setEnrichrSite("Enrichr")
+#
+websiteLive <- TRUE
+#
+dbs <- listEnrichrDbs()
 ```
+
+```{r,message=FALSE,echo=FALSE}
+dbs <- c("GO_Molecular_Function_2015", "GO_Cellular_Component_2015", "GO_Biological_Process_2015",
+         "Human_Phenotype_Ontology"
+         )
+
+genes <- c('RPSAP47', 'WIF1', 'KRT36', "NTS","LAMB4","SHOX",
+           'CFTR',  'KRTAP3-1', 'RMST', 'C9orf152', 'KRT36')
+
+if (websiteLive) {
+    enriched <- enrichr(genes, dbs)
+}
+```
+
+<br>
+
+## Ontologies {.tabset .tabset-fade}
+
+<br>
+The top negatively expressed gene pathways from Wikipathways 2019 with significant p-values are miRNA targets in ECM and membrane receptors, miR-509-3p alteration of YAP1/ECM (Extracellular matrix related), and Senesence and Autophagy in cancer, and platelet-mediated interactions with vascular and circulating cells.
+Again, this brings up more ECM/membrane receptor and platelet relationships with the negatively correlated gene set.
+<br>
+
+### Molecular_Function
+```{r,echo=FALSE}
+#Part 1 
+x <- as.data.frame(enriched[[1]])
+x <- x[order(-x$Combined.Score),]
+x <- x[1:9,]
+
+#Part 2
+fig <- plot_ly(x, x= ~Combined.Score, y= ~reorder(Term,Combined.Score), type = 'bar',marker = list(color=~P.value,size=10, 
+              opacity=.9, colorscale='YlGnBu', colorbar=list(title='P Value')), textposition = "auto", hoverinfo = "text",
+              hovertext = paste(" P Value:", x$P.value, "<br> Combined Score:", x$Combined.Score))
+
+yaxis <- list(
+  zerolinecolor = '#ffff', zerolinewidth = 2, gridcolor = 'ffff',
+  title = '', tickmode = "array", margin = list(r = 700))
+
+fig <- fig %>% layout(title = dbs[1], yaxis= yaxis, margin= list(t= 100))
+
+fig
+```
+
+The top negatively expressed gene pathways from Wikipathways 2019 with significant p-values are miRNA targets in ECM and membrane receptors, miR-509-3p alteration of YAP1/ECM (Extracellular matrix related), and Senesence and Autophagy in cancer, and platelet-mediated interactions with vascular and circulating cells.
+
+Again, this brings up more ECM/membrane receptor and platelet relationships with the negatively correlated gene set.
+
+
+1. https://pubmed.ncbi.nlm.nih.gov/9405449/
+2. https://pubmed.ncbi.nlm.nih.gov/28611024/
+3. https://pubmed.ncbi.nlm.nih.gov/9405449/
+4. https://pubmed.ncbi.nlm.nih.gov/28611024/
+
+### Cellular Component
+```{r,echo=FALSE}
+#Part 1 
+x <- as.data.frame(enriched[[2]])
+x <- x[order(-x$Combined.Score),]
+x <- x[1:9,]
+
+#Part 2
+fig <- plot_ly(x, x= ~Combined.Score, y= ~reorder(Term,Combined.Score), type = 'bar',marker = list(color=~P.value,size=10, 
+              opacity=.9, colorscale='YlGnBu', colorbar=list(title='P Value')), textposition = "auto", hoverinfo = "text",
+              hovertext = paste(" P Value:", x$P.value, "<br> Combined Score:", x$Combined.Score))
+
+yaxis <- list(
+  zerolinecolor = '#ffff', zerolinewidth = 2, gridcolor = 'ffff',
+  title = '', tickmode = "array", margin = list(r = 700))
+
+fig <- fig %>% layout(title = dbs[2], yaxis= yaxis, margin= list(t= 100))
+
+fig
+```
+
+### Biological Process
+```{r,echo=FALSE}
+#Part 1 
+x <- as.data.frame(enriched[[3]])
+x <- x[order(-x$Combined.Score),]
+x <- x[1:9,]
+
+#Part 2
+fig <- plot_ly(x, x= ~Combined.Score, y= ~reorder(Term,Combined.Score), type = 'bar',marker = list(color=~P.value,size=10, 
+              opacity=.9, colorscale='YlGnBu', colorbar=list(title='P Value')), textposition = "auto", hoverinfo = "text",
+              hovertext = paste(" P Value:", x$P.value, "<br> Combined Score:", x$Combined.Score))
+
+yaxis <- list(
+  zerolinecolor = '#ffff', zerolinewidth = 2, gridcolor = 'ffff',
+  title = '', tickmode = "array", margin = list(r = 700))
+
+fig <- fig %>% layout(title = dbs[3], yaxis= yaxis, margin= list(t= 100))
+
+fig
+```
+
+The top negatively expressed gene pathways from Wikipathways 2019 with significant p-values are miRNA targets in ECM and membrane receptors, miR-509-3p alteration of YAP1/ECM (Extracellular matrix related), and Senesence and Autophagy in cancer, and platelet-mediated interactions with vascular and circulating cells.
+Again, this brings up more ECM/membrane receptor and platelet relationships with the negatively correlated gene set.
+1. https://pubmed.ncbi.nlm.nih.gov/9405449/
+2. https://pubmed.ncbi.nlm.nih.gov/28611024/
+3. https://pubmed.ncbi.nlm.nih.gov/9405449/
+4.https://pubmed.ncbi.nlm.nih.gov/28611024/
+
+### Human Phenotype
+```{r,echo=FALSE}
+#Part 1 
+x <- as.data.frame(enriched[[1]])
+x <- x[order(-x$Combined.Score),]
+x <- x[1:9,]
+
+#Part 2
+fig <- plot_ly(x, x= ~Combined.Score, y= ~reorder(Term,Combined.Score), type = 'bar',marker = list(color=~P.value,size=10, 
+              opacity=.9, colorscale='YlGnBu', colorbar=list(title='P Value')), textposition = "auto", hoverinfo = "text",
+              hovertext = paste(" P Value:", x$P.value, "<br> Combined Score:", x$Combined.Score))
+
+yaxis <- list(
+  zerolinecolor = '#ffff', zerolinewidth = 2, gridcolor = 'ffff',
+  title = '', tickmode = "array", margin = list(r = 700))
+
+fig <- fig %>% layout(title = dbs[1], yaxis= yaxis, margin= list(t= 100))
+
+fig
+```
+
+
+## Transcription {.tabset .tabset-fade}
+
+### v
+```{r,echo=FALSE}
+#Part 1 
+x <- as.data.frame(enriched[[1]])
+x <- x[order(-x$Combined.Score),]
+x <- x[1:9,]
+
+#Part 2
+fig <- plot_ly(x, x= ~Combined.Score, y= ~reorder(Term,Combined.Score), type = 'bar',marker = list(color=~P.value,size=10, 
+              opacity=.9, colorscale='YlGnBu', colorbar=list(title='P Value')), textposition = "auto", hoverinfo = "text",
+              hovertext = paste(" P Value:", x$P.value, "<br> Combined Score:", x$Combined.Score))
+
+yaxis <- list(
+  zerolinecolor = '#ffff', zerolinewidth = 2, gridcolor = 'ffff',
+  title = '', tickmode = "array", margin = list(r = 700))
+
+fig <- fig %>% layout(title = dbs[1], yaxis= yaxis, margin= list(t= 100))
+
+fig
+```
+
+
+### vi
+```{r,echo=FALSE}
+#Part 1 
+x <- as.data.frame(enriched[[1]])
+x <- x[order(-x$Combined.Score),]
+x <- x[1:9,]
+
+#Part 2
+fig <- plot_ly(x, x= ~Combined.Score, y= ~reorder(Term,Combined.Score), type = 'bar',marker = list(color=~P.value,size=10, 
+              opacity=.9, colorscale='YlGnBu', colorbar=list(title='P Value')), textposition = "auto", hoverinfo = "text",
+              hovertext = paste(" P Value:", x$P.value, "<br> Combined Score:", x$Combined.Score))
+
+yaxis <- list(
+  zerolinecolor = '#ffff', zerolinewidth = 2, gridcolor = 'ffff',
+  title = '', tickmode = "array", margin = list(r = 700))
+
+fig <- fig %>% layout(title = dbs[1], yaxis= yaxis, margin= list(t= 100))
+
+fig
+```
+
+### vii
+```{r,echo=FALSE}
+#Part 1 
+x <- as.data.frame(enriched[[1]])
+x <- x[order(-x$Combined.Score),]
+x <- x[1:9,]
+
+#Part 2
+fig <- plot_ly(x, x= ~Combined.Score, y= ~reorder(Term,Combined.Score), type = 'bar',marker = list(color=~P.value,size=10, 
+              opacity=.9, colorscale='YlGnBu', colorbar=list(title='P Value')), textposition = "auto", hoverinfo = "text",
+              hovertext = paste(" P Value:", x$P.value, "<br> Combined Score:", x$Combined.Score))
+
+yaxis <- list(
+  zerolinecolor = '#ffff', zerolinewidth = 2, gridcolor = 'ffff',
+  title = '', tickmode = "array", margin = list(r = 700))
+
+fig <- fig %>% layout(title = dbs[1], yaxis= yaxis, margin= list(t= 100))
+
+fig
+```
+
+
+
+
+
+
+
+
 
