@@ -48,7 +48,8 @@ dbs <- c("GO_Molecular_Function_2015", "GO_Cellular_Component_2015", "GO_Biologi
          )
 
 genes <- c('RPSAP47', 'WIF1', 'KRT36', "NTS","LAMB4","SHOX",
-           'CFTR',  'KRTAP3-1', 'RMST', 'C9orf152', 'KRT36')
+           'CFTR',  'KRTAP3-1', 'RMST', 'C9orf152', 'KRT36',
+           "HMGCS2","TNN","SHISA9","MAB21L2")
 
 if (websiteLive) {
     enriched <- enrichr(genes, dbs)
@@ -86,10 +87,14 @@ fig <- fig %>% layout(title = dbs[1], yaxis= yaxis, margin= list(t= 100))
 fig
 ```
 
-The top negatively expressed gene ontologies from GO molecular function 2018 with significant p-values are vinculin binding and platelet-derived growth factor binding. Vinculin is involved in embryonic development and cell adhesion (1). Platelet-derived growth factor (PDGF) has already been discussed in the context of the kinase receptors for it, and it is involved in development of various tissues and wound healing.
-Collagen-binding and integrin binding are again probably involved in the ECM.
+(1) Bicarbonate transport proteins facilitate the movement of membrane-impermeant HCO3− across membranes to accelerate disposal of waste CO2, control cellular and whole-body pH, and to regulate fluid movement and acid/base secretion. Their high metabolic rate make them of interest in squamous cell carcinomas .
+(2) Chloride channels is associated with CFTR is a cyclic AMP (cAMP)-activated chloride (Cl-) channel and a regulator of outwardly rectifying Cl- channels (ORCCs) in airway epithelia (CFTR is discussed further in this analysis).
 
-1. Peng et al.(2011) New insights into Vinculin function and regulation. International review of cell and molecular biology. https://doi.org/10.1016/B978-0-12-386043-9.00005-0
+
+1. https://doi.org/10.1042/BJ20081634
+
+2. https://doi.org/10.1073/pnas.95.5.2674
+
 
 
 ### Cellular Component
@@ -113,8 +118,13 @@ fig <- fig %>% layout(title = dbs[2], yaxis= yaxis, margin= list(t= 100))
 fig
 ```
 
-The top negatively expressed gene ontologies from GO cellular component 2018 with significant p-values are endoplasmic reticulum lumen, focal adhesion, and phagocytic vesicle membrane. The ER lumen ontology may be related to the ER stress mechanisms already discuessed. Focal adhesion and phagocytic vesicle membrane again related to the ECM and phagosomes.
+(1) Alpha-amino-3-hydroxy-5-methyl-4-isoxazolepropionic acid (AMPA) receptors are responsible for the bulk of fast excitatory synaptic transmission throughout the CNS and their modulation is the ultimate mechanism that underlies much of the plasticity of excitatory transmission that is expressed in the brain. Increasing the post-synaptic response to a stimulus is achieved either through increasing the number of AMPA receptors at the post-synaptic surface or by increasing the single channel conductance of the receptors expressed. This was shown to be the basis of LTP mechanisms. More recently, it has become clear that these two apparently different mechanisms to increase AMPA receptor response can be combined, with the insertion of Ca2+ permeable AMPA receptors that have a high conductance in response to tetanic stimulation. Thus the overall conductance of a synapse may be increased by receptor insertion rather than modification of existing receptors.
 
+(2) Intermediate filament (IF) proteins are traditionally known for their roles in fostering structural integrity in cells and tissues. In cancer, IF proteins serve as diagnostic markers, as tumor cells partially retain their original signature expression of IF proteins.The evidence already in hand establishes that IF proteins function beyond their classical roles as markers and serve as effectors of tumorgenesis
+
+1. https://doi.org/10.1073/pnas.0611698104
+
+2. https://doi.org/10.3390/cells8050497
 
 ### Biological Process
 ```{r,echo=FALSE}
@@ -137,7 +147,6 @@ fig <- fig %>% layout(title = dbs[3], yaxis= yaxis, margin= list(t= 100))
 fig
 ```
 
-Again, more ECM relationships are described in the ontologies referring to antigen presentation and ECM organisation. A new topic of an opic-related ontology can be found in the retinal ganglion cell axon guidance.
 
 
 ### Human Phenotype
@@ -160,8 +169,6 @@ fig <- fig %>% layout(title = dbs[4], yaxis= yaxis, margin= list(t= 100))
 
 fig
 ```
-
-The top negatively expressed gene ontologies from GO cellular component 2018 with significant p-values are endoplasmic reticulum lumen, focal adhesion, and phagocytic vesicle membrane.The ER lumen ontology may be related to the ER stress mechanisms already discuessed. Focal adhesion and phagocytic vesicle membrane again related to the ECM and phagosomes.
 
 
 
@@ -192,13 +199,21 @@ fig <- fig %>% layout(title = dbs[5], yaxis= yaxis, margin= list(t= 100))
 fig
 ```
 
-The top negatively expressed gene pathways from BioPlanet 2019 coexpressed with significant p-values are mostly involved in ECM functions. Perhaps of specific interest:
+(1) Ketone body metabolism was described before in ontolgoies their seems that some pancreatic disorders are overlapping with our disease state. 
 
-TWEAK, which is involved in apoptosis (1).Platelet amyloid precursor protein pathways, which is for a protein found in platelets and associated with Alzheimer disease (2). Integrins in angiogenesis, because several other links to angiogenesis have been found earlier in this report.
+(2) CFTR  is responsible for regulating the proper flow of chloride and sodium (a component of salt) in and out of the cell membranes in the lungs and other organs 
 
-1 https://pubmed.ncbi.nlm.nih.gov/9405449/
+(3) The PITX2 gene provides instructions for making a protein that attaches (binds) to specific regions of DNA and regulates the activity of other genes. 
 
-2 https://pubmed.ncbi.nlm.nih.gov/28611024/
+(4) Inactivation of GSK3  by Akt causes accumulation of beta-catenin in alveolar macrophages. GSK3 has been implicated in the development of insulin resistance, primarily based on its role in regulation of glycogen synthesis. However, GSK3 is involved in many other important signaling cascades which may regulate glucose homeostasis and the development of insulin resistance.Lrp5/β-Catenin Signaling Controls Lung Macrophage Differentiation and Inhibits Resolution of Fibrosis. This seems to be relating to CFTR.
+
+1. https://pubmed.ncbi.nlm.nih.gov/9405449/
+
+2. https://medlineplus.gov/genetics/gene/pitx2/
+
+3. https://medlineplus.gov/genetics/gene/pitx2/
+
+4. https://doi.org/10.1016/j.diabres.2007.01.033
 
 
 ### WikiPathway 2021 Human
@@ -222,9 +237,7 @@ fig <- fig %>% layout(title = dbs[6], yaxis= yaxis, margin= list(t= 100))
 fig
 ```
 
-The top negatively expressed gene pathways from Wikipathways 2019 with significant p-values are miRNA targets in ECM and membrane receptors, miR-509-3p alteration of YAP1/ECM (Extracellular matrix related), and Senesence and Autophagy in cancer, and platelet-mediated interactions with vascular and circulating cells.
-
-Again, this brings up more ECM/membrane receptor and platelet relationships with the negatively correlated gene set.
+Again, this brings up more Ketone body metabolism relationships correlated with our gene set.
 
 ###  KEGG 2021 Human
 ```{r,echo=FALSE}
@@ -247,9 +260,6 @@ fig <- fig %>% layout(title = dbs[7], yaxis= yaxis, margin= list(t= 100))
 fig
 ```
 
-The top negatively expressed gene pathways from KEGG 2019 Human with significant p-values are focal adhesion, phagosome, and ECM-receptor interaction. This again suggests more ECM relationships (ex. focal adhesion, ECM-receptor interaction), but introduces specifically phagosomes and lysosomes. There is also more discussion of the ER protein processing, which can be involved in ER stress (1).
-
-1 https://www.genome.jp/kegg-bin/show_pathway?
 
 ## Diseases/Drugs {.tabset .tabset-fade}
 
@@ -278,17 +288,13 @@ fig <- fig %>% layout(title = dbs[8], yaxis= yaxis, margin= list(t= 100))
 fig
 ```
 
-The top negatively expressed genes relation to diseases/drugs from DSigDB were mostly histamine receptor antagonists.
+(1) Chloasma is a required hypermelanosis of sun-exposed areas occurred during pregnancy and it can affect 50-70% of pregnant women.
 
-Suloctidil was a calcium agonist which altered blood platelets, but causes hepatotoxicity (1). Pizotifen is a diarylmethane used in migrane treatment by acting as a serotonin agonist and is a histamine antagonist (2). Terfenadine is a diarylmethane prodrug of a histamine H1-receptor antagonist (3). Prenylamine is also diarylmethane formerly used for angina pectoris (4). Chloropyramine is also an antihistamine (5). Triprolidine and promethazine are also an antihistamines (6,7).
+(2) There are a variety of disorders of the pancreas (not diabetes) including acute pancreatitis, chronic pancreatitis, hereditary pancreatitis, and pancreatic cancer.
 
-1. https://drugs.ncats.io/substance/XV1N1XY17K
-2. https://pubchem.ncbi.nlm.nih.gov/compound/Pizotifen
-3. https://pubchem.ncbi.nlm.nih.gov/compound/5405
-4. https://pubchem.ncbi.nlm.nih.gov/compound/9801
-5. https://pubchem.ncbi.nlm.nih.gov/compound/25295
-6. https://pubchem.ncbi.nlm.nih.gov/compound/5282443
-7. https://pubchem.ncbi.nlm.nih.gov/compound/4927
+
+1. https://pubmed.ncbi.nlm.nih.gov/19140277/
+
 
 ### PheWeb 2019
 
@@ -312,7 +318,7 @@ fig <- fig %>% layout(title = dbs[9], yaxis= yaxis, margin= list(t= 100))
 fig
 ```
 
-The top negatively expressed genes relation to diseases/drugs from ARCHS4 IDG Coexpression with significant p-values are mainly related to NEK7 IDG kinase. NEK7 has already been discussed as being an important gene for mitosis.
+
 
 ## Cell Types {.tabset .tabset-fade}
 
@@ -342,7 +348,7 @@ fig <- fig %>% layout(title = dbs[10], yaxis= yaxis, margin= list(t= 100))
 fig
 ```
 
-Using the top negatively expressed gene the top cell line from the Human Gene Atlasy with highly significant p-values is overwhelmingly smooth muscle.
+Data is seemingly related to the GI tract .
 
 ### Descartes Cell Types and Tissue 2021
 
@@ -366,16 +372,7 @@ fig <- fig %>% layout(title = dbs[11], yaxis= yaxis, margin= list(t= 100))
 fig
 ```
 
-The top negatively expressed genes related to cell lines from Top CCLE Proteomics 2020 with highly significant p-values are mostly CNS (four glioblastoma) and some Kidney and lung. U118MG is an astrocytoma cell line (1). OSCR2 is a renal cell carcinoma line (2).
-U87MG is probably a glioblastoma cell line (although there are issues with its identification) (3). KNS81 is also a glioblastoma (4).
-NCIH2052 is a pleural mesothelioma cell line (5). A172 and SNU1105 are also a glioblastoma lines (6,7).
 
-1. https://web.expasy.org/cellosaurus/CVCL_0633
-2. https://web.expasy.org/cellosaurus/CVCL_1626
-3. https://web.expasy.org/cellosaurus/CVCL_0022
-4. https://web.expasy.org/cellosaurus/CVCL_2799
-5. https://web.expasy.org/cellosaurus/CVCL_1518
-6. https://web.expasy.org/cellosaurus/CVCL_0131
 
 ## Transcription {.tabset .tabset-fade}
 
@@ -405,14 +402,12 @@ fig <- fig %>% layout(title = dbs[12], yaxis= yaxis, margin= list(t= 100))
 fig
 ```
 
-The top negatively expressed transcrpition genes from ChEA_2016 with highly significant adjust p-values are RELA, CJUN, ATF3, and BRD4, within specific cell lines.
+(1) TRIM28 (Tripartite Motif Containing 28) is a Protein Coding gene. Diseases associated with TRIM28 include Wilms Tumor 1 and Renal Wilms' Tumor (Childhood cancer that starts in the kidneys). Among its related pathways are Gene Expression and E2F transcription factor network. Gene Ontology (GO) annotations related to this gene include _RNA binding and sequence-specific DNA binding_. 
 
-RELA codes for part of the most common NK-KB transcription factor, which activates transcription and is involved in many processes and cell types (1). CJUN is a TF, and can be involved in cAMP signaling pathway stimulation and colorectal cancer (2). ATF3 is also involved in cAMP in the response element (3). BRD4 regulates transcription and is involved in epigenetic memory, but is also binds with RELA for NF-KB activation (4). It has been considered as a target for inhibition in leukemia treatment (4).
+(2) IRF1 (Interferon Regulatory Factor 1) is a Protein Coding gene. Diseases associated with IRF1 include Gastric Cancer and Lung Cancer. Among its related pathways are Immune response IFN gamma signaling pathway and Bacterial infections in CF airways. Gene Ontology (GO) annotations related to this gene include _DNA-binding transcription factor activity and RNA polymerase II cis-regulatory region sequence-specific DNA binding_.
 
-1. https://www.uniprot.org/uniprot/Q04206#function
-2. https://www.uniprot.org/uniprot/P05412#function
-3. https://www.uniprot.org/uniprot/P18847#function
-4. https://www.uniprot.org/uniprot/O60885#function
+1. https://www.genecards.org/cgi-bin/carddisp.pl?gene=TRIM28&keywords=trim28
+2. https://www.genecards.org/cgi-bin/carddisp.pl?gene=IRF1&keywords=irf1
 
 ### ENCODE and ChEA Consensus TFs from ChIP-X"
 
@@ -435,11 +430,15 @@ fig <- fig %>% layout(title = dbs[13], yaxis= yaxis, margin= list(t= 100))
 
 fig
 ```
+(1) PPARD (Peroxisome Proliferator Activated Receptor Delta) is a Protein Coding gene. Diseases associated with PPARD include Diabetic Cataract and Abdominal Obesity-Metabolic Syndrome 1. Among its related pathways are Metabolism and Pyruvate metabolism and Citric Acid (TCA) cycle. Gene Ontology (GO) annotations related to this gene include _DNA-binding transcription factor activity and transcription coactivator activity_. 
 
-The top negatively expressed transcription genes from ChEA_2016 and ENCODE consensus with significant p-values are NFE2L2, SUZ12, and IRF8. NFE2L2 is involved in autophagy and oxidative stress, and is allowed to accumulate during oxidative stress instead of being broken down by the BCR(KEAP1) complex (1).
 
-SUZ12 is part of the PRC2 complex which is involved in repressing transcription, and one of the genes it represses is MYT1 (2). IRF8 can activate or repress transcription, and is part of cell differentiation in CD8+ dendritic cells (WBC) (3).
+(2) TP53  encodes a tumor suppressor protein containing transcriptional activation, DNA binding, and oligomerization domains. The encoded protein responds to diverse cellular stresses to regulate expression of target genes, thereby inducing cell cycle arrest, apoptosis, senescence, DNA repair, or changes in metabolism. Mutations in this gene are associated with a variety of human cancers, including hereditary cancers such as Li-Fraumeni syndrome. TP53 mutations are universal across cancer types. The loss of a tumor suppressor is most often through large deleterious events, such as frameshift mutations, or premature stop codons. 
 
-1. https://www.uniprot.org/uniprot/Q16236#function
-2. https://www.uniprot.org/uniprot/Q15022#function
-3. https://www.uniprot.org/uniprot/Q02556#function
+
+(3) YY1 (YY1 Transcription Factor) is a Protein Coding gene. Diseases associated with YY1 include Gabriele-De Vries Syndrome and Insulinoma. Among its related pathways are mTOR signaling pathway and Sterol Regulatory Element-Binding Proteins (SREBP) signalling. Gene Ontology (GO) annotations related to this gene include _DNA-binding transcription factor activity and transcription coactivator activity_. 
+
+1. https://www.genecards.org/cgi-bin/carddisp.pl?gene=PPARD
+2. https://www.genecards.org/cgi-bin/carddisp.pl?gene=TP53&keywords=tp53
+3. https://www.genecards.org/cgi-bin/carddisp.pl?gene=YY1&keywords=yy1
+
