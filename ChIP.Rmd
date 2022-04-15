@@ -5,12 +5,370 @@ date: "cordell@knights.ucf.edu"
 output:
   html_document:
     theme: cosmo
-    toc: yes
-    toc_float: yes
 ---
 
+## {.tabset .tabset-fade .tabset-pills}
+
+### Objective 
+
+The data for ChIP-seq peak calling are stacks of aligned reads across a genome. Some of these stacks correspond to the signal of interest (e.g. binding of a transcription factor or modified histone). Many other stacks are regarded as molecular or experimental noise, or as being influenced by a systematically greater accessibility of measurement by the experiment at that particular genomic location. The goal of this experiment is to understand how our transcription factors compare to one another in regards to binding sites.
+
+Important Objectives: 
+
+1. Make a venn diagram comparing the overlap of binding sites for your two ChIP-Seq datasets
+2. Make a metaplot of your two datasets around the TSS.
+3. Annotate the peaks for genomic features such as intron, exon, 3’UTR, etc and compare the annotations between your two datasets.
+4. Assign peaks to genes – then perform pathway enrichment.
+6. What genes and pathways/genesets shared between these datasets? What pathways differ? What is your interpretation of these results? What future directions could you propose to follow up on these findings? (No right answers to these questions, just important to think through this part).
+
+### About the Data
+
+Data source: http://www.carroll-lab.org.uk/data 
+
+FOXA1 (Forkhead Box A1) is a Protein Coding gene that encodes a member of the forkhead class of DNA-binding proteins. Diseases associated with FOXA1 include Estrogen-Receptor Negative Breast Cancer and Estrogen-Receptor Positive Breast Cancer. Among its related pathways are Embryonic and Induced Pluripotent Stem Cells and Lineage-specific Markers and Glucose / Energy Metabolism. Gene Ontology (GO) annotations related to this gene include DNA-binding transcription factor activity and transcription factor binding.
+
+Source: https://www.genecards.org/cgi-bin/carddisp.pl?gene=FOXA1
+
+The peaks for FOXA1 in MCF-7 cell are in this file http://www.carroll-lab.org.uk/FreshFiles/Data/Data_Sheet_3/MCF7_FOXA1%20binding.bed.
 
 
-# In Progress... 
 
-$$$
+ER or ESR1 (Estrogen Receptor 1) is a protein coding gene, the protein encoded by this gene regulates the transcription of many estrogen-inducible genes that play a role in growth, metabolism, sexual development, gestation, and other reproductive functions and is expressed in many non-reproductive tissues. The receptor encoded by this gene plays a key role in breast cancer, endometrial cancer, and osteoporosis. 
+
+Among its related pathways are Apoptosis and survival_Anti-apoptotic action of nuclear ESR1 and ESR2 and Signaling events mediated by HDAC Class II. Gene Ontology (GO) annotations related to this gene include DNA-binding transcription factor activity and identical protein binding.
+
+Source: https://www.genecards.org/cgi-bin/carddisp.pl?gene=ESR1&keywords=ER
+
+The peaks for estrogen receptor (ER) are in BED file format. We will use the function import.bed from the rtracklayer package to directly import the peaks as GRanges object.http://www.carroll-lab.org.uk/FreshFiles/Data/Data_Sheet_3/MCF7_ER_binding.bed
+
+```{r,include=FALSE}
+library(ChIPseeker)
+library(clusterProfiler)
+library(ChIPpeakAnno)
+library(TxDb.Hsapiens.UCSC.hg19.knownGene)
+
+library(EnsDb.Hsapiens.v75)
+annoData <- toGRanges(EnsDb.Hsapiens.v75, feature="gene")
+require(rtracklayer)
+
+#Import FOXA1
+FOXA1.df <- read.table("http://www.carroll-lab.org.uk/FreshFiles/Data/Data_Sheet_3/MCF7_FOXA1%20binding.bed", header=TRUE)
+
+require(GenomicRanges) # load the GenomicRanges pakcage
+
+
+FOXA1 <- GRanges(
+  FOXA1.df$chr,
+  IRanges(FOXA1.df$star, FOXA1.df$end),
+  strand="*"
+)
+
+# we can add more data to each peak subsequently
+names(FOXA1) <- paste("FOXA1_peak", 1:nrow(FOXA1.df), sep="_")
+score(FOXA1) <- FOXA1.df[,"X.10.log10.pvalue."]  
+FOXA1 <- FOXA1[width(FOXA1) <= 2000]
+
+#Import ER bed table
+ER <- import.bed("http://www.carroll-lab.org.uk/FreshFiles/Data/Data_Sheet_3/MCF7_ER_binding.bed")
+# assign scores by converting the 'name' feald to type numeric
+score(ER) <- as.numeric(ER$name)
+# overwrite the name column
+ER$name <- paste("ER_peaks", 1:length(ER), sep="_")
+# use the names() function 
+names(ER) <- ER$name 
+```
+## <br>
+
+```{r,echo=FALSE,message=FALSE,warning=FALSE}
+data <- as.data.frame(width(FOXA1))
+pata <- as.data.frame(width(ER))
+
+library(plotly)
+fig <- plot_ly(data,x= ~width(FOXA1), type = "histogram",alpha = 0.5,name= "FOXA1")
+fig <- fig %>% add_histogram(x = ~width(ER),name="ER")
+fig <- fig %>% layout(title="Distrubtion of Peak Size", barmode = "overlay",xaxis= list(title= "Peak Size"),yaxis= list(title="Frequency"))
+fig
+
+```
+
+From this figure we can analyze how the distribution of peak sizes between FOXA1 and ER compare/contrast. 
+
+```{r,echo=FALSE,message=FALSE,warning=FALSE}
+# compute overlaps
+ol <- findOverlaps(ER, FOXA1)
+# show the resulting Hits object
+
+ER.uniq <- setdiff(ER, FOXA1)
+FOXA1.uniq <- setdiff(FOXA1, ER)
+
+#Overall
+# compute overlaps
+ovlHits <- findOverlaps(ER, FOXA1)
+# get subsets of binding sites
+ovl <- subsetByOverlaps(ER, FOXA1)
+```
+
+
+## Venn Diagram
+```{r,echo=FALSE,message=FALSE,warning=FALSE}
+library(Vennerable)
+venn <- Venn(SetNames=c("ER", "FOXA1"), 
+    Weight=c(
+        '10'=length(ER.uniq), 
+        '11'=length(ovl), 
+        '01'=length(FOXA1.uniq)
+    )
+)
+
+# plot Venn Diagram
+plot(venn)
+```
+
+Binding site overlap can be visualized with a Venn diagram, e.g. above. 
+
+```{r,echo=FALSE,message=FALSE,warning=FALSE}
+require(TxDb.Hsapiens.UCSC.hg18.knownGene)
+txdb <- TxDb.Hsapiens.UCSC.hg18.knownGene
+
+ER.features <- assignChromosomeRegion(ER, TxDb=txdb, nucleotideLevel=FALSE)
+FOXA1.features <- assignChromosomeRegion(FOXA1, TxDb=txdb, nucleotideLevel=FALSE)
+```
+
+
+## <br>
+
+```{r,echo=FALSE,message=FALSE,warning=FALSE}
+library(dplyr)
+data <- as.data.frame(ER.features$percentage)
+data <- mutate_if(data,is.numeric, round)
+
+Fata <- as.data.frame(FOXA1.features$percentage)
+Fata <- mutate_if(Fata,is.numeric, round)
+
+data <- merge(x= data, y= Fata, by= "subjectHits")
+
+fig <- plot_ly(data, x= ~subjectHits, y = ~Freq.x, type = 'bar', textposition = 'inside',text = ~paste(Freq.x, '%'),
+               marker = list(color = 'rgb(158,202,225)',
+               line = list(color = 'rgb(8,48,107)', width = 3.0)),name= "ER")
+
+fig <- fig %>% add_trace(y= ~Freq.y, name = 'FOXA1',text = ~paste(Freq.y, '%'), marker = list(color = 'rgb(58,200,225)', line = list(color = 'rgb(8,48,107)')))
+
+fig <- fig %>% layout(yaxis = list(title = 'Percentage'),xaxis= list(title=""),barmode = 'group',title="Binding Site Distribution")
+
+fig
+```
+
+Binding of a transcription factor (TF) to its DNA binding sites (TFBSs) is a critical step to initiate the transcription of its target genes. Knowing what regions peaks occur can aid in further downstream analysis. 
+
+```{r,echo=FALSE,message=FALSE,warning=FALSE}
+OL <- findOverlapsOfPeaks(FOXA1, ER)
+OL <- addMetadata(OL, colNames="score", FUN=mean) 
+peaklist <-OL$peaklist
+
+overlappingPeaks <- OL$overlappingPeaks
+```
+
+
+```{r,echo=FALSE,message=FALSE,warning=FALSE}
+data <- as.data.frame(overlappingPeaks["FOXA1///ER"])
+colors <- c('rgb(158,185,243)', 'rgb(220,176,242)', 'rgb(180,151,231)', 'rgb(102,197,204)') 
+
+data %>% count(FOXA1...ER.overlapFeature) %>%
+  as.data.frame() %>%
+  plot_ly(labels= ~FOXA1...ER.overlapFeature ,values = ~n, type = 'pie', 
+          marker = list(colors = colors, line = list(color = '#FFFFFF', width = 1)))%>% 
+  layout(title="Overlap Features of Peaks")
+```
+
+### Peak scores around TSS {.tabset .tabset-fade .tabset-pills}
+
+#### ER
+
+```{r,echo=FALSE,message=FALSE,warning=FALSE}
+ER.copy <- ER
+ER.copy$score <- 1
+
+binOverFeature(ER, ER.copy, annotationData=annoData,
+               radius=5000, nbins=10, FUN=c(sum, length),
+               ylab=c("score", "count"), 
+               main=c("Distribution of aggregated peak scores around TSS", 
+                      "Distribution of aggregated peak numbers around TSS"))
+```
+
+Once the peaks are annotated, the distribution of the distance to the nearest feature such as the transcription start sites (TSS) can be plotted. The figure above illustrates the distribution of the aggregated peak scores and the number of peaks around the TSS. Score denotes average signal enrichment for the region. This is the average (between replicates) read count over the region. If the score is high, it means that a lot of chromatin from that region is pulled down by the IP and sequenced.
+
+#### FOXA1
+
+```{r,echo=FALSE,message=FALSE,warning=FALSE}
+FOXA1.copy <- FOXA1
+FOXA1.copy$score <- 1
+
+binOverFeature(FOXA1, FOXA1.copy, annotationData=annoData,
+               radius=5000, nbins=10, FUN=c(sum, length),
+               ylab=c("score", "count"), 
+               main=c("Distribution of aggregated peak scores around TSS", 
+                      "Distribution of aggregated peak numbers around TSS"))
+```
+
+## Peak distribution over different genomic features.
+
+```{r,fig.width=12,fig.height=7,echo=FALSE,message=FALSE,warning=FALSE}
+overlaps <- OL$peaklist[["FOXA1///ER"]]
+
+library(UpSetR)
+x <- genomicElementUpSetR(overlaps, 
+                          TxDb.Hsapiens.UCSC.hg19.knownGene)
+upset(x$plotData, nsets=13, nintersects=NA)
+```
+
+upset plot of common gene symbols among annotations by Ensembl, UCSC and Gencode features.
+
+As a conclusion, annotate with different annotation resources, even the other parameter keep same, the annotations will be different from each other. To improve the reproducibility, accuracy of an annotation source should be provided. Some people were advertizing their tools by playing this trick by using different annotations to mislead users.
+
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+
+
+
+
+```{r,eval = FALSE,include=FALSE}
+
+#PC3: https://www.encodeproject.org/experiments/ENCSR359LOD/
+
+#PC3 (PC-3) is a human prostate cancer cell line used in prostate cancer research and drug development. PC3 cells are useful in investigating biochemical changes in advanced prostate cancer cells and in assessing their response to chemotherapeutic agents.
+
+#PC9: https://www.encodeproject.org/experiments/ENCSR243INX/
+
+#PC-9 is lung adenocarcinoma cell line with a deletion in exon 19 of the EGFR gene that exhibits high sensitivity to TKIs.
+
+Goals:
+
+
+1. Make a venn diagram comparing the overlap of binding sites for your two ChIP-Seq datasets
+2. Make a metaplot of your two datasets around the TSS.
+3. Annotate the peaks for genomic features such as intron, exon, 3’UTR, etc and compare the annotations between your two datasets.
+4. Assign peaks to genes – then perform pathway enrichment.
+6. What genes and pathways/genesets shared between these datasets? What pathways differ? What is your interpretation of these results? What future directions could you propose to follow up on these findings? (No right answers to these questions, just important to think through this part).
+
+overlaps.anno <- annotatePeakInBatch(overlaps, 
+                                     AnnotationData=annoData, 
+                                     output="nearestBiDirectionalPromoters",
+                                     bindingRegion=c(-2000, 500))
+library(org.Hs.eg.db)
+library(DBI)
+
+overlaps.anno <- addGeneIDs(overlaps.anno,
+                            "org.Hs.eg.db",
+                            IDs2Add = "entrez_id")
+
+over <- getEnrichedGO(overlaps.anno, orgAnn="org.Hs.eg.db", condense=TRUE)
+enrichmentPlot(over,n= 10)
+
+peaks <- GRangesList(rep1=FOXA1,
+                     rep2=ER)
+genomicElementDistribution(peaks, 
+                           TxDb = TxDb.Hsapiens.UCSC.hg19.knownGene,
+                           promoterRegion=c(upstream=2000, downstream=500),
+                           geneDownstream=c(upstream=0, downstream=2000))
+
+
+library(ChIPseeker)
+library(clusterProfiler)
+library(ChIPpeakAnno)
+library(TxDb.Hsapiens.UCSC.hg19.knownGene)
+
+#Second
+pc9<- toGRanges("/Users/cordell/Downloads/ENCFF267BQD.bed.gz" , format="narrowPeak", header=FALSE)
+pc3<- toGRanges("/Users/cordell/Downloads/ENCFF450JNO.bed.gz" , format="narrowPeak", header=FALSE)
+
+PC9 <- unique(pc9)
+PC3 <- unique(pc3)
+
+ol <- findOverlapsOfPeaks(PC3,PC9)
+ol <- addMetadata(ol, colNames="score", FUN=mean) 
+
+#Thrid
+makeVennDiagram(ol, fill=c("#009E73", "#F0E442"), # circle fill color
+                col=c("#D55E00", "#0072B2"), #circle border color
+                cat.col=c("#D55E00", "#0072B2")) # label color, keep same as circle border color
+
+#fourth
+library(EnsDb.Hsapiens.v75) ##(hg19)
+## create annotation file from EnsDb or TxDb
+annoData <- toGRanges(EnsDb.Hsapiens.v75, feature="gene")
+
+#Fifth
+pie1(table(ol$overlappingPeaks[["PC3///PC9"]]$overlapFeature))
+
+#Sixth
+overlaps <- ol$peaklist[["PC3///PC9"]]
+
+binOverFeature(overlaps, annotationData=annoData,
+               radius=5000, nbins=200, FUN=length, errFun=0,
+               xlab="distance from TSS (bp)", ylab="count", 
+               main="Distribution of aggregated peak numbers around TSS")
+
+#Seventh
+library(TxDb.Hsapiens.UCSC.hg19.knownGene)
+
+peaks <- GRangesList(rep1=PC9,
+                     rep2=PC3)
+
+genomicElementDistribution(peaks, 
+                           TxDb = TxDb.Hsapiens.UCSC.hg19.knownGene,
+                           promoterRegion=c(upstream=2000, downstream=500),
+                           geneDownstream=c(upstream=0, downstream=2000))
+
+#Eighth
+out <- genomicElementDistribution(overlaps, 
+                           TxDb = TxDb.Hsapiens.UCSC.hg19.knownGene,
+                           promoterRegion=c(upstream=2000, downstream=500),
+                           geneDownstream=c(upstream=0, downstream=2000),
+                           promoterLevel=list(
+                         # from 5' -> 3', fixed precedence 3' -> 5'
+                             breaks = c(-2000, -1000, -500, 0, 500),
+                             labels = c("upstream 1-2Kb", "upstream 0.5-1Kb", 
+                                        "upstream <500b", "TSS - 500b"),
+                             colors = c("#FFE5CC", "#FFCA99", 
+                                        "#FFAD65", "#FF8E32")))
+```
+
+
+
+
+
+
+
+
+
