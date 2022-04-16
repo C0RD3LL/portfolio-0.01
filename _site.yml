@@ -14,10 +14,13 @@ navbar:
     - text: "Archive"
       menu:
       - text: "RNA-Seq (Original)"
-        href: https://c0rd3ll.github.io/RNAseq/
+        href: ./rnaseqv1/rna-seq.html
+      - text: "Benchmark Experiment"
+        href: ./bench/benchmark.html
       - text: "Place Holder 1"
       - text: "Place Holder 2"
       - text: "Place Holder 3"
+      - text: "Place Holder 4"
 
 
         
