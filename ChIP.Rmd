@@ -7,224 +7,144 @@ output:
     theme: cosmo
 ---
 
-## {.tabset .tabset-fade .tabset-pills}
+# Introduction {.tabset .tabset-fade .tabset-pills}
 
-### Objective 
+## Objective 
 
 The data for ChIP-seq peak calling are stacks of aligned reads across a genome. Some of these stacks correspond to the signal of interest (e.g. binding of a transcription factor or modified histone). Many other stacks are regarded as molecular or experimental noise, or as being influenced by a systematically greater accessibility of measurement by the experiment at that particular genomic location. The goal of this experiment is to understand how our transcription factors compare to one another in regards to binding sites.
 
-Important Objectives: 
+## About the Data
 
-1. Make a venn diagram comparing the overlap of binding sites for your two ChIP-Seq datasets
-2. Make a metaplot of your two datasets around the TSS.
-3. Annotate the peaks for genomic features such as intron, exon, 3’UTR, etc and compare the annotations between your two datasets.
-4. Assign peaks to genes – then perform pathway enrichment.
-6. What genes and pathways/genesets shared between these datasets? What pathways differ? What is your interpretation of these results? What future directions could you propose to follow up on these findings? (No right answers to these questions, just important to think through this part).
-
-### About the Data
-
-Data source: http://www.carroll-lab.org.uk/data 
-
-FOXA1 (Forkhead Box A1) is a Protein Coding gene that encodes a member of the forkhead class of DNA-binding proteins. Diseases associated with FOXA1 include Estrogen-Receptor Negative Breast Cancer and Estrogen-Receptor Positive Breast Cancer. Among its related pathways are Embryonic and Induced Pluripotent Stem Cells and Lineage-specific Markers and Glucose / Energy Metabolism. Gene Ontology (GO) annotations related to this gene include DNA-binding transcription factor activity and transcription factor binding.
-
-Source: https://www.genecards.org/cgi-bin/carddisp.pl?gene=FOXA1
-
-The peaks for FOXA1 in MCF-7 cell are in this file http://www.carroll-lab.org.uk/FreshFiles/Data/Data_Sheet_3/MCF7_FOXA1%20binding.bed.
-
-
-
-ER or ESR1 (Estrogen Receptor 1) is a protein coding gene, the protein encoded by this gene regulates the transcription of many estrogen-inducible genes that play a role in growth, metabolism, sexual development, gestation, and other reproductive functions and is expressed in many non-reproductive tissues. The receptor encoded by this gene plays a key role in breast cancer, endometrial cancer, and osteoporosis. 
-
-Among its related pathways are Apoptosis and survival_Anti-apoptotic action of nuclear ESR1 and ESR2 and Signaling events mediated by HDAC Class II. Gene Ontology (GO) annotations related to this gene include DNA-binding transcription factor activity and identical protein binding.
-
-Source: https://www.genecards.org/cgi-bin/carddisp.pl?gene=ESR1&keywords=ER
-
-The peaks for estrogen receptor (ER) are in BED file format. We will use the function import.bed from the rtracklayer package to directly import the peaks as GRanges object.http://www.carroll-lab.org.uk/FreshFiles/Data/Data_Sheet_3/MCF7_ER_binding.bed
+Source: https://content.cruk.cam.ac.uk/bioinformatics/software/DiffBind/DiffBind_vignette_data.tar.gz
 
 ```{r,include=FALSE}
+# Load libraries 
+library(DESeq2)
+library(DiffBind)
 library(ChIPseeker)
+library(ReactomePA)
 library(clusterProfiler)
-library(ChIPpeakAnno)
+library(biomaRt)
+library(org.Hs.eg.db)  
 library(TxDb.Hsapiens.UCSC.hg19.knownGene)
-
-library(EnsDb.Hsapiens.v75)
-annoData <- toGRanges(EnsDb.Hsapiens.v75, feature="gene")
-require(rtracklayer)
-
-#Import FOXA1
-FOXA1.df <- read.table("http://www.carroll-lab.org.uk/FreshFiles/Data/Data_Sheet_3/MCF7_FOXA1%20binding.bed", header=TRUE)
-
-require(GenomicRanges) # load the GenomicRanges pakcage
-
-
-FOXA1 <- GRanges(
-  FOXA1.df$chr,
-  IRanges(FOXA1.df$star, FOXA1.df$end),
-  strand="*"
-)
-
-# we can add more data to each peak subsequently
-names(FOXA1) <- paste("FOXA1_peak", 1:nrow(FOXA1.df), sep="_")
-score(FOXA1) <- FOXA1.df[,"X.10.log10.pvalue."]  
-FOXA1 <- FOXA1[width(FOXA1) <= 2000]
-
-#Import ER bed table
-ER <- import.bed("http://www.carroll-lab.org.uk/FreshFiles/Data/Data_Sheet_3/MCF7_ER_binding.bed")
-# assign scores by converting the 'name' feald to type numeric
-score(ER) <- as.numeric(ER$name)
-# overwrite the name column
-ER$name <- paste("ER_peaks", 1:length(ER), sep="_")
-# use the names() function 
-names(ER) <- ER$name 
+txdb <- TxDb.Hsapiens.UCSC.hg19.knownGene
 ```
-## <br>
+The easiest way to set up an experiment to analyze is with a sample sheet. The sample sheet can be a , or it can be read directly from a csv file. Here is the example sample sheet read into a from a csv file:
 
-```{r,echo=FALSE,message=FALSE,warning=FALSE}
-data <- as.data.frame(width(FOXA1))
-pata <- as.data.frame(width(ER))
+The peaksets are read in using the following DiffBind function:
+```{r,include=FALSE}
+#Get Data
+setwd(file.path("./DiffBind_Vignette"))
+samples <- read.csv("./tamoxifen.csv")
+tamoxifen <- dba(sampleSheet ="./tamoxifen.csv") %>% 
+  dba.blacklist() %>%
+  dba.count()     %>%
+  dba.normalize() %>%
+  dba.contrast()  %>%
+  dba.analyze()
 
-library(plotly)
-fig <- plot_ly(data,x= ~width(FOXA1), type = "histogram",alpha = 0.5,name= "FOXA1")
-fig <- fig %>% add_histogram(x = ~width(ER),name="ER")
-fig <- fig %>% layout(title="Distrubtion of Peak Size", barmode = "overlay",xaxis= list(title= "Peak Size"),yaxis= list(title="Frequency"))
-fig
+#Display Dataframs
+df.tamoxifen <- dba.show(tamoxifen)
+tamoxifen.DB <- dba.report(tamoxifen)
+tamoxifen.DB.DF <- as.data.frame(tamoxifen.DB)
 
+#DESeq2 Object
+tamoxifen.DESeq <- tamoxifen[["DESeq2"]]
+dds.tamoxifen <-tamoxifen.DESeq[["DEdata"]]
+ddseq <- DESeq(dds.tamoxifen)
+res <- results(ddseq)
+resDF <- as.data.frame(res)
 ```
 
-From this figure we can analyze how the distribution of peak sizes between FOXA1 and ER compare/contrast. 
+# Differential Expression
 
-```{r,echo=FALSE,message=FALSE,warning=FALSE}
-# compute overlaps
-ol <- findOverlaps(ER, FOXA1)
-# show the resulting Hits object
+## PCA 
 
-ER.uniq <- setdiff(ER, FOXA1)
-FOXA1.uniq <- setdiff(FOXA1, ER)
 
-#Overall
-# compute overlaps
-ovlHits <- findOverlaps(ER, FOXA1)
-# get subsets of binding sites
-ovl <- subsetByOverlaps(ER, FOXA1)
+While the correlation heatmaps already seen are good for showing clustering, plots based on principal components analysis can be used to give a deeper insight into how samples are associated. A PCA plot corresponding to Figure 2, which includes normalized read counts for all 2845 binding sites, can be obtained as follows:
+
+The resulting plot (Figure 5) shows all the MCF7-derived samples (red) clustering on one side of the first (horizontal) component, with the Responsive and Resistant samples not separable either in the first nor in the second (vertical) component.3
+
+*I recommend to color by "tissue" and shape by "condition"*
+
+```{r}
+library(Glimma)
+glimmaMDS(dds.tamoxifen, width=800, height=450)
 ```
 
+The bias towards enriched binding in the Responsive case (or loss of binding affinity in the Resistant case) can be visualized using MA and Volcano plots, as shown in the following Section.
+```{r}
+dba.plotVenn(tamoxifen, contrast=1, bDB=TRUE, bGain=TRUE, bLoss=TRUE, bAll=FALSE)
+```
+Venn diagrams are also useful for examining overlaps between peaksets, particularly when determining how best to derive consensus peaksets for read counting and further analysis. Section 8, which discusses consensus peaksets, shows a number of Venn plots in context, and the help page for dba.plotVenn has a number of additional examples.
 
-## Venn Diagram
-```{r,echo=FALSE,message=FALSE,warning=FALSE}
-library(Vennerable)
-venn <- Venn(SetNames=c("ER", "FOXA1"), 
-    Weight=c(
-        '10'=length(ER.uniq), 
-        '11'=length(ovl), 
-        '01'=length(FOXA1.uniq)
-    )
-)
+## MA Plots {.tabset .tabset-fade .tabset-pills}
+MA plots are a useful way to visualize the relationship between the overall binding level at each site and the magnitude of the change in binding enrichment between conditions, as well as the effect of normalization on data. An MA plot can be obtained for the Resistant vs Responsive contrast as follows:
 
-# plot Venn Diagram
-plot(venn)
+### MA Plot i
+```{r}
+dba.plotMA(tamoxifen)
 ```
 
-Binding site overlap can be visualized with a Venn diagram, e.g. above. 
-
-```{r,echo=FALSE,message=FALSE,warning=FALSE}
-require(TxDb.Hsapiens.UCSC.hg18.knownGene)
-txdb <- TxDb.Hsapiens.UCSC.hg18.knownGene
-
-ER.features <- assignChromosomeRegion(ER, TxDb=txdb, nucleotideLevel=FALSE)
-FOXA1.features <- assignChromosomeRegion(FOXA1, TxDb=txdb, nucleotideLevel=FALSE)
+### MA Plot ii
+```{r}
+plotMA(res)
 ```
 
 
-## <br>
+The plot is shown in Figure 7. Each point represents a binding site, with the 246 points in magenta representing sites identified as differentially bound. There is a blue horizontal line through the origin (0 LFC), as well as a horizontal red curve representing a non-linear loess fit showing the underlying relationship between coverage levels and fold changes. The plot shows how the differentially bound sites appear to have a minimum absolute log fold difference of somewhere between one and two. As we have already seen, it also shows that more ERa binding sites lose binding affinity in the tamoxifen resistant condition than gain binding affinity, as evidenced by more red dots below the center line than are above it. This same data can also be shown with the concentrations of each sample groups plotted against each other plot using dba.plotMA(tamoxifen, bXY=TRUE).
+Section 7 contains several examples of MA plots, including showing non-normalized data, and the ability to plot any subset of samples against any other set of sample.
 
-```{r,echo=FALSE,message=FALSE,warning=FALSE}
-library(dplyr)
-data <- as.data.frame(ER.features$percentage)
-data <- mutate_if(data,is.numeric, round)
+## Volcano Plots {.tabset .tabset-fade .tabset-pills}
 
-Fata <- as.data.frame(FOXA1.features$percentage)
-Fata <- mutate_if(Fata,is.numeric, round)
+Similar to MA plots, Volcano plots also highlight significantly differentially bound sites and show their fold changes. Here, however, the confidence statistic (FDR or p-value) is shown on a negative log scale, helping visualize the relationship between the magnitude of fold changes and the confidence that sites are differentially bound.
+For example, the same data as plotted in Figure 7 can be visualized as a volcano plot:
 
-data <- merge(x= data, y= Fata, by= "subjectHits")
+### Volcano Plot i
 
-fig <- plot_ly(data, x= ~subjectHits, y = ~Freq.x, type = 'bar', textposition = 'inside',text = ~paste(Freq.x, '%'),
-               marker = list(color = 'rgb(158,202,225)',
-               line = list(color = 'rgb(8,48,107)', width = 3.0)),name= "ER")
-
-fig <- fig %>% add_trace(y= ~Freq.y, name = 'FOXA1',text = ~paste(Freq.y, '%'), marker = list(color = 'rgb(58,200,225)', line = list(color = 'rgb(8,48,107)')))
-
-fig <- fig %>% layout(yaxis = list(title = 'Percentage'),xaxis= list(title=""),barmode = 'group',title="Binding Site Distribution")
-
-fig
-```
-
-Binding of a transcription factor (TF) to its DNA binding sites (TFBSs) is a critical step to initiate the transcription of its target genes. Knowing what regions peaks occur can aid in further downstream analysis. 
-
-```{r,echo=FALSE,message=FALSE,warning=FALSE}
-OL <- findOverlapsOfPeaks(FOXA1, ER)
-OL <- addMetadata(OL, colNames="score", FUN=mean) 
-peaklist <-OL$peaklist
-
-overlappingPeaks <- OL$overlappingPeaks
+```{r,fig.width= 7,fig.height=7}
+library(EnhancedVolcano)
+library(magrittr)
+  EnhancedVolcano(res ,lab = rownames(res), x = 'log2FoldChange', y = 'pvalue')
 ```
 
 
-```{r,echo=FALSE,message=FALSE,warning=FALSE}
-data <- as.data.frame(overlappingPeaks["FOXA1///ER"])
-colors <- c('rgb(158,185,243)', 'rgb(220,176,242)', 'rgb(180,151,231)', 'rgb(102,197,204)') 
+### Volcano Plot ii
 
-data %>% count(FOXA1...ER.overlapFeature) %>%
-  as.data.frame() %>%
-  plot_ly(labels= ~FOXA1...ER.overlapFeature ,values = ~n, type = 'pie', 
-          marker = list(colors = colors, line = list(color = '#FFFFFF', width = 1)))%>% 
-  layout(title="Overlap Features of Peaks")
+```{r,fig.width= 7,fig.height=7}
+dba.plotVolcano(tamoxifen)
 ```
 
-### Peak scores around TSS {.tabset .tabset-fade .tabset-pills}
+The plot is shown in Figure 8, with the predominance of lower binding in the Resistant case evidenced by the greater number of significant sites on the negative side of the Fold Change (X) axis.
 
-#### ER
 
-```{r,echo=FALSE,message=FALSE,warning=FALSE}
-ER.copy <- ER
-ER.copy$score <- 1
+## Heatmaps {.tabset .tabset-fade .tabset-pills}
 
-binOverFeature(ER, ER.copy, annotationData=annoData,
-               radius=5000, nbins=10, FUN=c(sum, length),
-               ylab=c("score", "count"), 
-               main=c("Distribution of aggregated peak scores around TSS", 
-                      "Distribution of aggregated peak numbers around TSS"))
+The effect of different scoring methods (normalization) can be examined in these plots by setting the score parameter to a different value. The default value, DBA_SCORE_NORMALIZED, uses the normalized read counts (see Section 7). Another scoring method is to use RPKM fold (RPKM of the ChIP reads divided by RPKM of the control reads); a correlation heatmap for all the data using this scoring method can be obtained by typing dba.plotHeatmap(tamoxifen, score=DBA_SCORE_RPKM_FOLD).
+
+### Cell-Line Heatmap
+
+```{r,fig.width= 10,fig.height=7}
+dba.plotHeatmap(tamoxifen)
 ```
+The resulting plot (Figure 1) shows that while the replicates for each cell line cluster to- gether appropriately, the cell lines do not cluster into groups corresponding to those that are responsive (MCF7, T47D, and ZR75) vs. those resistant (BT474 and MCF7r) to ta- moxifen treatment. It also shows that the two most highly correlated cell lines are the two MCF7-based ones, even though they respond differently to tamoxifen treatment.
 
-Once the peaks are annotated, the distribution of the distance to the nearest feature such as the transcription start sites (TSS) can be plotted. The figure above illustrates the distribution of the aggregated peak scores and the number of peaks around the TSS. Score denotes average signal enrichment for the region. This is the average (between replicates) read count over the region. If the score is high, it means that a lot of chromatin from that region is pulled down by the IP and sequenced.
+### Binding Site Heatmape
+Another way to view the patterns of binding affinity directly in the differentially bound sites is via a binding affinity heatmap, showing the read scores for some or all of the binding sites. This can be plotted for the example case as follows:
 
-#### FOXA1
-
-```{r,echo=FALSE,message=FALSE,warning=FALSE}
-FOXA1.copy <- FOXA1
-FOXA1.copy$score <- 1
-
-binOverFeature(FOXA1, FOXA1.copy, annotationData=annoData,
-               radius=5000, nbins=10, FUN=c(sum, length),
-               ylab=c("score", "count"), 
-               main=c("Distribution of aggregated peak scores around TSS", 
-                      "Distribution of aggregated peak numbers around TSS"))
+```{r,fig.width= 10,fig.height=7}
+hmap <- colorRampPalette(c("red", "black", "green"))(n = 13)
+readscores <- dba.plotHeatmap(tamoxifen, contrast=1, correlations=FALSE,
+                              scale="row", colScheme = hmap)
 ```
+Figure 10 shows the affinities and clustering of the differentially bound sites (rows), as well as the sample clustering (columns). In this case, the (normalized) counts have been row scaled, and a red/green heatmap color palette applied.
 
-## Peak distribution over different genomic features.
+# ChIP-seq downstream analysis
 
-```{r,fig.width=12,fig.height=7,echo=FALSE,message=FALSE,warning=FALSE}
-overlaps <- OL$peaklist[["FOXA1///ER"]]
-
-library(UpSetR)
-x <- genomicElementUpSetR(overlaps, 
-                          TxDb.Hsapiens.UCSC.hg19.knownGene)
-upset(x$plotData, nsets=13, nintersects=NA)
+```{r}
+peaks.consensus <- dba.peakset(tamoxifen, bRetrieve = T)
+peaks.consensus
 ```
-
-upset plot of common gene symbols among annotations by Ensembl, UCSC and Gencode features.
-
-As a conclusion, annotate with different annotation resources, even the other parameter keep same, the annotations will be different from each other. To improve the reproducibility, accuracy of an annotation source should be provided. Some people were advertizing their tools by playing this trick by using different annotations to mislead users.
-
 
 ```{r}
 
@@ -258,117 +178,17 @@ As a conclusion, annotate with different annotation resources, even the other pa
 
 ```
 
+```{r}
 
-
-
-
-```{r,eval = FALSE,include=FALSE}
-
-#PC3: https://www.encodeproject.org/experiments/ENCSR359LOD/
-
-#PC3 (PC-3) is a human prostate cancer cell line used in prostate cancer research and drug development. PC3 cells are useful in investigating biochemical changes in advanced prostate cancer cells and in assessing their response to chemotherapeutic agents.
-
-#PC9: https://www.encodeproject.org/experiments/ENCSR243INX/
-
-#PC-9 is lung adenocarcinoma cell line with a deletion in exon 19 of the EGFR gene that exhibits high sensitivity to TKIs.
-
-Goals:
-
-
-1. Make a venn diagram comparing the overlap of binding sites for your two ChIP-Seq datasets
-2. Make a metaplot of your two datasets around the TSS.
-3. Annotate the peaks for genomic features such as intron, exon, 3’UTR, etc and compare the annotations between your two datasets.
-4. Assign peaks to genes – then perform pathway enrichment.
-6. What genes and pathways/genesets shared between these datasets? What pathways differ? What is your interpretation of these results? What future directions could you propose to follow up on these findings? (No right answers to these questions, just important to think through this part).
-
-overlaps.anno <- annotatePeakInBatch(overlaps, 
-                                     AnnotationData=annoData, 
-                                     output="nearestBiDirectionalPromoters",
-                                     bindingRegion=c(-2000, 500))
-library(org.Hs.eg.db)
-library(DBI)
-
-overlaps.anno <- addGeneIDs(overlaps.anno,
-                            "org.Hs.eg.db",
-                            IDs2Add = "entrez_id")
-
-over <- getEnrichedGO(overlaps.anno, orgAnn="org.Hs.eg.db", condense=TRUE)
-enrichmentPlot(over,n= 10)
-
-peaks <- GRangesList(rep1=FOXA1,
-                     rep2=ER)
-genomicElementDistribution(peaks, 
-                           TxDb = TxDb.Hsapiens.UCSC.hg19.knownGene,
-                           promoterRegion=c(upstream=2000, downstream=500),
-                           geneDownstream=c(upstream=0, downstream=2000))
-
-
-library(ChIPseeker)
-library(clusterProfiler)
-library(ChIPpeakAnno)
-library(TxDb.Hsapiens.UCSC.hg19.knownGene)
-
-#Second
-pc9<- toGRanges("/Users/cordell/Downloads/ENCFF267BQD.bed.gz" , format="narrowPeak", header=FALSE)
-pc3<- toGRanges("/Users/cordell/Downloads/ENCFF450JNO.bed.gz" , format="narrowPeak", header=FALSE)
-
-PC9 <- unique(pc9)
-PC3 <- unique(pc3)
-
-ol <- findOverlapsOfPeaks(PC3,PC9)
-ol <- addMetadata(ol, colNames="score", FUN=mean) 
-
-#Thrid
-makeVennDiagram(ol, fill=c("#009E73", "#F0E442"), # circle fill color
-                col=c("#D55E00", "#0072B2"), #circle border color
-                cat.col=c("#D55E00", "#0072B2")) # label color, keep same as circle border color
-
-#fourth
-library(EnsDb.Hsapiens.v75) ##(hg19)
-## create annotation file from EnsDb or TxDb
-annoData <- toGRanges(EnsDb.Hsapiens.v75, feature="gene")
-
-#Fifth
-pie1(table(ol$overlappingPeaks[["PC3///PC9"]]$overlapFeature))
-
-#Sixth
-overlaps <- ol$peaklist[["PC3///PC9"]]
-
-binOverFeature(overlaps, annotationData=annoData,
-               radius=5000, nbins=200, FUN=length, errFun=0,
-               xlab="distance from TSS (bp)", ylab="count", 
-               main="Distribution of aggregated peak numbers around TSS")
-
-#Seventh
-library(TxDb.Hsapiens.UCSC.hg19.knownGene)
-
-peaks <- GRangesList(rep1=PC9,
-                     rep2=PC3)
-
-genomicElementDistribution(peaks, 
-                           TxDb = TxDb.Hsapiens.UCSC.hg19.knownGene,
-                           promoterRegion=c(upstream=2000, downstream=500),
-                           geneDownstream=c(upstream=0, downstream=2000))
-
-#Eighth
-out <- genomicElementDistribution(overlaps, 
-                           TxDb = TxDb.Hsapiens.UCSC.hg19.knownGene,
-                           promoterRegion=c(upstream=2000, downstream=500),
-                           geneDownstream=c(upstream=0, downstream=2000),
-                           promoterLevel=list(
-                         # from 5' -> 3', fixed precedence 3' -> 5'
-                             breaks = c(-2000, -1000, -500, 0, 500),
-                             labels = c("upstream 1-2Kb", "upstream 0.5-1Kb", 
-                                        "upstream <500b", "TSS - 500b"),
-                             colors = c("#FFE5CC", "#FFCA99", 
-                                        "#FFAD65", "#FF8E32")))
 ```
 
+```{r}
 
+```
 
+```{r}
 
-
-
+```
 
 
 
