@@ -4,8 +4,12 @@ author: "Cordell Browne"
 date: "cordell@knights.ucf.edu"
 output:
   html_document:
+    highlight: pygments
     theme: cosmo
 ---
+
+<br>
+<br>
 
 # Introduction {.tabset .tabset-fade .tabset-pills}
 
@@ -13,15 +17,30 @@ output:
 
 The data for ChIP-seq peak calling are stacks of aligned reads across a genome. Some of these stacks correspond to the signal of interest (e.g. binding of a transcription factor or modified histone). Many other stacks are regarded as molecular or experimental noise, or as being influenced by a systematically greater accessibility of measurement by the experiment at that particular genomic location. The goal of this experiment is to understand how our transcription factors compare to one another in regards to binding sites.
 
-## About the Data
+<br>
+<br>
+<br>
 
-Source: https://content.cruk.cam.ac.uk/bioinformatics/software/DiffBind/DiffBind_vignette_data.tar.gz
+
+## About the Data.1
+
+Tamoxifen is a nonsteroidal antiestrogen that has found successful applications for each stage of breast cancer in the treatment of selected patients. Tamoxifen was originally introduced for the treatment of advanced disease in postmenopausal women; however, the drug is now also available for the palliative treatment of premenopausal women with estrogen receptor (ER) positive disease. The proven efficacy of tamoxifen and the low incidence of side effects made the drug an ideal agent to test as an adjuvant therapy for women with node-positive breast cancer. doi: 10.1016/0147-0272(92)90002-6. PMID: 1582240.
+
+<br>
+<br>
+<br>
+
+## About the Data.2 {.tabset}
+
+Source: https://content.cruk.cam.ac.uk/bioinformatics/software/DiffBind/
 
 ```{r,include=FALSE}
 # Load libraries 
+library(kableExtra) 
 library(DESeq2)
 library(DiffBind)
 library(ChIPseeker)
+library(enrichplot)
 library(ReactomePA)
 library(clusterProfiler)
 library(biomaRt)
@@ -29,9 +48,7 @@ library(org.Hs.eg.db)
 library(TxDb.Hsapiens.UCSC.hg19.knownGene)
 txdb <- TxDb.Hsapiens.UCSC.hg19.knownGene
 ```
-The easiest way to set up an experiment to analyze is with a sample sheet. The sample sheet can be a , or it can be read directly from a csv file. Here is the example sample sheet read into a from a csv file:
 
-The peaksets are read in using the following DiffBind function:
 ```{r,include=FALSE}
 #Get Data
 setwd(file.path("./DiffBind_Vignette"))
@@ -56,155 +73,324 @@ res <- results(ddseq)
 resDF <- as.data.frame(res)
 ```
 
+### Samples.1
+```{r,echo=FALSE}
+kbl(samples)  %>%
+  kable_paper() %>%
+  scroll_box(width = "100%", height = "200px")
+```
+
+<br>
+<br>
+<br>
+
+
+### Samples.2
+```{r,echo=FALSE}
+#kbl(head())  %>%
+#  kable_paper() %>%
+#  scroll_box(width = "100%", height = "200px")
+```
+
+<br>
+<br>
+<br>
+
+## Pre-Analysis 
+
+```{r, engine = 'bash', eval = FALSE}
+bowtie2 -p 20 -x mm9_genome -U file1.fastq -S file1.sam 
+
+samtools view -bS file1.sam > file1.bam
+              
+samtools sort file1.bam file1_sorted
+
+samtools index file1_sorted.bam
+```
+
+Converting BAM to BED (need this for Differential Binding Analysis)
+
+```{r, engine = 'bash', eval = FALSE}
+bamToBed -i file_sorted.bam
+```
+
+Using the mapped info from BAM file, we will perform peak calling using the MACS 2.0 program.If necessary
+
+```{r, engine = 'bash', eval = FALSE}
+macs2 callpeak -t file1.bam -f BAM -g mm -n file1_label -p 1e-3 --to-large
+```
+
+```{r, engine = 'bash', eval = FALSE}
+macs14 -t file1.bam -f BAM -g h -n file1_label
+```
+<br>
+<br>
+<br>
+
+
 # Differential Binding Analysis
 
-## PCA 
+Differential binding affinity analysis: The core functionality of DiffBind is the differential binding affinity analysis, which enables binding sites to be identified that are significantly differentially bound between sample groups
+<br>
 
+<br>
 
-While the correlation heatmaps already seen are good for showing clustering, plots based on principal components analysis can be used to give a deeper insight into how samples are associated. A PCA plot corresponding to Figure 2, which includes normalized read counts for all 2845 binding sites, can be obtained as follows:
-
-The resulting plot (Figure 5) shows all the MCF7-derived samples (red) clustering on one side of the first (horizontal) component, with the Responsive and Resistant samples not separable either in the first nor in the second (vertical) component.3
+__Multidimensional scaling (MDS)__ is a popular approach for graphically representing relationships between objects (e.g. plots or samples) in multidimensional space. Dimension reduction via MDS is achieved by taking the original set of samples and calculating a dissimilarity (distance) measure for each pairwise comparison of samples. The samples are then usually represented graphically in two dimensions such that the distance between points on the plot approximates their multivariate dissimilarity as closely as possible.
 
 *I recommend to color by "tissue" and shape by "condition"*
 
-```{r}
+```{r,echo=FALSE}
 library(Glimma)
 glimmaMDS(dds.tamoxifen, width=800, height=450)
 ```
 
-The bias towards enriched binding in the Responsive case (or loss of binding affinity in the Resistant case) can be visualized using MA and Volcano plots, as shown in the following Section.
-```{r}
-dba.plotVenn(tamoxifen, contrast=1, bDB=TRUE, bGain=TRUE, bLoss=TRUE, bAll=FALSE)
-```
-Venn diagrams are also useful for examining overlaps between peaksets, particularly when determining how best to derive consensus peaksets for read counting and further analysis. Section 8, which discusses consensus peaksets, shows a number of Venn plots in context, and the help page for dba.plotVenn has a number of additional examples.
 
-## MA Plots {.tabset .tabset-fade .tabset-pills}
-MA plots are a useful way to visualize the relationship between the overall binding level at each site and the magnitude of the change in binding enrichment between conditions, as well as the effect of normalization on data. An MA plot can be obtained for the Resistant vs Responsive contrast as follows:
+## {.tabset .tabset-fade .tabset-pills}
 
-### MA Plot i
-```{r}
-dba.plotMA(tamoxifen)
-```
+<br>
+<br>
 
-### MA Plot ii
-```{r}
-plotMA(res)
-```
 
+__MA plots__ are a useful way to visualize the relationship between the overall binding level at each site and the magnitude of the change in binding enrichment between conditions, as well as the effect of normalization on data. An MA plot can be obtained for the Resistant vs Responsive contrast as follows:
 
 The plot is shown in Figure 7. Each point represents a binding site, with the 246 points in magenta representing sites identified as differentially bound. There is a blue horizontal line through the origin (0 LFC), as well as a horizontal red curve representing a non-linear loess fit showing the underlying relationship between coverage levels and fold changes. The plot shows how the differentially bound sites appear to have a minimum absolute log fold difference of somewhere between one and two. As we have already seen, it also shows that more ERa binding sites lose binding affinity in the tamoxifen resistant condition than gain binding affinity, as evidenced by more red dots below the center line than are above it. This same data can also be shown with the concentrations of each sample groups plotted against each other plot using dba.plotMA(tamoxifen, bXY=TRUE).
 Section 7 contains several examples of MA plots, including showing non-normalized data, and the ability to plot any subset of samples against any other set of sample.
 
-## Volcano Plots {.tabset .tabset-fade .tabset-pills}
+### MA Plot i
+```{r,echo=FALSE}
+dba.plotMA(tamoxifen)
+```
 
-Similar to MA plots, Volcano plots also highlight significantly differentially bound sites and show their fold changes. Here, however, the confidence statistic (FDR or p-value) is shown on a negative log scale, helping visualize the relationship between the magnitude of fold changes and the confidence that sites are differentially bound.
-For example, the same data as plotted in Figure 7 can be visualized as a volcano plot:
+### MA Plot ii
+```{r,echo=FALSE}
+plotMA(res)
+```
+
+<br> 
+<br>
+
+##  {.tabset .tabset-fade .tabset-pills}
+
+ __Volcano plots__ also highlight significantly differentially bound sites and show their fold changes. Here, however, the confidence statistic (FDR or p-value) is shown on a negative log scale, helping visualize the relationship between the magnitude of fold changes and the confidence that sites are differentially bound.
+
+
+The plot shown, with the predominance of lower binding in the Resistant case evidenced by the greater number of significant sites on the negative side of the Fold Change (X) axis.
 
 ### Volcano Plot i
 
-```{r,fig.width= 7,fig.height=7}
+```{r,fig.width= 7,fig.height=7,echo=FALSE,message=FALSE}
 library(EnhancedVolcano)
 library(magrittr)
   EnhancedVolcano(res ,lab = rownames(res), x = 'log2FoldChange', y = 'pvalue')
 ```
 
+<br>
+<br>
+
 
 ### Volcano Plot ii
 
-```{r,fig.width= 7,fig.height=7}
+```{r,fig.width= 7,fig.height=7,echo=FALSE}
 dba.plotVolcano(tamoxifen)
 ```
 
-The plot is shown in Figure 8, with the predominance of lower binding in the Resistant case evidenced by the greater number of significant sites on the negative side of the Fold Change (X) axis.
+<br>
+<br>
 
+## {.tabset .tabset-fade .tabset-pills}
 
-## Heatmaps {.tabset .tabset-fade .tabset-pills}
-
-The effect of different scoring methods (normalization) can be examined in these plots by setting the score parameter to a different value. The default value, DBA_SCORE_NORMALIZED, uses the normalized read counts (see Section 7). Another scoring method is to use RPKM fold (RPKM of the ChIP reads divided by RPKM of the control reads); a correlation heatmap for all the data using this scoring method can be obtained by typing dba.plotHeatmap(tamoxifen, score=DBA_SCORE_RPKM_FOLD).
+__Correlation heatmap__:The effect of different scoring methods (normalization) can be examined in these plots by setting the score parameter to a different value. The default value, DBA_SCORE_NORMALIZED, uses the normalized read counts (see Section 7). Another scoring method is to use RPKM fold (RPKM of the ChIP reads divided by RPKM of the control reads).
 
 ### Cell-Line Heatmap
 
-```{r,fig.width= 10,fig.height=7}
+```{r,fig.width= 10,fig.height=7,echo=FALSE}
 dba.plotHeatmap(tamoxifen)
 ```
 The resulting plot (Figure 1) shows that while the replicates for each cell line cluster to- gether appropriately, the cell lines do not cluster into groups corresponding to those that are responsive (MCF7, T47D, and ZR75) vs. those resistant (BT474 and MCF7r) to ta- moxifen treatment. It also shows that the two most highly correlated cell lines are the two MCF7-based ones, even though they respond differently to tamoxifen treatment.
 
+<br>
+<br>
+<br>
+
+
 ### Binding Site Heatmape
 Another way to view the patterns of binding affinity directly in the differentially bound sites is via a binding affinity heatmap, showing the read scores for some or all of the binding sites. This can be plotted for the example case as follows:
 
-```{r,fig.width= 10,fig.height=7}
+```{r,fig.width= 10,fig.height=7,echo=FALSE}
 hmap <- colorRampPalette(c("red", "black", "green"))(n = 13)
 readscores <- dba.plotHeatmap(tamoxifen, contrast=1, correlations=FALSE,
                               scale="row", colScheme = hmap)
 ```
 Figure 10 shows the affinities and clustering of the differentially bound sites (rows), as well as the sample clustering (columns). In this case, the (normalized) counts have been row scaled, and a red/green heatmap color palette applied.
 
-# ChIP-seq downstream analysis
+<br>
+<br>
+<br>
 
-```{r}
+## ChIPSeeker
+
+The bias towards enriched binding in the Responsive case (or loss of binding affinity in the Resistant case) can be visualized using MA and Volcano plots, as shown in the following Section.
+
+Venn diagrams are also useful for examining overlaps between peaksets, particularly when determining how best to derive consensus peaksets for read counting and further analysis. Section 8, which discusses consensus peaksets, shows a number of Venn plots in context, and the help page for dba.plotVenn has a number of additional examples.
+
+```{r,echo=FALSE,results='hide',fig.keep='all'}
+dba.plotVenn(tamoxifen, contrast=1, bDB=TRUE, bGain=TRUE, bLoss=TRUE, bAll=FALSE)
+```
+
+
+__ChIP-seq Profiling__
+
+```{r,echo=FALSE,fig.width=7,message=FALSE,warning=FALSE,results='hide',fig.keep='all'}
 peaks.consensus <- dba.peakset(tamoxifen, bRetrieve = T)
 
 # extracting HeLA peaks
-peaks.HeLa_rep1 <- peaks.consensus[tamoxifen$called[,1]==1] # peaks called in rep 1
-peaks.HeLa_rep2 <- peaks.consensus[tamoxifen$called[,2]==1] # peaks called in rep 2
+peaks.BT474_rep1 <- peaks.consensus[tamoxifen$called[,1]==1] # peaks called in rep 1
+peaks.BT474_rep2 <- peaks.consensus[tamoxifen$called[,2]==1] # peaks called in rep 2
 
 # adding an unified affinity scores column (re-formatting data)
-peaks.HeLa_rep1$Score <- peaks.HeLa_rep1$BT4741
-peaks.HeLa_rep2$Score <- peaks.HeLa_rep2$BT4742
+peaks.BT474_rep1$Score <- peaks.BT474_rep1$BT4741
+peaks.BT474_rep2$Score <- peaks.BT474_rep2$BT4742
 
-# plotting coverage for replicate 1, using affinity scores as a weight for peaks height
-covplot(peaks.HeLa_rep1, weightCol = "Score",chrs=c("chr1", "chr18"))
-
-# zooming in to a selected region is also possible
-covplot(peaks.HeLa_rep1, weightCol = "Score", xlim=c(0, 1e07))
-```
-
-```{r}
 # creating genomicRangesList object holding replicates 1 and 2
-grL.HeLa <- GRangesList(HeLa_rep1=peaks.HeLa_rep1, HeLa_rep2=peaks.HeLa_rep2)
+grL.BT474<- GRangesList(BT474_rep1=peaks.BT474_rep1, BT474_rep2=peaks.BT474_rep2)
 
 # plotting using affinity scores as a weight for peaks height
-covplot(grL.HeLa, weightCol = "Score")
+covplot(grL.BT474 , weightCol = "Score", title = "ChIP Peaks Over Chr. 18")
 
-# zooming in
-covplot(grL.HeLa)
-```
-
-```{r}
-x<-as.data.frame(tamoxifen$called)
-```
-
-```{r}
+#x<-as.data.frame(tamoxifen$called)
 
 ```
 
-```{r}
+<br>
+<br>
+
+__Heatmap of ChIP peaks among different cell lines__
+
+```{r,echo=FALSE,message=FALSE,warning=FALSE,results='hide',fig.keep='all'}
+# extracting peaks for each cell line present across replicates
+peaks.BT474 <- peaks.consensus[tamoxifen$called[,1]==1 & tamoxifen$called[,2]==1]
+peaks.MCF7 <- peaks.consensus[tamoxifen$called[,3]==1 & tamoxifen$called[,4]==1 
+  & tamoxifen$called[,5]==1 & tamoxifen$called[,8]==1 & tamoxifen$called[,9]==1]
+peaks.T47D <- peaks.consensus[tamoxifen$called[,6]==1 & tamoxifen$called[,7]==1]
+peaks.ZR75 <- peaks.consensus[tamoxifen$called[,10]==1 & tamoxifen$called[,11]==1]
+
+# getting TSS regions
+promoter <- getPromoters(TxDb=txdb, upstream=3000, downstream=3000)
+
+# calculating tagMatrix
+tagMatrix.1 <- getTagMatrix(peaks.BT474, windows=promoter)
+tagMatrix.2 <- getTagMatrix(peaks.MCF7, windows=promoter)
+tagMatrix.3 <- getTagMatrix(peaks.T47D, windows=promoter)
+tagMatrix.4 <- getTagMatrix(peaks.ZR75, windows=promoter)
+
+# preparing tagMatrix list to enable cell lines comparisions
+tagMatrixList <- list(BT474=tagMatrix.1, MCF7=tagMatrix.2, T47D=tagMatrix.3, ZR75=tagMatrix.4)
+
+# plotting tagMatrix heatmaps for each cell line
+tagHeatmap(tagMatrixList, xlim=c(-3000, 3000), color=NULL)
+```
+
+<br>
+<br>
+
+__Average profile of ChIP peaks among different cell lines__
+
+```{r,echo=FALSE,message=FALSE,warning=FALSE,results='hide',fig.keep='all'}
+# plotting average profile of ChIP peaks among different cell lines
+plotAvgProf(tagMatrixList, xlim=c(-3000, 3000))
+```
+
+<br>
+<br>
+
+__Genomics locations: dataset comparisons with barplot__ 
+
+```{r,echo=FALSE,message=FALSE,warning=FALSE,results='hide',fig.keep='all'}
+# annotating peaks
+peaks.BT474_ann <- annotatePeak(peaks.BT474, tssRegion=c(-3000, 3000), TxDb=txdb, annoDb="org.Hs.eg.db")
+peaks.MCF7_ann <- annotatePeak(peaks.MCF7, tssRegion=c(-1000, 2000), TxDb=txdb, annoDb="org.Hs.eg.db")
+peaks.T47D_ann <- annotatePeak(peaks.T47D, tssRegion=c(-1000, 2000), TxDb=txdb, annoDb="org.Hs.eg.db")
+peaks.ZR75_ann <- annotatePeak(peaks.ZR75, tssRegion=c(-1000, 2000), TxDb=txdb, annoDb="org.Hs.eg.db")
+
+# creating list holding annotations for different cell lines
+list.annotations <- list(BT474=peaks.BT474_ann, MCF7=peaks.MCF7_ann, HT47D=peaks.T47D_ann, ZR75=peaks.ZR75_ann)
+# creating barplot for HeLa, neural, HepG2 and sknsh peaks genomic annotations
+plotAnnoBar(list.annotations)
+#vennpie(peaks.BT474_ann)
+```
+<br>
+<br>
+
+__Distance to TSS Comparisons__
+
+```{r,echo=FALSE,message=FALSE,results='hide',fig.keep='all'}
+# plotting distance to TSS for all cell lines in our annotation list
+plotDistToTSS(list.annotations)
+```
+
+<br>
+<br>
+<br>
+
+# Functional Analysis In Progress ... 
+
+
+```{r,eval = FALSE}
+#biomart
+ensembl <- useEnsembl(biomart = "genes", dataset = "hsapiens_gene_ensembl",version = 95)
+# running query: extracting ENTREZID for genes on chromosome 1 and 2
+genes.chr18 <- getBM(attributes= "entrezgene", filters=c("chromosome_name"), values=18, mart=ensembl)
+# reformatting output to character string (as required later on by clusterProfiler functions)
+genes.universe <- as.character(as.numeric(as.matrix(genes.chr18)))
+```
+
+```{r,eval = FALSE}
+# a: selecting annotated peaks for functional enrichment in object
+data.peaks_ann <- peaks.MCF7_ann
+#x <- as.data.frame(data.peaks_ann)
+
+# a: fining enriched Reactome pathways using chromosome 1 and 2 genes as a background
+pathway.reac1 <- enrichPathway(as.data.frame(data.peaks_ann)$geneId, universe = genes.universe)
+
+# a: previewing enriched Reactome pathways
+head(pathway.reac1)
+
+# b: selecting peaks
+data.peaks <- peaks.T47D
+# b: running seq2gene function for many-to-many mapping based on sequence regions (note: no prior peaks annotations here, many-to-many mapping is done from the sequence)
+genes.m2m <- seq2gene(data.peaks, tssRegion = c(-1000, 1000), flankDistance = 3000, TxDb=txdb)
+# b: finding enriched Reactome pathways given many to many mapping and chromosome 1 and 2 genes as a background
+pathway.reac2 <- enrichPathway(genes.m2m, universe = genes.universe)
+# b: creating dotplot to visualise enrichment results
+
+dotplot(pathway.reac2)
 
 ```
 
-```{r}
+```{r,eval = FALSE}
+# creating a gene list with ENTREZID ideas extracted from our annotation list, containing annotated peaks for all four cell lines
+list.genes = lapply(list.annotations, function(i) as.data.frame(i)$geneId)
+names(list.genes) <- sub("_", "\n", names(list.genes))
 
+# running enrichedGO function to find enriched MF correlation_libraries_normalised on the gene list
+
+compMF <- compareCluster(geneCluster = list.genes,
+                       fun           = "enrichGO",
+                       pvalueCutoff  = 0.05,
+                       pAdjustMethod = "BH",
+                       OrgDb='org.Hs.eg.db',
+                       ont="MF")
+
+# comparing results on a dotplot
+dotplot(compMF)
+
+# simplifying results although here we do not have problems with too many GO terms
+compMF.flr <- simplify(compMF, cutoff = 0.7, by = "p.adjust", select_fun = min, measure = "Wang", semData = NULL)
+
+# creating a dotplot on reduced GO terms
+dotplot(compMF.flr)
 ```
 
-```{r}
-
-```
-
-```{r}
-
-```
-
-```{r}
-
-```
-
-```{r}
-
-```
-
-```{r}
-
-```
 
 ```{r}
 

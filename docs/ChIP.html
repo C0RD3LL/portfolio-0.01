@@ -31,8 +31,8 @@
        code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
        pre:not([class]) { background-color: white }</style>
 <script src="site_libs/navigation-1.1/tabsets.js"></script>
-<link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
-<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<script src="site_libs/kePrint-0.0.1/kePrint.js"></script>
+<link href="site_libs/lightable-0.0.1/lightable.css" rel="stylesheet" />
 <script src="site_libs/htmlwidgets-1.5.4/htmlwidgets.js"></script>
 <link href="site_libs/vega-1/vega_plots.css" rel="stylesheet" />
 <script src="site_libs/vega-1/vega.min.js"></script>
@@ -54,18 +54,103 @@
   ul.task-list{list-style: none;}
     </style>
 
-<style type="text/css">code{white-space: pre;}</style>
-<script type="text/javascript">
-if (window.hljs) {
-  hljs.configure({languages: []});
-  hljs.initHighlightingOnLoad();
-  if (document.readyState && document.readyState === "complete") {
-    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+
+
+<style type="text/css">
+  code {
+    white-space: pre;
   }
+  .sourceCode {
+    overflow: visible;
+  }
+</style>
+<style type="text/css" data-origin="pandoc">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
 }
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+
+</style>
+<script>
+// apply pandoc div.sourceCode style to pre.sourceCode instead
+(function() {
+  var sheets = document.styleSheets;
+  for (var i = 0; i < sheets.length; i++) {
+    if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
+    try { var rules = sheets[i].cssRules; } catch (e) { continue; }
+    for (var j = 0; j < rules.length; j++) {
+      var rule = rules[j];
+      // check if there is a div.sourceCode rule
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") continue;
+      var style = rule.style.cssText;
+      // check if color or background-color is set
+      if (rule.style.color === '' && rule.style.backgroundColor === '') continue;
+      // replace div.sourceCode by a pre.sourceCode rule
+      sheets[i].deleteRule(j);
+      sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
+    }
+  }
+})();
 </script>
-
-
 
 
 
@@ -309,140 +394,599 @@ $(document).ready(function () {
 </div>
 
 
+<p><br> <br></p>
 <div id="introduction" class="section level1 tabset tabset-fade tabset-pills">
 <h1 class="tabset tabset-fade tabset-pills">Introduction</h1>
 <div id="objective" class="section level2">
 <h2>Objective</h2>
 <p>The data for ChIP-seq peak calling are stacks of aligned reads across a genome. Some of these stacks correspond to the signal of interest (e.g. binding of a transcription factor or modified histone). Many other stacks are regarded as molecular or experimental noise, or as being influenced by a systematically greater accessibility of measurement by the experiment at that particular genomic location. The goal of this experiment is to understand how our transcription factors compare to one another in regards to binding sites.</p>
+<p><br> <br> <br></p>
 </div>
-<div id="about-the-data" class="section level2">
-<h2>About the Data</h2>
-<p>Source: <a href="https://content.cruk.cam.ac.uk/bioinformatics/software/DiffBind/DiffBind_vignette_data.tar.gz" class="uri">https://content.cruk.cam.ac.uk/bioinformatics/software/DiffBind/DiffBind_vignette_data.tar.gz</a></p>
-<p>The easiest way to set up an experiment to analyze is with a sample sheet. The sample sheet can be a , or it can be read directly from a csv file. Here is the example sample sheet read into a from a csv file:</p>
-<p>The peaksets are read in using the following DiffBind function:</p>
+<div id="about-the-data.1" class="section level2">
+<h2>About the Data.1</h2>
+<p>Tamoxifen is a nonsteroidal antiestrogen that has found successful applications for each stage of breast cancer in the treatment of selected patients. Tamoxifen was originally introduced for the treatment of advanced disease in postmenopausal women; however, the drug is now also available for the palliative treatment of premenopausal women with estrogen receptor (ER) positive disease. The proven efficacy of tamoxifen and the low incidence of side effects made the drug an ideal agent to test as an adjuvant therapy for women with node-positive breast cancer. doi: 10.1016/0147-0272(92)90002-6. PMID: 1582240.</p>
+<p><br> <br> <br></p>
+</div>
+<div id="about-the-data.2" class="section level2 tabset">
+<h2 class="tabset">About the Data.2</h2>
+<p>Source: <a href="https://content.cruk.cam.ac.uk/bioinformatics/software/DiffBind/" class="uri">https://content.cruk.cam.ac.uk/bioinformatics/software/DiffBind/</a></p>
+<div id="samples.1" class="section level3">
+<h3>Samples.1</h3>
+<div style="border: 1px solid #ddd; padding: 0px; overflow-y: scroll; height:200px; overflow-x: scroll; width:100%; ">
+<table class=" lightable-paper" style="font-family: &quot;Arial Narrow&quot;, arial, helvetica, sans-serif; margin-left: auto; margin-right: auto;">
+<thead>
+<tr>
+<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
+SampleID
+</th>
+<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
+Tissue
+</th>
+<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
+Factor
+</th>
+<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
+Condition
+</th>
+<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
+Treatment
+</th>
+<th style="text-align:right;position: sticky; top:0; background-color: #FFFFFF;">
+Replicate
+</th>
+<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
+bamReads
+</th>
+<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
+ControlID
+</th>
+<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
+bamControl
+</th>
+<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
+Peaks
+</th>
+<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
+PeakCaller
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+BT4741
+</td>
+<td style="text-align:left;">
+BT474
+</td>
+<td style="text-align:left;">
+ER
+</td>
+<td style="text-align:left;">
+Resistant
+</td>
+<td style="text-align:left;">
+Full-Media
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:left;">
+reads/Chr18_BT474_ER_1.bam
+</td>
+<td style="text-align:left;">
+BT474c
+</td>
+<td style="text-align:left;">
+reads/Chr18_BT474_input.bam
+</td>
+<td style="text-align:left;">
+peaks/BT474_ER_1.bed.gz
+</td>
+<td style="text-align:left;">
+bed
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+BT4742
+</td>
+<td style="text-align:left;">
+BT474
+</td>
+<td style="text-align:left;">
+ER
+</td>
+<td style="text-align:left;">
+Resistant
+</td>
+<td style="text-align:left;">
+Full-Media
+</td>
+<td style="text-align:right;">
+2
+</td>
+<td style="text-align:left;">
+reads/Chr18_BT474_ER_2.bam
+</td>
+<td style="text-align:left;">
+BT474c
+</td>
+<td style="text-align:left;">
+reads/Chr18_BT474_input.bam
+</td>
+<td style="text-align:left;">
+peaks/BT474_ER_2.bed.gz
+</td>
+<td style="text-align:left;">
+bed
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+MCF71
+</td>
+<td style="text-align:left;">
+MCF7
+</td>
+<td style="text-align:left;">
+ER
+</td>
+<td style="text-align:left;">
+Responsive
+</td>
+<td style="text-align:left;">
+Full-Media
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:left;">
+reads/Chr18_MCF7_ER_1.bam
+</td>
+<td style="text-align:left;">
+MCF7c
+</td>
+<td style="text-align:left;">
+reads/Chr18_MCF7_input.bam
+</td>
+<td style="text-align:left;">
+peaks/MCF7_ER_1.bed.gz
+</td>
+<td style="text-align:left;">
+bed
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+MCF72
+</td>
+<td style="text-align:left;">
+MCF7
+</td>
+<td style="text-align:left;">
+ER
+</td>
+<td style="text-align:left;">
+Responsive
+</td>
+<td style="text-align:left;">
+Full-Media
+</td>
+<td style="text-align:right;">
+2
+</td>
+<td style="text-align:left;">
+reads/Chr18_MCF7_ER_2.bam
+</td>
+<td style="text-align:left;">
+MCF7c
+</td>
+<td style="text-align:left;">
+reads/Chr18_MCF7_input.bam
+</td>
+<td style="text-align:left;">
+peaks/MCF7_ER_2.bed.gz
+</td>
+<td style="text-align:left;">
+bed
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+MCF73
+</td>
+<td style="text-align:left;">
+MCF7
+</td>
+<td style="text-align:left;">
+ER
+</td>
+<td style="text-align:left;">
+Responsive
+</td>
+<td style="text-align:left;">
+Full-Media
+</td>
+<td style="text-align:right;">
+3
+</td>
+<td style="text-align:left;">
+reads/Chr18_MCF7_ER_3.bam
+</td>
+<td style="text-align:left;">
+MCF7c
+</td>
+<td style="text-align:left;">
+reads/Chr18_MCF7_input.bam
+</td>
+<td style="text-align:left;">
+peaks/MCF7_ER_3.bed.gz
+</td>
+<td style="text-align:left;">
+bed
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+T47D1
+</td>
+<td style="text-align:left;">
+T47D
+</td>
+<td style="text-align:left;">
+ER
+</td>
+<td style="text-align:left;">
+Responsive
+</td>
+<td style="text-align:left;">
+Full-Media
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:left;">
+reads/Chr18_T47D_ER_1.bam
+</td>
+<td style="text-align:left;">
+T47Dc
+</td>
+<td style="text-align:left;">
+reads/Chr18_T47D_input.bam
+</td>
+<td style="text-align:left;">
+peaks/T47D_ER_1.bed.gz
+</td>
+<td style="text-align:left;">
+bed
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+T47D2
+</td>
+<td style="text-align:left;">
+T47D
+</td>
+<td style="text-align:left;">
+ER
+</td>
+<td style="text-align:left;">
+Responsive
+</td>
+<td style="text-align:left;">
+Full-Media
+</td>
+<td style="text-align:right;">
+2
+</td>
+<td style="text-align:left;">
+reads/Chr18_T47D_ER_2.bam
+</td>
+<td style="text-align:left;">
+T47Dc
+</td>
+<td style="text-align:left;">
+reads/Chr18_T47D_input.bam
+</td>
+<td style="text-align:left;">
+peaks/T47D_ER_2.bed.gz
+</td>
+<td style="text-align:left;">
+bed
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+MCF7r1
+</td>
+<td style="text-align:left;">
+MCF7
+</td>
+<td style="text-align:left;">
+ER
+</td>
+<td style="text-align:left;">
+Resistant
+</td>
+<td style="text-align:left;">
+Full-Media
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:left;">
+reads/Chr18_TAMR_ER_1.bam
+</td>
+<td style="text-align:left;">
+TAMRc
+</td>
+<td style="text-align:left;">
+reads/Chr18_TAMR_input.bam
+</td>
+<td style="text-align:left;">
+peaks/TAMR_ER_1.bed.gz
+</td>
+<td style="text-align:left;">
+bed
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+MCF7r2
+</td>
+<td style="text-align:left;">
+MCF7
+</td>
+<td style="text-align:left;">
+ER
+</td>
+<td style="text-align:left;">
+Resistant
+</td>
+<td style="text-align:left;">
+Full-Media
+</td>
+<td style="text-align:right;">
+2
+</td>
+<td style="text-align:left;">
+reads/Chr18_TAMR_ER_2.bam
+</td>
+<td style="text-align:left;">
+TAMRc
+</td>
+<td style="text-align:left;">
+reads/Chr18_TAMR_input.bam
+</td>
+<td style="text-align:left;">
+peaks/TAMR_ER_2.bed.gz
+</td>
+<td style="text-align:left;">
+bed
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+ZR751
+</td>
+<td style="text-align:left;">
+ZR75
+</td>
+<td style="text-align:left;">
+ER
+</td>
+<td style="text-align:left;">
+Responsive
+</td>
+<td style="text-align:left;">
+Full-Media
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:left;">
+reads/Chr18_ZR75_ER_1.bam
+</td>
+<td style="text-align:left;">
+ZR75c
+</td>
+<td style="text-align:left;">
+reads/Chr18_ZR75_input.bam
+</td>
+<td style="text-align:left;">
+peaks/ZR75_ER_1.bed.gz
+</td>
+<td style="text-align:left;">
+bed
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+ZR752
+</td>
+<td style="text-align:left;">
+ZR75
+</td>
+<td style="text-align:left;">
+ER
+</td>
+<td style="text-align:left;">
+Responsive
+</td>
+<td style="text-align:left;">
+Full-Media
+</td>
+<td style="text-align:right;">
+2
+</td>
+<td style="text-align:left;">
+reads/Chr18_ZR75_ER_2.bam
+</td>
+<td style="text-align:left;">
+ZR75c
+</td>
+<td style="text-align:left;">
+reads/Chr18_ZR75_input.bam
+</td>
+<td style="text-align:left;">
+peaks/ZR75_ER_2.bed.gz
+</td>
+<td style="text-align:left;">
+bed
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p><br> <br> <br></p>
+</div>
+<div id="samples.2" class="section level3">
+<h3>Samples.2</h3>
+<p><br> <br> <br></p>
 </div>
 </div>
-<div id="differential-expression" class="section level1">
-<h1>Differential Expression</h1>
-<div id="pca" class="section level2">
-<h2>PCA</h2>
-<p>While the correlation heatmaps already seen are good for showing clustering, plots based on principal components analysis can be used to give a deeper insight into how samples are associated. A PCA plot corresponding to Figure 2, which includes normalized read counts for all 2845 binding sites, can be obtained as follows:</p>
-<p>The resulting plot (Figure 5) shows all the MCF7-derived samples (red) clustering on one side of the first (horizontal) component, with the Responsive and Resistant samples not separable either in the first nor in the second (vertical) component.3</p>
+<div id="pre-analysis" class="section level2">
+<h2>Pre-Analysis</h2>
+<div class="sourceCode" id="cb1"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ex">bowtie2</span> <span class="at">-p</span> 20 <span class="at">-x</span> mm9_genome <span class="at">-U</span> file1.fastq <span class="at">-S</span> file1.sam </span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="ex">samtools</span> view <span class="at">-bS</span> file1.sam <span class="op">&gt;</span> file1.bam</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>              </span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="ex">samtools</span> sort file1.bam file1_sorted</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="ex">samtools</span> index file1_sorted.bam</span></code></pre></div>
+<p>Converting BAM to BED (need this for Differential Binding Analysis)</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="ex">bamToBed</span> <span class="at">-i</span> file_sorted.bam</span></code></pre></div>
+<p>Using the mapped info from BAM file, we will perform peak calling using the MACS 2.0 program.If necessary</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="ex">macs2</span> callpeak <span class="at">-t</span> file1.bam <span class="at">-f</span> BAM <span class="at">-g</span> mm <span class="at">-n</span> file1_label <span class="at">-p</span> 1e-3 <span class="at">--to-large</span></span></code></pre></div>
+<div class="sourceCode" id="cb4"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="ex">macs14</span> <span class="at">-t</span> file1.bam <span class="at">-f</span> BAM <span class="at">-g</span> h <span class="at">-n</span> file1_label</span></code></pre></div>
+<p><br> <br> <br></p>
+</div>
+</div>
+<div id="differential-binding-analysis" class="section level1">
+<h1>Differential Binding Analysis</h1>
+<p>Differential binding affinity analysis: The core functionality of DiffBind is the differential binding affinity analysis, which enables binding sites to be identified that are significantly differentially bound between sample groups <br></p>
+<p><br></p>
+<p><strong>Multidimensional scaling (MDS)</strong> is a popular approach for graphically representing relationships between objects (e.g. plots or samples) in multidimensional space. Dimension reduction via MDS is achieved by taking the original set of samples and calculating a dissimilarity (distance) measure for each pairwise comparison of samples. The samples are then usually represented graphically in two dimensions such that the distance between points on the plot approximates their multivariate dissimilarity as closely as possible.</p>
 <p><em>I recommend to color by “tissue” and shape by “condition”</em></p>
-<pre class="r"><code>library(Glimma)
-glimmaMDS(dds.tamoxifen, width=800, height=450)</code></pre>
-<div id="htmlwidget-6068a4faba7e8e111e2b" style="width:800px;height:450px;" class="glimmaMDS html-widget"></div>
-<script type="application/json" data-for="htmlwidget-6068a4faba7e8e111e2b">{"x":{"data":{"mdsData":{"dim1":[-0.512857199285564,-0.590034635563711,1.48050599276988,1.18896196410124,1.28857847707895,-0.910960581260104,-0.964964695810047,1.63157682847133,1.40999971511056,-2.01948472243788,-2.00132114317467],"dim2":[-1.5143143684107,-1.6693832554104,0.776920875741672,0.721027331598259,0.598884356456865,0.702332504294507,0.281839335910233,-0.529746887935494,-0.436410147228023,0.567331087249443,0.501519167733637],"dim3":[0.346937997835066,0.342631694736901,0.697508745184214,0.494478194201397,0.629383286556575,-1.69714509056224,-1.24231219529334,-0.516381911679882,-0.600345324542354,0.813863550520265,0.731381053043406],"dim4":[-0.663815170038446,-0.604410430495303,-0.626179075478736,-0.436369895703423,-0.491499871710906,-0.787328100424526,-0.15924428091844,1.18084663070506,1.10704393620817,0.684599442711454,0.796356815145091],"dim5":[-0.138790285205448,0.0596938030018612,-0.333582019226522,0.398317991973694,0.205479665020088,-0.82456869031011,1.1262395716381,-0.277156559148325,0.020676935316413,-0.29162479517135,0.0553143821115977],"dim6":[-0.0917509597930508,0.123802242912926,-0.736553550214579,0.72175385995441,0.100290108588518,0.226837861810499,-0.383683439842663,-0.0995822876046837,0.118777851108853,-0.040566854935822,0.0606751680155896],"dim7":[-0.0340402353558764,0.0332184893292819,-0.0139935985182401,0.302005332527132,-0.277108584079739,-0.0413688857148968,0.100891414520357,0.665739963423187,-0.725864559345297,0.0646268293467084,-0.0741061661326139],"dim8":[0.187523692450502,-0.134997382416607,0.303095179425128,0.424635425764296,-0.75912369029283,-0.058886123145341,0.0192449753650488,-0.226206176671137,0.253764215070891,0.0450640060581797,-0.0541141216081294],"labels":["BT4741","BT4742","MCF71","MCF72","MCF73","T47D1","T47D2","MCF7r1","MCF7r2","ZR751","ZR752"],"Tissue":["BT474","BT474","MCF7","MCF7","MCF7","T47D","T47D","MCF7","MCF7","ZR75","ZR75"],"Factor":["ER","ER","ER","ER","ER","ER","ER","ER","ER","ER","ER"],"Condition":["Resistant","Resistant","Responsive","Responsive","Responsive","Responsive","Responsive","Resistant","Resistant","Responsive","Responsive"],"Treatment":["Full-Media","Full-Media","Full-Media","Full-Media","Full-Media","Full-Media","Full-Media","Full-Media","Full-Media","Full-Media","Full-Media"],"Peak_caller":["counts","counts","counts","counts","counts","counts","counts","counts","counts","counts","counts"],"Replicate":["1","2","1","2","3","1","2","1","2","1","2"],"sizeFactor":[0.809961019664126,0.823205624684335,0.429899304089376,0.456732255869754,0.578619105836017,0.496227809507736,1.83090873380412,0.765203859609421,0.736158303055218,0.877144536125204,3.1959394477547],"-":["0","0","0","0","0","0","0","0","0","0","0"],"- ":[0,0,0,0,0,0,0,0,0,0,0]},"eigenData":{"name":[1,2,3,4,5,6,7,8],"eigen":[0.41,0.17,0.15,0.12,0.05,0.03,0.02,0.02]},"features":{"numeric":["sizeFactor","- "],"discrete":["labels","Tissue","Factor","Condition","Treatment","Peak_caller","Replicate","-"],"all":["sizeFactor","- ","labels","Tissue","Factor","Condition","Treatment","Peak_caller","Replicate","-"]},"continuousColour":false,"dimlist":["dim1","dim2","dim3","dim4","dim5","dim6","dim7","dim8"]}},"evals":[],"jsHooks":[]}</script>
-<p>The bias towards enriched binding in the Responsive case (or loss of binding affinity in the Resistant case) can be visualized using MA and Volcano plots, as shown in the following Section.</p>
-<pre class="r"><code>dba.plotVenn(tamoxifen, contrast=1, bDB=TRUE, bGain=TRUE, bLoss=TRUE, bAll=FALSE)</code></pre>
-<pre><code>## Generating report-based DBA object...</code></pre>
-<p><img src="ChIP_files/figure-html/unnamed-chunk-4-1.png" width="672" /> Venn diagrams are also useful for examining overlaps between peaksets, particularly when determining how best to derive consensus peaksets for read counting and further analysis. Section 8, which discusses consensus peaksets, shows a number of Venn plots in context, and the help page for dba.plotVenn has a number of additional examples.</p>
-</div>
-<div id="ma-plots" class="section level2 tabset tabset-fade tabset-pills">
-<h2 class="tabset tabset-fade tabset-pills">MA Plots</h2>
-<p>MA plots are a useful way to visualize the relationship between the overall binding level at each site and the magnitude of the change in binding enrichment between conditions, as well as the effect of normalization on data. An MA plot can be obtained for the Resistant vs Responsive contrast as follows:</p>
+<div id="htmlwidget-dd1343e26550a37cde59" style="width:800px;height:450px;" class="glimmaMDS html-widget"></div>
+<script type="application/json" data-for="htmlwidget-dd1343e26550a37cde59">{"x":{"data":{"mdsData":{"dim1":[-0.512857199285564,-0.590034635563711,1.48050599276988,1.18896196410124,1.28857847707895,-0.910960581260104,-0.964964695810047,1.63157682847133,1.40999971511056,-2.01948472243788,-2.00132114317467],"dim2":[-1.5143143684107,-1.6693832554104,0.776920875741672,0.721027331598259,0.598884356456865,0.702332504294507,0.281839335910233,-0.529746887935494,-0.436410147228023,0.567331087249443,0.501519167733637],"dim3":[0.346937997835066,0.342631694736901,0.697508745184214,0.494478194201397,0.629383286556575,-1.69714509056224,-1.24231219529334,-0.516381911679882,-0.600345324542354,0.813863550520265,0.731381053043406],"dim4":[-0.663815170038446,-0.604410430495303,-0.626179075478736,-0.436369895703423,-0.491499871710906,-0.787328100424526,-0.15924428091844,1.18084663070506,1.10704393620817,0.684599442711454,0.796356815145091],"dim5":[-0.138790285205448,0.0596938030018612,-0.333582019226522,0.398317991973694,0.205479665020088,-0.82456869031011,1.1262395716381,-0.277156559148325,0.020676935316413,-0.29162479517135,0.0553143821115977],"dim6":[-0.0917509597930508,0.123802242912926,-0.736553550214579,0.72175385995441,0.100290108588518,0.226837861810499,-0.383683439842663,-0.0995822876046837,0.118777851108853,-0.040566854935822,0.0606751680155896],"dim7":[-0.0340402353558764,0.0332184893292819,-0.0139935985182401,0.302005332527132,-0.277108584079739,-0.0413688857148968,0.100891414520357,0.665739963423187,-0.725864559345297,0.0646268293467084,-0.0741061661326139],"dim8":[0.187523692450502,-0.134997382416607,0.303095179425128,0.424635425764296,-0.75912369029283,-0.058886123145341,0.0192449753650488,-0.226206176671137,0.253764215070891,0.0450640060581797,-0.0541141216081294],"labels":["BT4741","BT4742","MCF71","MCF72","MCF73","T47D1","T47D2","MCF7r1","MCF7r2","ZR751","ZR752"],"Tissue":["BT474","BT474","MCF7","MCF7","MCF7","T47D","T47D","MCF7","MCF7","ZR75","ZR75"],"Factor":["ER","ER","ER","ER","ER","ER","ER","ER","ER","ER","ER"],"Condition":["Resistant","Resistant","Responsive","Responsive","Responsive","Responsive","Responsive","Resistant","Resistant","Responsive","Responsive"],"Treatment":["Full-Media","Full-Media","Full-Media","Full-Media","Full-Media","Full-Media","Full-Media","Full-Media","Full-Media","Full-Media","Full-Media"],"Peak_caller":["counts","counts","counts","counts","counts","counts","counts","counts","counts","counts","counts"],"Replicate":["1","2","1","2","3","1","2","1","2","1","2"],"sizeFactor":[0.809961019664126,0.823205624684335,0.429899304089376,0.456732255869754,0.578619105836017,0.496227809507736,1.83090873380412,0.765203859609421,0.736158303055218,0.877144536125204,3.1959394477547],"-":["0","0","0","0","0","0","0","0","0","0","0"],"- ":[0,0,0,0,0,0,0,0,0,0,0]},"eigenData":{"name":[1,2,3,4,5,6,7,8],"eigen":[0.41,0.17,0.15,0.12,0.05,0.03,0.02,0.02]},"features":{"numeric":["sizeFactor","- "],"discrete":["labels","Tissue","Factor","Condition","Treatment","Peak_caller","Replicate","-"],"all":["sizeFactor","- ","labels","Tissue","Factor","Condition","Treatment","Peak_caller","Replicate","-"]},"continuousColour":false,"dimlist":["dim1","dim2","dim3","dim4","dim5","dim6","dim7","dim8"]}},"evals":[],"jsHooks":[]}</script>
+<div id="section" class="section level2 tabset tabset-fade tabset-pills">
+<h2 class="tabset tabset-fade tabset-pills"></h2>
+<p><br> <br></p>
+<p><strong>MA plots</strong> are a useful way to visualize the relationship between the overall binding level at each site and the magnitude of the change in binding enrichment between conditions, as well as the effect of normalization on data. An MA plot can be obtained for the Resistant vs Responsive contrast as follows:</p>
+<p>The plot is shown in Figure 7. Each point represents a binding site, with the 246 points in magenta representing sites identified as differentially bound. There is a blue horizontal line through the origin (0 LFC), as well as a horizontal red curve representing a non-linear loess fit showing the underlying relationship between coverage levels and fold changes. The plot shows how the differentially bound sites appear to have a minimum absolute log fold difference of somewhere between one and two. As we have already seen, it also shows that more ERa binding sites lose binding affinity in the tamoxifen resistant condition than gain binding affinity, as evidenced by more red dots below the center line than are above it. This same data can also be shown with the concentrations of each sample groups plotted against each other plot using dba.plotMA(tamoxifen, bXY=TRUE). Section 7 contains several examples of MA plots, including showing non-normalized data, and the ability to plot any subset of samples against any other set of sample.</p>
 <div id="ma-plot-i" class="section level3">
 <h3>MA Plot i</h3>
-<pre class="r"><code>dba.plotMA(tamoxifen)</code></pre>
-<p><img src="ChIP_files/figure-html/unnamed-chunk-5-1.png" width="672" /></p>
+<p><img src="ChIP_files/figure-html/unnamed-chunk-10-1.png" width="672" /></p>
 </div>
 <div id="ma-plot-ii" class="section level3">
 <h3>MA Plot ii</h3>
-<pre class="r"><code>plotMA(res)</code></pre>
-<p><img src="ChIP_files/figure-html/unnamed-chunk-6-1.png" width="672" /></p>
-<p>The plot is shown in Figure 7. Each point represents a binding site, with the 246 points in magenta representing sites identified as differentially bound. There is a blue horizontal line through the origin (0 LFC), as well as a horizontal red curve representing a non-linear loess fit showing the underlying relationship between coverage levels and fold changes. The plot shows how the differentially bound sites appear to have a minimum absolute log fold difference of somewhere between one and two. As we have already seen, it also shows that more ERa binding sites lose binding affinity in the tamoxifen resistant condition than gain binding affinity, as evidenced by more red dots below the center line than are above it. This same data can also be shown with the concentrations of each sample groups plotted against each other plot using dba.plotMA(tamoxifen, bXY=TRUE). Section 7 contains several examples of MA plots, including showing non-normalized data, and the ability to plot any subset of samples against any other set of sample.</p>
+<p><img src="ChIP_files/figure-html/unnamed-chunk-11-1.png" width="672" /></p>
+<p><br> <br></p>
 </div>
 </div>
-<div id="volcano-plots" class="section level2 tabset tabset-fade tabset-pills">
-<h2 class="tabset tabset-fade tabset-pills">Volcano Plots</h2>
-<p>Similar to MA plots, Volcano plots also highlight significantly differentially bound sites and show their fold changes. Here, however, the confidence statistic (FDR or p-value) is shown on a negative log scale, helping visualize the relationship between the magnitude of fold changes and the confidence that sites are differentially bound. For example, the same data as plotted in Figure 7 can be visualized as a volcano plot:</p>
+<div id="section-1" class="section level2 tabset tabset-fade tabset-pills">
+<h2 class="tabset tabset-fade tabset-pills"></h2>
+<p><strong>Volcano plots</strong> also highlight significantly differentially bound sites and show their fold changes. Here, however, the confidence statistic (FDR or p-value) is shown on a negative log scale, helping visualize the relationship between the magnitude of fold changes and the confidence that sites are differentially bound.</p>
+<p>The plot shown, with the predominance of lower binding in the Resistant case evidenced by the greater number of significant sites on the negative side of the Fold Change (X) axis.</p>
 <div id="volcano-plot-i" class="section level3">
 <h3>Volcano Plot i</h3>
-<pre class="r"><code>library(EnhancedVolcano)</code></pre>
-<pre><code>## Loading required package: ggplot2</code></pre>
-<pre><code>## Loading required package: ggrepel</code></pre>
-<pre><code>## Registered S3 methods overwritten by &#39;ggalt&#39;:
-##   method                  from   
-##   grid.draw.absoluteGrob  ggplot2
-##   grobHeight.absoluteGrob ggplot2
-##   grobWidth.absoluteGrob  ggplot2
-##   grobX.absoluteGrob      ggplot2
-##   grobY.absoluteGrob      ggplot2</code></pre>
-<pre class="r"><code>library(magrittr)
-  EnhancedVolcano(res ,lab = rownames(res), x = &#39;log2FoldChange&#39;, y = &#39;pvalue&#39;)</code></pre>
-<p><img src="ChIP_files/figure-html/unnamed-chunk-7-1.png" width="672" /></p>
+<p><img src="ChIP_files/figure-html/unnamed-chunk-12-1.png" width="672" /></p>
+<p><br> <br></p>
 </div>
 <div id="volcano-plot-ii" class="section level3">
 <h3>Volcano Plot ii</h3>
-<pre class="r"><code>dba.plotVolcano(tamoxifen)</code></pre>
-<p><img src="ChIP_files/figure-html/unnamed-chunk-8-1.png" width="672" /></p>
-<p>The plot is shown in Figure 8, with the predominance of lower binding in the Resistant case evidenced by the greater number of significant sites on the negative side of the Fold Change (X) axis.</p>
+<p><img src="ChIP_files/figure-html/unnamed-chunk-13-1.png" width="672" /></p>
+<p><br> <br></p>
 </div>
 </div>
-<div id="heatmaps" class="section level2 tabset tabset-fade tabset-pills">
-<h2 class="tabset tabset-fade tabset-pills">Heatmaps</h2>
-<p>The effect of different scoring methods (normalization) can be examined in these plots by setting the score parameter to a different value. The default value, DBA_SCORE_NORMALIZED, uses the normalized read counts (see Section 7). Another scoring method is to use RPKM fold (RPKM of the ChIP reads divided by RPKM of the control reads); a correlation heatmap for all the data using this scoring method can be obtained by typing dba.plotHeatmap(tamoxifen, score=DBA_SCORE_RPKM_FOLD).</p>
+<div id="section-2" class="section level2 tabset tabset-fade tabset-pills">
+<h2 class="tabset tabset-fade tabset-pills"></h2>
+<p><strong>Correlation heatmap</strong>:The effect of different scoring methods (normalization) can be examined in these plots by setting the score parameter to a different value. The default value, DBA_SCORE_NORMALIZED, uses the normalized read counts (see Section 7). Another scoring method is to use RPKM fold (RPKM of the ChIP reads divided by RPKM of the control reads).</p>
 <div id="cell-line-heatmap" class="section level3">
 <h3>Cell-Line Heatmap</h3>
-<pre class="r"><code>dba.plotHeatmap(tamoxifen)</code></pre>
-<p><img src="ChIP_files/figure-html/unnamed-chunk-9-1.png" width="960" /> The resulting plot (Figure 1) shows that while the replicates for each cell line cluster to- gether appropriately, the cell lines do not cluster into groups corresponding to those that are responsive (MCF7, T47D, and ZR75) vs. those resistant (BT474 and MCF7r) to ta- moxifen treatment. It also shows that the two most highly correlated cell lines are the two MCF7-based ones, even though they respond differently to tamoxifen treatment.</p>
+<p><img src="ChIP_files/figure-html/unnamed-chunk-14-1.png" width="960" /> The resulting plot (Figure 1) shows that while the replicates for each cell line cluster to- gether appropriately, the cell lines do not cluster into groups corresponding to those that are responsive (MCF7, T47D, and ZR75) vs. those resistant (BT474 and MCF7r) to ta- moxifen treatment. It also shows that the two most highly correlated cell lines are the two MCF7-based ones, even though they respond differently to tamoxifen treatment.</p>
+<p><br> <br> <br></p>
 </div>
 <div id="binding-site-heatmape" class="section level3">
 <h3>Binding Site Heatmape</h3>
 <p>Another way to view the patterns of binding affinity directly in the differentially bound sites is via a binding affinity heatmap, showing the read scores for some or all of the binding sites. This can be plotted for the example case as follows:</p>
-<pre class="r"><code>hmap &lt;- colorRampPalette(c(&quot;red&quot;, &quot;black&quot;, &quot;green&quot;))(n = 13)
-readscores &lt;- dba.plotHeatmap(tamoxifen, contrast=1, correlations=FALSE,
-                              scale=&quot;row&quot;, colScheme = hmap)</code></pre>
-<p><img src="ChIP_files/figure-html/unnamed-chunk-10-1.png" width="960" /> Figure 10 shows the affinities and clustering of the differentially bound sites (rows), as well as the sample clustering (columns). In this case, the (normalized) counts have been row scaled, and a red/green heatmap color palette applied.</p>
+<p><img src="ChIP_files/figure-html/unnamed-chunk-15-1.png" width="960" /> Figure 10 shows the affinities and clustering of the differentially bound sites (rows), as well as the sample clustering (columns). In this case, the (normalized) counts have been row scaled, and a red/green heatmap color palette applied.</p>
+<p><br> <br> <br></p>
 </div>
 </div>
+<div id="chipseeker" class="section level2">
+<h2>ChIPSeeker</h2>
+<p>The bias towards enriched binding in the Responsive case (or loss of binding affinity in the Resistant case) can be visualized using MA and Volcano plots, as shown in the following Section.</p>
+<p>Venn diagrams are also useful for examining overlaps between peaksets, particularly when determining how best to derive consensus peaksets for read counting and further analysis. Section 8, which discusses consensus peaksets, shows a number of Venn plots in context, and the help page for dba.plotVenn has a number of additional examples.</p>
+<pre><code>## Generating report-based DBA object...</code></pre>
+<p><img src="ChIP_files/figure-html/unnamed-chunk-16-1.png" width="672" /></p>
+<p><strong>ChIP-seq Profiling</strong></p>
+<p><img src="ChIP_files/figure-html/unnamed-chunk-17-1.png" width="672" /></p>
+<p><br> <br></p>
+<p><strong>Heatmap of ChIP peaks among different cell lines</strong></p>
+<p><img src="ChIP_files/figure-html/unnamed-chunk-18-1.png" width="672" /></p>
+<p><br> <br></p>
+<p><strong>Average profile of ChIP peaks among different cell lines</strong></p>
+<p><img src="ChIP_files/figure-html/unnamed-chunk-19-1.png" width="672" /></p>
+<p><br> <br></p>
+<p><strong>Genomics locations: dataset comparisons with barplot</strong></p>
+<p><img src="ChIP_files/figure-html/unnamed-chunk-20-1.png" width="672" /> <br> <br></p>
+<p><strong>Distance to TSS Comparisons</strong></p>
+<p><img src="ChIP_files/figure-html/unnamed-chunk-21-1.png" width="672" /></p>
+<p><br> <br> <br></p>
 </div>
-<div id="chip-seq-downstream-analysis" class="section level1">
-<h1>ChIP-seq downstream analysis</h1>
-<pre class="r"><code>peaks.consensus &lt;- dba.peakset(tamoxifen, bRetrieve = T)
-peaks.consensus</code></pre>
-<pre><code>## GRanges object with 2795 ranges and 11 metadata columns:
-##        seqnames            ranges strand |    BT4741    BT4742     MCF71
-##           &lt;Rle&gt;         &lt;IRanges&gt;  &lt;Rle&gt; | &lt;numeric&gt; &lt;numeric&gt; &lt;numeric&gt;
-##      1    chr18       90841-91241      * |   2.46925   1.21476   0.00000
-##      2    chr18     150222-150622      * |  18.51941  15.79192  51.17477
-##      3    chr18     150807-151207      * |  13.58090   9.71811   9.30450
-##      4    chr18     189192-189592      * |  13.58090  26.72479  46.52252
-##      5    chr18     199821-200221      * |  14.81553  19.43621   2.32613
-##    ...      ...               ...    ... .       ...       ...       ...
-##   2791    chr18 77782651-77783051      * |  13.58090   1.21476   6.97838
-##   2792    chr18 77903180-77903580      * |   8.64239  18.22145   4.65225
-##   2793    chr18 77955380-77955780      * |  18.51941  10.93287  18.60901
-##   2794    chr18 77968226-77968626      * |  64.20062  70.45627 123.28468
-##   2795    chr18 77987616-77988016      * |  22.22329   3.64429 148.87207
-##            MCF72     MCF73     T47D1     T47D2    MCF7r1    MCF7r2     ZR751
-##        &lt;numeric&gt; &lt;numeric&gt; &lt;numeric&gt; &lt;numeric&gt; &lt;numeric&gt; &lt;numeric&gt; &lt;numeric&gt;
-##      1   0.00000    0.0000   0.00000  0.546177    0.0000    0.0000  25.08139
-##      2  24.08413   46.6628   0.00000  3.277061   22.2163   12.2256  13.68076
-##      3  13.13680   13.8260   2.01520  2.730884   32.6710   24.4513   2.28013
-##      4  26.27360   65.6736   6.04561  3.277061  107.1610   73.3538  18.24101
-##      5   8.75787   10.3695  10.07602 10.923537   15.6821   19.0176  33.06183
-##    ...       ...       ...       ...       ...       ...       ...       ...
-##   2791   24.0841   3.45651  14.10642   8.19265   6.53421   9.50882   23.9413
-##   2792    0.0000   6.91301   8.06081  11.46971   9.14789   4.07521   30.7817
-##   2793   13.1368   8.64126  26.19765   7.10030   2.61368   8.15042   34.2019
-##   2794   89.7681  79.49962  12.09122  16.38531 130.68413  66.56177   55.8631
-##   2795   89.7681  81.22787  14.10642   6.55412  60.11470  23.09286  205.2113
-##            ZR752
-##        &lt;numeric&gt;
-##      1  10.95140
-##      2  10.95140
-##      3   5.31925
-##      4  13.14168
-##      5  17.20934
-##    ...       ...
-##   2791   10.9514
-##   2792   17.8351
-##   2793   27.2220
-##   2794   42.5540
-##   2795  146.7487
-##   -------
-##   seqinfo: 1 sequence from an unspecified genome; no seqlengths</code></pre>
+</div>
+<div id="functional-analysis-in-progress" class="section level1">
+<h1>Functional Analysis In Progress …</h1>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co">#biomart</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>ensembl <span class="ot">&lt;-</span> <span class="fu">useEnsembl</span>(<span class="at">biomart =</span> <span class="st">&quot;genes&quot;</span>, <span class="at">dataset =</span> <span class="st">&quot;hsapiens_gene_ensembl&quot;</span>,<span class="at">version =</span> <span class="dv">95</span>)</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="co"># running query: extracting ENTREZID for genes on chromosome 1 and 2</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>genes.chr18 <span class="ot">&lt;-</span> <span class="fu">getBM</span>(<span class="at">attributes=</span> <span class="st">&quot;entrezgene&quot;</span>, <span class="at">filters=</span><span class="fu">c</span>(<span class="st">&quot;chromosome_name&quot;</span>), <span class="at">values=</span><span class="dv">18</span>, <span class="at">mart=</span>ensembl)</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a><span class="co"># reformatting output to character string (as required later on by clusterProfiler functions)</span></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>genes.universe <span class="ot">&lt;-</span> <span class="fu">as.character</span>(<span class="fu">as.numeric</span>(<span class="fu">as.matrix</span>(genes.chr18)))</span></code></pre></div>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># a: selecting annotated peaks for functional enrichment in object</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>data.peaks_ann <span class="ot">&lt;-</span> peaks.MCF7_ann</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="co">#x &lt;- as.data.frame(data.peaks_ann)</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a><span class="co"># a: fining enriched Reactome pathways using chromosome 1 and 2 genes as a background</span></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>pathway.reac1 <span class="ot">&lt;-</span> <span class="fu">enrichPathway</span>(<span class="fu">as.data.frame</span>(data.peaks_ann)<span class="sc">$</span>geneId, <span class="at">universe =</span> genes.universe)</span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a><span class="co"># a: previewing enriched Reactome pathways</span></span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(pathway.reac1)</span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a><span class="co"># b: selecting peaks</span></span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>data.peaks <span class="ot">&lt;-</span> peaks.T47D</span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a><span class="co"># b: running seq2gene function for many-to-many mapping based on sequence regions (note: no prior peaks annotations here, many-to-many mapping is done from the sequence)</span></span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>genes.m2m <span class="ot">&lt;-</span> <span class="fu">seq2gene</span>(data.peaks, <span class="at">tssRegion =</span> <span class="fu">c</span>(<span class="sc">-</span><span class="dv">1000</span>, <span class="dv">1000</span>), <span class="at">flankDistance =</span> <span class="dv">3000</span>, <span class="at">TxDb=</span>txdb)</span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a><span class="co"># b: finding enriched Reactome pathways given many to many mapping and chromosome 1 and 2 genes as a background</span></span>
+<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a>pathway.reac2 <span class="ot">&lt;-</span> <span class="fu">enrichPathway</span>(genes.m2m, <span class="at">universe =</span> genes.universe)</span>
+<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a><span class="co"># b: creating dotplot to visualise enrichment results</span></span>
+<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-19"><a href="#cb7-19" aria-hidden="true" tabindex="-1"></a><span class="fu">dotplot</span>(pathway.reac2)</span></code></pre></div>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># creating a gene list with ENTREZID ideas extracted from our annotation list, containing annotated peaks for all four cell lines</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>list.genes <span class="ot">=</span> <span class="fu">lapply</span>(list.annotations, <span class="cf">function</span>(i) <span class="fu">as.data.frame</span>(i)<span class="sc">$</span>geneId)</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(list.genes) <span class="ot">&lt;-</span> <span class="fu">sub</span>(<span class="st">&quot;_&quot;</span>, <span class="st">&quot;</span><span class="sc">\n</span><span class="st">&quot;</span>, <span class="fu">names</span>(list.genes))</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a><span class="co"># running enrichedGO function to find enriched MF correlation_libraries_normalised on the gene list</span></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>compMF <span class="ot">&lt;-</span> <span class="fu">compareCluster</span>(<span class="at">geneCluster =</span> list.genes,</span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>                       <span class="at">fun           =</span> <span class="st">&quot;enrichGO&quot;</span>,</span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>                       <span class="at">pvalueCutoff  =</span> <span class="fl">0.05</span>,</span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>                       <span class="at">pAdjustMethod =</span> <span class="st">&quot;BH&quot;</span>,</span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>                       <span class="at">OrgDb=</span><span class="st">&#39;org.Hs.eg.db&#39;</span>,</span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>                       <span class="at">ont=</span><span class="st">&quot;MF&quot;</span>)</span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a><span class="co"># comparing results on a dotplot</span></span>
+<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a><span class="fu">dotplot</span>(compMF)</span>
+<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a><span class="co"># simplifying results although here we do not have problems with too many GO terms</span></span>
+<span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a>compMF.flr <span class="ot">&lt;-</span> <span class="fu">simplify</span>(compMF, <span class="at">cutoff =</span> <span class="fl">0.7</span>, <span class="at">by =</span> <span class="st">&quot;p.adjust&quot;</span>, <span class="at">select_fun =</span> min, <span class="at">measure =</span> <span class="st">&quot;Wang&quot;</span>, <span class="at">semData =</span> <span class="cn">NULL</span>)</span>
+<span id="cb8-19"><a href="#cb8-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-20"><a href="#cb8-20" aria-hidden="true" tabindex="-1"></a><span class="co"># creating a dotplot on reduced GO terms</span></span>
+<span id="cb8-21"><a href="#cb8-21" aria-hidden="true" tabindex="-1"></a><span class="fu">dotplot</span>(compMF.flr)</span></code></pre></div>
 </div>
 
 
