@@ -43,7 +43,7 @@ tamoxifen <- dba(sampleSheet ="./tamoxifen.csv") %>%
   dba.contrast()  %>%
   dba.analyze()
 
-#Display Dataframs
+#Display Dataframes
 df.tamoxifen <- dba.show(tamoxifen)
 tamoxifen.DB <- dba.report(tamoxifen)
 tamoxifen.DB.DF <- as.data.frame(tamoxifen.DB)
@@ -56,7 +56,7 @@ res <- results(ddseq)
 resDF <- as.data.frame(res)
 ```
 
-# Differential Expression
+# Differential Binding Analysis
 
 ## PCA 
 
@@ -143,15 +143,35 @@ Figure 10 shows the affinities and clustering of the differentially bound sites 
 
 ```{r}
 peaks.consensus <- dba.peakset(tamoxifen, bRetrieve = T)
-peaks.consensus
+
+# extracting HeLA peaks
+peaks.HeLa_rep1 <- peaks.consensus[tamoxifen$called[,1]==1] # peaks called in rep 1
+peaks.HeLa_rep2 <- peaks.consensus[tamoxifen$called[,2]==1] # peaks called in rep 2
+
+# adding an unified affinity scores column (re-formatting data)
+peaks.HeLa_rep1$Score <- peaks.HeLa_rep1$BT4741
+peaks.HeLa_rep2$Score <- peaks.HeLa_rep2$BT4742
+
+# plotting coverage for replicate 1, using affinity scores as a weight for peaks height
+covplot(peaks.HeLa_rep1, weightCol = "Score",chrs=c("chr1", "chr18"))
+
+# zooming in to a selected region is also possible
+covplot(peaks.HeLa_rep1, weightCol = "Score", xlim=c(0, 1e07))
 ```
 
 ```{r}
+# creating genomicRangesList object holding replicates 1 and 2
+grL.HeLa <- GRangesList(HeLa_rep1=peaks.HeLa_rep1, HeLa_rep2=peaks.HeLa_rep2)
 
+# plotting using affinity scores as a weight for peaks height
+covplot(grL.HeLa, weightCol = "Score")
+
+# zooming in
+covplot(grL.HeLa)
 ```
 
 ```{r}
-
+x<-as.data.frame(tamoxifen$called)
 ```
 
 ```{r}
