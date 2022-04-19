@@ -286,7 +286,6 @@ grL.BT474<- GRangesList(BT474_rep1=peaks.BT474_rep1, BT474_rep2=peaks.BT474_rep2
 covplot(grL.BT474 , weightCol = "Score", title = "ChIP Peaks Over Chr. 18")
 
 #x<-as.data.frame(tamoxifen$called)
-
 ```
 
 In these images we compare peaks across replicates particularly BT474. This should give us visual assessment of variability between replicates: peaks locations and strength should match in an idealistic scenario
