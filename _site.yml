@@ -18,7 +18,6 @@ navbar:
       - text: "Benchmark Experiment"
         href: ./bench/benchmark.html
       - text: "Wet Lab Research"
-        href: ./qpcr.html
       - text: "Place Holder 2"
       - text: "Place Holder 3"
       - text: "Place Holder 4"
