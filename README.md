@@ -11,11 +11,11 @@ _Same data, different tools and formatting_
 
 
 __Functional Analysis of OSCC Gene Hub Data__ _(Portfolio)_
-- [View HTML page](./docs/functional.html)
+- [View HTML page](https://c0rd3ll.github.io/portfolio-0.01/functional.html)
 - [View Code (Rmd)](./functional.Rmd)
 
 
 __ChIP Profiling of TF ERa in 5 Breast Cancer Cell Lines__ _(Portfolio)_
-- [View HTML page](./docs/ChIP.html)
+- [View HTML page](https://c0rd3ll.github.io/portfolio-0.01/ChIP.html)
 - [View Code (Rmd)](./ChIP.Rmd)
 
