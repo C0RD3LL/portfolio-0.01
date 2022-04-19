@@ -397,15 +397,11 @@ $(document).ready(function () {
 <p><br> <br></p>
 <div id="section" class="section level1 tabset tabset-fade">
 <h1 class="tabset tabset-fade"></h1>
-<div id="objective" class="section level2">
-<h2>Objective</h2>
-<p>The data for ChIP-seq peak calling are stacks of aligned reads across a genome. Some of these stacks correspond to the signal of interest (e.g. binding of a transcription factor or modified histone). Many other stacks are regarded as molecular or experimental noise, or as being influenced by a systematically greater accessibility of measurement by the experiment at that particular genomic location. The goal of this experiment is to understand how our transcription factors compare to one another in regards to binding sites.</p>
-<p><br> <br> <br></p>
-</div>
 <div id="about-the-data.1" class="section level2">
 <h2>About the Data.1</h2>
-<p>The dataset for this example consists of ChIPs against the transcription factor ERa using five breast cancer cell lines. Three of these cell lines are responsive to tamoxifen treatment, while two others are resistant to tamoxifen. There are eleven total sequenced libraries, at least two replicates for each of the cell lines. Of the five cell lines, two are based on MCF7 cells: the standard MCF7 tamoxifen responsive line, and MCF7 cells specially treated with tamoxifen until a tamoxifen resistant version of the cell line is obtained. For each sample, there is an associated peakset derived using the MACS peak caller[1], for a total of eleven peaksets.To save time and space in the package, only data for chromosome 18 is used for the vignette.</p>
-<p>Tamoxifen is a nonsteroidal antiestrogen that has found successful applications for each stage of breast cancer in the treatment of selected patients. Tamoxifen was originally introduced for the treatment of advanced disease in postmenopausal women; however, the drug is now also available for the palliative treatment of premenopausal women with estrogen receptor (ER) positive disease. The proven efficacy of tamoxifen and the low incidence of side effects made the drug an ideal agent to test as an adjuvant therapy for women with node-positive breast cancer. doi: 10.1016/0147-0272(92)90002-6. PMID: 1582240.</p>
+<p>ChIP-seq was used to analyze five breast cancer cell lines against the transcription factor ERa. Three of these cell lines are responsive to tamoxifen treatment, while two others are resistant to tamoxifen; there are eleven total sequenced libraries. For each sample, there is an associated peakset derived using the MACS peak caller. Only data for chromosome 18 was included in the data. The goal of the analysis is compare binding across samples and cell types.</p>
+<p>Tamoxifen is a nonsteroidal antiestrogen that has found successful applications for each stage of breast cancer in the treatment of selected patients. Tamoxifen was originally introduced for the treatment of advanced disease in postmenopausal women. The proven efficacy of tamoxifen and the low incidence of side effects made the drug an ideal agent to test as an adjuvant therapy for women with node-positive breast cancer.</p>
+<p>doi: 10.1016/0147-0272(92)90002-6. PMID: 1582240.</p>
 <p><br> <br> <br></p>
 </div>
 <div id="about-the-data.2" class="section level2 tabset">
@@ -73603,17 +73599,16 @@ chr18
 </div>
 <div id="differential-binding-analysis" class="section level1">
 <h1>Differential Binding Analysis</h1>
-<p>Differential binding affinity analysis: The core functionality of DiffBind is the differential binding affinity analysis, which enables binding sites to be identified that are significantly differentially bound between sample groups <br></p>
-<p><br></p>
+<p><br> <br></p>
 <p><strong>Multidimensional scaling (MDS)</strong> is a popular approach for graphically representing relationships between objects (e.g. plots or samples) in multidimensional space. Dimension reduction via MDS is achieved by taking the original set of samples and calculating a dissimilarity (distance) measure for each pairwise comparison of samples. The samples are then usually represented graphically in two dimensions such that the distance between points on the plot approximates their multivariate dissimilarity as closely as possible.</p>
 <p><em>I recommend to color by “tissue” and shape by “condition”</em></p>
-<div id="htmlwidget-046a820f338e659bc108" style="width:800px;height:450px;" class="glimmaMDS html-widget"></div>
-<script type="application/json" data-for="htmlwidget-046a820f338e659bc108">{"x":{"data":{"mdsData":{"dim1":[-0.512857199285564,-0.590034635563711,1.48050599276988,1.18896196410124,1.28857847707895,-0.910960581260104,-0.964964695810047,1.63157682847133,1.40999971511056,-2.01948472243788,-2.00132114317467],"dim2":[-1.5143143684107,-1.6693832554104,0.776920875741672,0.721027331598259,0.598884356456865,0.702332504294507,0.281839335910233,-0.529746887935494,-0.436410147228023,0.567331087249443,0.501519167733637],"dim3":[0.346937997835066,0.342631694736901,0.697508745184214,0.494478194201397,0.629383286556575,-1.69714509056224,-1.24231219529334,-0.516381911679882,-0.600345324542354,0.813863550520265,0.731381053043406],"dim4":[-0.663815170038446,-0.604410430495303,-0.626179075478736,-0.436369895703423,-0.491499871710906,-0.787328100424526,-0.15924428091844,1.18084663070506,1.10704393620817,0.684599442711454,0.796356815145091],"dim5":[-0.138790285205448,0.0596938030018612,-0.333582019226522,0.398317991973694,0.205479665020088,-0.82456869031011,1.1262395716381,-0.277156559148325,0.020676935316413,-0.29162479517135,0.0553143821115977],"dim6":[-0.0917509597930508,0.123802242912926,-0.736553550214579,0.72175385995441,0.100290108588518,0.226837861810499,-0.383683439842663,-0.0995822876046837,0.118777851108853,-0.040566854935822,0.0606751680155896],"dim7":[-0.0340402353558764,0.0332184893292819,-0.0139935985182401,0.302005332527132,-0.277108584079739,-0.0413688857148968,0.100891414520357,0.665739963423187,-0.725864559345297,0.0646268293467084,-0.0741061661326139],"dim8":[0.187523692450502,-0.134997382416607,0.303095179425128,0.424635425764296,-0.75912369029283,-0.058886123145341,0.0192449753650488,-0.226206176671137,0.253764215070891,0.0450640060581797,-0.0541141216081294],"labels":["BT4741","BT4742","MCF71","MCF72","MCF73","T47D1","T47D2","MCF7r1","MCF7r2","ZR751","ZR752"],"Tissue":["BT474","BT474","MCF7","MCF7","MCF7","T47D","T47D","MCF7","MCF7","ZR75","ZR75"],"Factor":["ER","ER","ER","ER","ER","ER","ER","ER","ER","ER","ER"],"Condition":["Resistant","Resistant","Responsive","Responsive","Responsive","Responsive","Responsive","Resistant","Resistant","Responsive","Responsive"],"Treatment":["Full-Media","Full-Media","Full-Media","Full-Media","Full-Media","Full-Media","Full-Media","Full-Media","Full-Media","Full-Media","Full-Media"],"Peak_caller":["counts","counts","counts","counts","counts","counts","counts","counts","counts","counts","counts"],"Replicate":["1","2","1","2","3","1","2","1","2","1","2"],"sizeFactor":[0.809961019664126,0.823205624684335,0.429899304089376,0.456732255869754,0.578619105836017,0.496227809507736,1.83090873380412,0.765203859609421,0.736158303055218,0.877144536125204,3.1959394477547],"-":["0","0","0","0","0","0","0","0","0","0","0"],"- ":[0,0,0,0,0,0,0,0,0,0,0]},"eigenData":{"name":[1,2,3,4,5,6,7,8],"eigen":[0.41,0.17,0.15,0.12,0.05,0.03,0.02,0.02]},"features":{"numeric":["sizeFactor","- "],"discrete":["labels","Tissue","Factor","Condition","Treatment","Peak_caller","Replicate","-"],"all":["sizeFactor","- ","labels","Tissue","Factor","Condition","Treatment","Peak_caller","Replicate","-"]},"continuousColour":false,"dimlist":["dim1","dim2","dim3","dim4","dim5","dim6","dim7","dim8"]}},"evals":[],"jsHooks":[]}</script>
+<div id="htmlwidget-6ed0eb94e64b0aa2a857" style="width:800px;height:450px;" class="glimmaMDS html-widget"></div>
+<script type="application/json" data-for="htmlwidget-6ed0eb94e64b0aa2a857">{"x":{"data":{"mdsData":{"dim1":[-0.512857199285564,-0.590034635563711,1.48050599276988,1.18896196410124,1.28857847707895,-0.910960581260104,-0.964964695810047,1.63157682847133,1.40999971511056,-2.01948472243788,-2.00132114317467],"dim2":[-1.5143143684107,-1.6693832554104,0.776920875741672,0.721027331598259,0.598884356456865,0.702332504294507,0.281839335910233,-0.529746887935494,-0.436410147228023,0.567331087249443,0.501519167733637],"dim3":[0.346937997835066,0.342631694736901,0.697508745184214,0.494478194201397,0.629383286556575,-1.69714509056224,-1.24231219529334,-0.516381911679882,-0.600345324542354,0.813863550520265,0.731381053043406],"dim4":[-0.663815170038446,-0.604410430495303,-0.626179075478736,-0.436369895703423,-0.491499871710906,-0.787328100424526,-0.15924428091844,1.18084663070506,1.10704393620817,0.684599442711454,0.796356815145091],"dim5":[-0.138790285205448,0.0596938030018612,-0.333582019226522,0.398317991973694,0.205479665020088,-0.82456869031011,1.1262395716381,-0.277156559148325,0.020676935316413,-0.29162479517135,0.0553143821115977],"dim6":[-0.0917509597930508,0.123802242912926,-0.736553550214579,0.72175385995441,0.100290108588518,0.226837861810499,-0.383683439842663,-0.0995822876046837,0.118777851108853,-0.040566854935822,0.0606751680155896],"dim7":[-0.0340402353558764,0.0332184893292819,-0.0139935985182401,0.302005332527132,-0.277108584079739,-0.0413688857148968,0.100891414520357,0.665739963423187,-0.725864559345297,0.0646268293467084,-0.0741061661326139],"dim8":[0.187523692450502,-0.134997382416607,0.303095179425128,0.424635425764296,-0.75912369029283,-0.058886123145341,0.0192449753650488,-0.226206176671137,0.253764215070891,0.0450640060581797,-0.0541141216081294],"labels":["BT4741","BT4742","MCF71","MCF72","MCF73","T47D1","T47D2","MCF7r1","MCF7r2","ZR751","ZR752"],"Tissue":["BT474","BT474","MCF7","MCF7","MCF7","T47D","T47D","MCF7","MCF7","ZR75","ZR75"],"Factor":["ER","ER","ER","ER","ER","ER","ER","ER","ER","ER","ER"],"Condition":["Resistant","Resistant","Responsive","Responsive","Responsive","Responsive","Responsive","Resistant","Resistant","Responsive","Responsive"],"Treatment":["Full-Media","Full-Media","Full-Media","Full-Media","Full-Media","Full-Media","Full-Media","Full-Media","Full-Media","Full-Media","Full-Media"],"Peak_caller":["counts","counts","counts","counts","counts","counts","counts","counts","counts","counts","counts"],"Replicate":["1","2","1","2","3","1","2","1","2","1","2"],"sizeFactor":[0.809961019664126,0.823205624684335,0.429899304089376,0.456732255869754,0.578619105836017,0.496227809507736,1.83090873380412,0.765203859609421,0.736158303055218,0.877144536125204,3.1959394477547],"-":["0","0","0","0","0","0","0","0","0","0","0"],"- ":[0,0,0,0,0,0,0,0,0,0,0]},"eigenData":{"name":[1,2,3,4,5,6,7,8],"eigen":[0.41,0.17,0.15,0.12,0.05,0.03,0.02,0.02]},"features":{"numeric":["sizeFactor","- "],"discrete":["labels","Tissue","Factor","Condition","Treatment","Peak_caller","Replicate","-"],"all":["sizeFactor","- ","labels","Tissue","Factor","Condition","Treatment","Peak_caller","Replicate","-"]},"continuousColour":false,"dimlist":["dim1","dim2","dim3","dim4","dim5","dim6","dim7","dim8"]}},"evals":[],"jsHooks":[]}</script>
 <div id="section-1" class="section level2 tabset tabset-fade tabset-pills">
 <h2 class="tabset tabset-fade tabset-pills"></h2>
 <p><br> <br></p>
 <p><strong>MA plots</strong> are a useful way to visualize the relationship between the overall binding level at each site and the magnitude of the change in binding enrichment between conditions, as well as the effect of normalization on data. An MA plot can be obtained for the Resistant vs Responsive contrast as follows:</p>
-<p>The plot is shown in Figure 7. Each point represents a binding site, with the 246 points in magenta representing sites identified as differentially bound. There is a blue horizontal line through the origin (0 LFC), as well as a horizontal red curve representing a non-linear loess fit showing the underlying relationship between coverage levels and fold changes. The plot shows how the differentially bound sites appear to have a minimum absolute log fold difference of somewhere between one and two. As we have already seen, it also shows that more ERa binding sites lose binding affinity in the tamoxifen resistant condition than gain binding affinity, as evidenced by more red dots below the center line than are above it. This same data can also be shown with the concentrations of each sample groups plotted against each other plot using dba.plotMA(tamoxifen, bXY=TRUE). Section 7 contains several examples of MA plots, including showing non-normalized data, and the ability to plot any subset of samples against any other set of sample.</p>
+<p>Each point represents a binding site, with the 246 points in magenta representing sites identified as differentially bound. The bias towards enriched binding in the Responsive case (or loss of binding affinity in the Resistant case) can be visualized using MA and Volcano plots, as shown in the following Section.</p>
 <div id="ma-plot-i" class="section level3">
 <h3>MA Plot i</h3>
 <p><img src="ChIP_files/figure-html/unnamed-chunk-9-1.png" width="672" /></p>
@@ -73641,90 +73636,343 @@ chr18
 </div>
 <div id="section-3" class="section level2 tabset tabset-fade tabset-pills">
 <h2 class="tabset tabset-fade tabset-pills"></h2>
-<p><strong>Correlation heatmap</strong>:The effect of different scoring methods (normalization) can be examined in these plots by setting the score parameter to a different value. The default value, DBA_SCORE_NORMALIZED, uses the normalized read counts (see Section 7). Another scoring method is to use RPKM fold (RPKM of the ChIP reads divided by RPKM of the control reads).</p>
+<p><strong>Correlation heatmaps</strong></p>
 <div id="cell-line-heatmap" class="section level3">
 <h3>Cell-Line Heatmap</h3>
-<p><img src="ChIP_files/figure-html/unnamed-chunk-13-1.png" width="960" /> The resulting plot (Figure 1) shows that while the replicates for each cell line cluster to- gether appropriately, the cell lines do not cluster into groups corresponding to those that are responsive (MCF7, T47D, and ZR75) vs. those resistant (BT474 and MCF7r) to ta- moxifen treatment. It also shows that the two most highly correlated cell lines are the two MCF7-based ones, even though they respond differently to tamoxifen treatment.</p>
+<p><img src="ChIP_files/figure-html/unnamed-chunk-13-1.png" width="960" /> The plot shows that while the replicates for each cell line cluster together appropriately, the cell lines do not cluster into groups corresponding to those that are responsive (MCF7, T47D, and ZR75) vs. those resistant (BT474 and MCF7r) to tamoxifen treatment. It also shows that the two most highly correlated cell lines are the two MCF7-based ones, even though they respond differently to tamoxifen treatment.</p>
 <p><br> <br> <br></p>
 </div>
-<div id="binding-site-heatmape" class="section level3">
-<h3>Binding Site Heatmape</h3>
+<div id="binding-site-heatmap" class="section level3">
+<h3>Binding Site Heatmap</h3>
 <p>Another way to view the patterns of binding affinity directly in the differentially bound sites is via a binding affinity heatmap, showing the read scores for some or all of the binding sites. This can be plotted for the example case as follows:</p>
-<p><img src="ChIP_files/figure-html/unnamed-chunk-14-1.png" width="960" /> Figure 10 shows the affinities and clustering of the differentially bound sites (rows), as well as the sample clustering (columns). In this case, the (normalized) counts have been row scaled, and a red/green heatmap color palette applied.</p>
+<p><img src="ChIP_files/figure-html/unnamed-chunk-14-1.png" width="960" /></p>
+<p>the plot shows the affinities and clustering of the differentially bound sites (rows), as well as the sample clustering (columns).</p>
 <p><br> <br> <br></p>
 </div>
 </div>
-<div id="chipseeker" class="section level2">
-<h2>ChIPSeeker</h2>
-<p>The bias towards enriched binding in the Responsive case (or loss of binding affinity in the Resistant case) can be visualized using MA and Volcano plots, as shown in the following Section.</p>
-<p>Venn diagrams are also useful for examining overlaps between peaksets, particularly when determining how best to derive consensus peaksets for read counting and further analysis. Section 8, which discusses consensus peaksets, shows a number of Venn plots in context, and the help page for dba.plotVenn has a number of additional examples.</p>
+<div id="ii." class="section level2">
+<h2>II.</h2>
+<p>The following venn diagram shows overlaps between peaksets.</p>
 <pre><code>## Generating report-based DBA object...</code></pre>
 <p><img src="ChIP_files/figure-html/unnamed-chunk-15-1.png" width="672" /></p>
-<p><strong>ChIP-seq Profiling</strong></p>
+<div id="chip-seq-profiling" class="section level3 tabset tabset-fade">
+<h3 class="tabset tabset-fade"><strong>ChIP-seq Profiling</strong></h3>
+<div id="bt474" class="section level4">
+<h4>BT474</h4>
 <p><img src="ChIP_files/figure-html/unnamed-chunk-16-1.png" width="672" /></p>
+<p>In these images we compare peaks across replicates particularly BT474. This should give us visual assessment of variability between replicates: peaks locations and strength should match in an idealistic scenario</p>
+<p>From the figures provided it can be concluded which pair of replicates is most consistent.</p>
 <p><br> <br></p>
-<p><strong>Heatmap of ChIP peaks among different cell lines</strong></p>
+</div>
+<div id="mcf7" class="section level4">
+<h4>MCF7</h4>
 <p><img src="ChIP_files/figure-html/unnamed-chunk-17-1.png" width="672" /></p>
 <p><br> <br></p>
-<p><strong>Average profile of ChIP peaks among different cell lines</strong></p>
+</div>
+<div id="t47d" class="section level4">
+<h4>T47D</h4>
 <p><img src="ChIP_files/figure-html/unnamed-chunk-18-1.png" width="672" /></p>
 <p><br> <br></p>
-<p><strong>Genomics locations: dataset comparisons with barplot</strong></p>
-<p><img src="ChIP_files/figure-html/unnamed-chunk-19-1.png" width="672" /> <br> <br></p>
-<p><strong>Distance to TSS Comparisons</strong></p>
+</div>
+<div id="zr75" class="section level4">
+<h4>ZR75</h4>
+<p><img src="ChIP_files/figure-html/unnamed-chunk-19-1.png" width="672" /></p>
+<p><br> <br></p>
+</div>
+</div>
+<div id="heatmap-of-chip-peaks-among-different-cell-lines" class="section level3">
+<h3><strong>Heatmap of ChIP peaks among different cell lines</strong></h3>
 <p><img src="ChIP_files/figure-html/unnamed-chunk-20-1.png" width="672" /></p>
+<p><br> <br></p>
+</div>
+<div id="average-profile-of-chip-peaks-among-different-cell-lines" class="section level3">
+<h3><strong>Average profile of ChIP peaks among different cell lines</strong></h3>
+<p><img src="ChIP_files/figure-html/unnamed-chunk-21-1.png" width="672" /></p>
+<p>I defined the TSS region, by default set to -3kb to 3kb. The output of is shown above.</p>
+<p><br> <br></p>
+</div>
+<div id="genomics-locations-dataset-comparisons-with-barplot" class="section level3">
+<h3><strong>Genomics locations: dataset comparisons with barplot</strong></h3>
+<p><img src="ChIP_files/figure-html/unnamed-chunk-22-1.png" width="672" /></p>
+<p><br> <br></p>
+</div>
+<div id="distance-to-tss-comparisons" class="section level3">
+<h3><strong>Distance to TSS Comparisons</strong></h3>
+<p><img src="ChIP_files/figure-html/unnamed-chunk-23-1.png" width="672" /></p>
 <p><br> <br> <br></p>
+</div>
 </div>
 </div>
 <div id="functional-analysis-in-progress" class="section level1">
 <h1>Functional Analysis In Progress …</h1>
 <div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co">#biomart</span></span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>ensembl <span class="ot">&lt;-</span> <span class="fu">useEnsembl</span>(<span class="at">biomart =</span> <span class="st">&quot;genes&quot;</span>, <span class="at">dataset =</span> <span class="st">&quot;hsapiens_gene_ensembl&quot;</span>,<span class="at">version =</span> <span class="dv">95</span>)</span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="co"># running query: extracting ENTREZID </span></span>
-<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>genes.chr18 <span class="ot">&lt;-</span> <span class="fu">getBM</span>(<span class="at">attributes=</span> <span class="st">&quot;entrezgene&quot;</span>, <span class="at">filters=</span><span class="fu">c</span>(<span class="st">&quot;chromosome_name&quot;</span>), <span class="at">values=</span><span class="dv">18</span>, <span class="at">mart=</span>ensembl)</span>
-<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a><span class="co"># reformatting output to character string </span></span>
-<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>genes.universe <span class="ot">&lt;-</span> <span class="fu">as.character</span>(<span class="fu">as.numeric</span>(<span class="fu">as.matrix</span>(genes.chr18)))</span></code></pre></div>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="co"># running query: extracting ENTREZID </span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>genes.chr18 <span class="ot">&lt;-</span> <span class="fu">getBM</span>(<span class="at">attributes=</span> <span class="st">&quot;entrezgene&quot;</span>, <span class="at">filters=</span><span class="fu">c</span>(<span class="st">&quot;chromosome_name&quot;</span>), <span class="at">values=</span><span class="dv">18</span>, <span class="at">mart=</span>ensembl)</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="co"># reformatting output to character string </span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>genes.universe <span class="ot">&lt;-</span> <span class="fu">as.character</span>(<span class="fu">as.numeric</span>(<span class="fu">as.matrix</span>(genes.chr18)))</span></code></pre></div>
 <div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co">#1 selecting annotated peaks for functional enrichment </span></span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>data.peaks_ann <span class="ot">&lt;-</span> peaks.MCF7_ann</span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="co">#x &lt;- as.data.frame(data.peaks_ann)</span></span>
-<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a><span class="co">#1 finding enriched Reactome pathways using chromosome </span></span>
-<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>pathway.reac1 <span class="ot">&lt;-</span> <span class="fu">enrichPathway</span>(<span class="fu">as.data.frame</span>(data.peaks_ann)<span class="sc">$</span>geneId, <span class="at">universe =</span> genes.universe)</span>
-<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a><span class="co">#1 previewing pathways</span></span>
-<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(pathway.reac1)</span>
-<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a><span class="co">#2 selecting peaks</span></span>
-<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>data.peaks <span class="ot">&lt;-</span> peaks.T47D</span>
-<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a><span class="co">#2  seq2gene function for many-to-many mapping based on sequence regions </span></span>
-<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>genes.m2m <span class="ot">&lt;-</span> <span class="fu">seq2gene</span>(data.peaks, <span class="at">tssRegion =</span> <span class="fu">c</span>(<span class="sc">-</span><span class="dv">1000</span>, <span class="dv">1000</span>), <span class="at">flankDistance =</span> <span class="dv">3000</span>, <span class="at">TxDb=</span>txdb)</span>
-<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a><span class="co">#2 finding enriched Reactome pathways </span></span>
-<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a>pathway.reac2 <span class="ot">&lt;-</span> <span class="fu">enrichPathway</span>(genes.m2m, <span class="at">universe =</span> genes.universe)</span>
-<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a><span class="co">#2 visualise enrichment results</span></span>
-<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a><span class="fu">dotplot</span>(pathway.reac2)</span></code></pre></div>
-<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># creating a gene list with ENTREZID ideas extracted from our annotation list, containing annotated peaks for all four cell lines</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a><span class="co">#1 finding enriched Reactome pathways using chromosome </span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>pathway.reac1 <span class="ot">&lt;-</span> <span class="fu">enrichPathway</span>(<span class="fu">as.data.frame</span>(data.peaks_ann)<span class="sc">$</span>geneId, <span class="at">universe =</span> genes.universe)</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a><span class="co">#2 selecting peaks</span></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>data.peaks <span class="ot">&lt;-</span> peaks.T47D</span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a><span class="co">#2  seq2gene function for many-to-many mapping based on sequence regions </span></span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>genes.m2m <span class="ot">&lt;-</span> <span class="fu">seq2gene</span>(data.peaks, <span class="at">tssRegion =</span> <span class="fu">c</span>(<span class="sc">-</span><span class="dv">1000</span>, <span class="dv">1000</span>), <span class="at">flankDistance =</span> <span class="dv">3000</span>, <span class="at">TxDb=</span>txdb)</span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a><span class="co">#2 finding enriched Reactome pathways </span></span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>pathway.reac2 <span class="ot">&lt;-</span> <span class="fu">enrichPathway</span>(genes.m2m, <span class="at">universe =</span> genes.universe)</span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a><span class="co">#2 visualise enrichment results</span></span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a><span class="fu">dotplot</span>(pathway.reac2)</span></code></pre></div>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># creating a gene list with ENTREZID </span></span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>list.genes <span class="ot">=</span> <span class="fu">lapply</span>(list.annotations, <span class="cf">function</span>(i) <span class="fu">as.data.frame</span>(i)<span class="sc">$</span>geneId)</span>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(list.genes) <span class="ot">&lt;-</span> <span class="fu">sub</span>(<span class="st">&quot;_&quot;</span>, <span class="st">&quot;</span><span class="sc">\n</span><span class="st">&quot;</span>, <span class="fu">names</span>(list.genes))</span>
-<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a><span class="co"># running enrichedGO function to find enriched MF correlation_libraries_normalised on the gene list</span></span>
-<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>compMF <span class="ot">&lt;-</span> <span class="fu">compareCluster</span>(<span class="at">geneCluster =</span> list.genes,</span>
-<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>                       <span class="at">fun           =</span> <span class="st">&quot;enrichGO&quot;</span>,</span>
-<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>                       <span class="at">pvalueCutoff  =</span> <span class="fl">0.05</span>,</span>
-<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>                       <span class="at">pAdjustMethod =</span> <span class="st">&quot;BH&quot;</span>,</span>
-<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>                       <span class="at">OrgDb=</span><span class="st">&#39;org.Hs.eg.db&#39;</span>,</span>
-<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>                       <span class="at">ont=</span><span class="st">&quot;MF&quot;</span>)</span>
-<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a><span class="co"># comparing results on a dotplot</span></span>
-<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a><span class="fu">dotplot</span>(compMF)</span>
-<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a><span class="co"># simplifying results although here we do not have problems with too many GO terms</span></span>
-<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a>compMF.flr <span class="ot">&lt;-</span> <span class="fu">simplify</span>(compMF, <span class="at">cutoff =</span> <span class="fl">0.7</span>, <span class="at">by =</span> <span class="st">&quot;p.adjust&quot;</span>, <span class="at">select_fun =</span> min, <span class="at">measure =</span> <span class="st">&quot;Wang&quot;</span>, <span class="at">semData =</span> <span class="cn">NULL</span>)</span>
-<span id="cb7-19"><a href="#cb7-19" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-20"><a href="#cb7-20" aria-hidden="true" tabindex="-1"></a><span class="co"># creating a dotplot on reduced GO terms</span></span>
-<span id="cb7-21"><a href="#cb7-21" aria-hidden="true" tabindex="-1"></a><span class="fu">dotplot</span>(compMF.flr)</span></code></pre></div>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="co"># running enrichedGO </span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>compMF <span class="ot">&lt;-</span> <span class="fu">compareCluster</span>(<span class="at">geneCluster =</span> list.genes,<span class="at">fun=</span> <span class="st">&quot;enrichGO&quot;</span>,</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>                       <span class="at">pvalueCutoff  =</span> <span class="fl">0.05</span>, <span class="at">pAdjustMethod =</span> <span class="st">&quot;BH&quot;</span>,</span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>                       <span class="at">OrgDb=</span><span class="st">&#39;org.Hs.eg.db&#39;</span>, <span class="at">ont=</span><span class="st">&quot;MF&quot;</span>)</span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a><span class="co"># results dotplot</span></span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a><span class="fu">dotplot</span>(compMF)</span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a><span class="co"># simplify results </span></span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>compMF.flr <span class="ot">&lt;-</span> <span class="fu">simplify</span>(compMF, <span class="at">cutoff =</span> <span class="fl">0.7</span>, <span class="at">by =</span> <span class="st">&quot;p.adjust&quot;</span>, <span class="at">select_fun =</span> min, <span class="at">measure =</span> <span class="st">&quot;Wang&quot;</span>, <span class="at">semData =</span> <span class="cn">NULL</span>)</span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a><span class="co">#dotplot GO terms</span></span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a><span class="fu">dotplot</span>(compMF.flr)</span></code></pre></div>
+</div>
+<div id="section-4" class="section level1 tabset">
+<h1 class="tabset"></h1>
+<div id="citation" class="section level2">
+<h2>Citation</h2>
+<ul>
+<li><p>G Yu, LG Wang, QY He. ChIPseeker: an R/Bioconductor package for ChIP peak annotation, comparison and visualization. Bioinformatics 2015, 31(14):2382-2383. <a href="doi:%5B10.1093/bioinformatics/btv145" class="uri">doi:[10.1093/bioinformatics/btv145</a>](<a href="http://dx.doi.org/10.1093/bioinformatics/btv145" class="uri">http://dx.doi.org/10.1093/bioinformatics/btv145</a>)</p></li>
+<li><p>C.S. Ross-Innes, R. Stark, A.E. Teschendorff, K.A. Holmes, H.R. Ali, M.J. Dunning, G.D. Brown, O. Gojis, I.O. Ellis, A.R. Green, et al. Differential oestrogen receptor binding is associated with clinical outcome in breast cancer. Nature, 481(7381):389–393, 2012.</p></li>
+<li><p>Haley M. Amemiya, Anshul Kundaje, and Alan P. Boyle. The ENCODE blacklist: Identification of problematic regions of the genome. Scientific Reports, 9(1):9354, 2019.</p></li>
+<li><p>Gord Brown. GreyListChIP: Grey lists–mask artefact regions based on ChIP inputs, 2015. URL: <a href="https://bioconductor.org/packages/GreyListChIP/" class="uri">https://bioconductor.org/packages/GreyListChIP/</a>, <a href="doi:10.18129/B9.bioc.GreyListChIP" class="uri">doi:10.18129/B9.bioc.GreyListChIP</a>.</p></li>
+<li><p><a href="https://nbisweden.github.io/workshop-archive/workshop-ChIP-seq/2018-11-07/labs/lab-ChIPseeker.html#Profile" class="uri">https://nbisweden.github.io/workshop-archive/workshop-ChIP-seq/2018-11-07/labs/lab-ChIPseeker.html#Profile</a></p></li>
+</ul>
+</div>
+<div id="session-info" class="section level2">
+<h2>Session Info</h2>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Print session info</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>sessioninfo<span class="sc">::</span><span class="fu">session_info</span>()</span></code></pre></div>
+<pre><code>## ─ Session info ───────────────────────────────────────────────────────────────
+##  setting  value
+##  version  R version 4.1.2 (2021-11-01)
+##  os       macOS Big Sur 10.16
+##  system   x86_64, darwin17.0
+##  ui       X11
+##  language (EN)
+##  collate  en_US.UTF-8
+##  ctype    en_US.UTF-8
+##  tz       America/New_York
+##  date     2022-04-19
+##  pandoc   2.14.0.3 @ /Applications/RStudio.app/Contents/MacOS/pandoc/ (via rmarkdown)
+## 
+## ─ Packages ───────────────────────────────────────────────────────────────────
+##  package                           * version    date (UTC) lib source
+##  amap                                0.8-18     2019-12-12 [1] CRAN (R 4.1.0)
+##  annotate                            1.72.0     2021-10-26 [1] Bioconductor
+##  AnnotationDbi                     * 1.56.2     2021-11-09 [1] Bioconductor
+##  ape                                 5.6-2      2022-03-02 [1] CRAN (R 4.1.2)
+##  apeglm                              1.16.0     2021-10-26 [1] Bioconductor
+##  aplot                               0.1.3      2022-04-01 [1] CRAN (R 4.1.2)
+##  ash                                 1.0-15     2015-09-01 [1] CRAN (R 4.1.0)
+##  ashr                                2.2-54     2022-02-22 [1] CRAN (R 4.1.2)
+##  assertthat                          0.2.1      2019-03-21 [1] CRAN (R 4.1.0)
+##  backports                           1.4.1      2021-12-13 [1] CRAN (R 4.1.0)
+##  bbmle                               1.0.24     2021-08-05 [1] CRAN (R 4.1.0)
+##  bdsmatrix                           1.3-4      2020-01-13 [1] CRAN (R 4.1.0)
+##  beeswarm                            0.4.0      2021-06-01 [1] CRAN (R 4.1.0)
+##  Biobase                           * 2.54.0     2021-10-26 [1] Bioconductor
+##  BiocFileCache                       2.2.1      2022-01-23 [1] Bioconductor
+##  BiocGenerics                      * 0.40.0     2021-10-26 [1] Bioconductor
+##  BiocIO                              1.4.0      2021-10-26 [1] Bioconductor
+##  BiocParallel                        1.28.3     2021-12-09 [1] Bioconductor
+##  biomaRt                           * 2.50.3     2022-02-06 [1] Bioconductor
+##  Biostrings                          2.62.0     2021-10-26 [1] Bioconductor
+##  bit                                 4.0.4      2020-08-04 [1] CRAN (R 4.1.0)
+##  bit64                               4.0.5      2020-08-30 [1] CRAN (R 4.1.0)
+##  bitops                              1.0-7      2021-04-24 [1] CRAN (R 4.1.0)
+##  blob                                1.2.3      2022-04-10 [1] CRAN (R 4.1.2)
+##  boot                                1.3-28     2021-05-03 [1] CRAN (R 4.1.2)
+##  BSgenome                            1.62.0     2021-10-26 [1] Bioconductor
+##  bslib                               0.3.1      2021-10-06 [1] CRAN (R 4.1.0)
+##  cachem                              1.0.6      2021-08-19 [1] CRAN (R 4.1.0)
+##  caTools                             1.18.2     2021-03-28 [1] CRAN (R 4.1.0)
+##  checkmate                           2.0.0      2020-02-06 [1] CRAN (R 4.1.0)
+##  ChIPseeker                        * 1.30.3     2021-12-19 [1] Bioconductor
+##  cli                                 3.2.0      2022-02-14 [1] CRAN (R 4.1.2)
+##  clusterProfiler                   * 4.2.2      2022-01-13 [1] Bioconductor
+##  coda                                0.19-4     2020-09-30 [1] CRAN (R 4.1.0)
+##  colorspace                          2.0-3      2022-02-21 [1] CRAN (R 4.1.2)
+##  crayon                              1.5.1      2022-03-26 [1] CRAN (R 4.1.2)
+##  curl                                4.3.2      2021-06-23 [1] CRAN (R 4.1.0)
+##  data.table                          1.14.2     2021-09-27 [1] CRAN (R 4.1.0)
+##  DBI                                 1.1.2      2021-12-20 [1] CRAN (R 4.1.0)
+##  dbplyr                              2.1.1      2021-04-06 [1] CRAN (R 4.1.0)
+##  DelayedArray                        0.20.0     2021-10-26 [1] Bioconductor
+##  DESeq2                            * 1.34.0     2021-10-26 [1] Bioconductor
+##  DiffBind                          * 3.4.11     2022-02-24 [1] Bioconductor
+##  digest                              0.6.29     2021-12-01 [1] CRAN (R 4.1.0)
+##  DO.db                               2.9        2022-01-20 [1] Bioconductor
+##  DOSE                                3.20.1     2021-11-18 [1] Bioconductor
+##  downloader                          0.4        2015-07-09 [1] CRAN (R 4.1.0)
+##  dplyr                               1.0.8      2022-02-08 [1] CRAN (R 4.1.2)
+##  edgeR                               3.36.0     2021-10-26 [1] Bioconductor
+##  ellipsis                            0.3.2      2021-04-29 [1] CRAN (R 4.1.0)
+##  emdbook                             1.3.12     2020-02-19 [1] CRAN (R 4.1.0)
+##  EnhancedVolcano                   * 1.12.0     2021-10-26 [1] Bioconductor
+##  enrichplot                        * 1.15.3     2022-04-18 [1] Github (YuLab-SMU/enrichplot@e48a727)
+##  evaluate                            0.15       2022-02-18 [1] CRAN (R 4.1.2)
+##  extrafont                           0.18       2022-04-12 [1] CRAN (R 4.1.2)
+##  extrafontdb                         1.0        2012-06-11 [1] CRAN (R 4.1.0)
+##  fansi                               1.0.3      2022-03-24 [1] CRAN (R 4.1.2)
+##  farver                              2.1.0      2021-02-28 [1] CRAN (R 4.1.0)
+##  fastmap                             1.1.0      2021-01-25 [1] CRAN (R 4.1.0)
+##  fastmatch                           1.1-3      2021-07-23 [1] CRAN (R 4.1.0)
+##  fgsea                               1.20.0     2021-10-26 [1] Bioconductor
+##  filelock                            1.0.2      2018-10-05 [1] CRAN (R 4.1.0)
+##  genefilter                          1.76.0     2021-10-26 [1] Bioconductor
+##  geneplotter                         1.72.0     2021-10-26 [1] Bioconductor
+##  generics                            0.1.2      2022-01-31 [1] CRAN (R 4.1.2)
+##  GenomeInfoDb                      * 1.30.1     2022-01-30 [1] Bioconductor
+##  GenomeInfoDbData                    1.2.7      2021-12-12 [1] Bioconductor
+##  GenomicAlignments                   1.30.0     2021-10-26 [1] Bioconductor
+##  GenomicFeatures                   * 1.46.5     2022-03-01 [1] Bioconductor
+##  GenomicRanges                     * 1.46.1     2021-11-18 [1] Bioconductor
+##  ggalt                               0.4.0      2017-02-15 [1] CRAN (R 4.1.0)
+##  ggbeeswarm                          0.6.0      2017-08-07 [1] CRAN (R 4.1.0)
+##  ggforce                             0.3.3      2021-03-05 [1] CRAN (R 4.1.0)
+##  ggfun                               0.0.6      2022-04-01 [1] CRAN (R 4.1.2)
+##  ggplot2                           * 3.3.5      2021-06-25 [1] CRAN (R 4.1.0)
+##  ggplotify                           0.1.0      2021-09-02 [1] CRAN (R 4.1.0)
+##  ggraph                              2.0.5      2021-02-23 [1] CRAN (R 4.1.0)
+##  ggrastr                             1.0.1      2021-12-08 [1] CRAN (R 4.1.0)
+##  ggrepel                           * 0.9.1      2021-01-15 [1] CRAN (R 4.1.0)
+##  ggtree                              3.2.1      2021-11-16 [1] Bioconductor
+##  Glimma                            * 2.4.0      2021-10-26 [1] Bioconductor
+##  glue                                1.6.2      2022-02-24 [1] CRAN (R 4.1.2)
+##  GO.db                               3.14.0     2022-01-18 [1] Bioconductor
+##  GOSemSim                            2.20.0     2021-10-26 [1] Bioconductor
+##  gplots                              3.1.1      2020-11-28 [1] CRAN (R 4.1.0)
+##  graph                               1.72.0     2021-10-26 [1] Bioconductor
+##  graphite                            1.40.0     2021-10-26 [1] Bioconductor
+##  graphlayouts                        0.8.0      2022-01-03 [1] CRAN (R 4.1.2)
+##  GreyListChIP                        1.26.0     2021-10-26 [1] Bioconductor
+##  gridExtra                           2.3        2017-09-09 [1] CRAN (R 4.1.0)
+##  gridGraphics                        0.5-1      2020-12-13 [1] CRAN (R 4.1.0)
+##  gtable                              0.3.0      2019-03-25 [1] CRAN (R 4.1.0)
+##  gtools                              3.9.2      2021-06-06 [1] CRAN (R 4.1.0)
+##  highr                               0.9        2021-04-16 [1] CRAN (R 4.1.0)
+##  hms                                 1.1.1      2021-09-26 [1] CRAN (R 4.1.0)
+##  htmltools                           0.5.2      2021-08-25 [1] CRAN (R 4.1.0)
+##  htmlwidgets                         1.5.4      2021-09-08 [1] CRAN (R 4.1.0)
+##  httr                                1.4.2      2020-07-20 [1] CRAN (R 4.1.0)
+##  hwriter                             1.3.2.1    2022-04-08 [1] CRAN (R 4.1.2)
+##  igraph                              1.3.0      2022-04-01 [1] CRAN (R 4.1.2)
+##  invgamma                            1.1        2017-05-07 [1] CRAN (R 4.1.0)
+##  IRanges                           * 2.28.0     2021-10-26 [1] Bioconductor
+##  irlba                               2.3.5      2021-12-06 [1] CRAN (R 4.1.0)
+##  jpeg                                0.1-9      2021-07-24 [1] CRAN (R 4.1.0)
+##  jquerylib                           0.1.4      2021-04-26 [1] CRAN (R 4.1.0)
+##  jsonlite                            1.8.0      2022-02-22 [1] CRAN (R 4.1.2)
+##  kableExtra                        * 1.3.4      2021-02-20 [1] CRAN (R 4.1.0)
+##  KEGGREST                            1.34.0     2021-10-26 [1] Bioconductor
+##  KernSmooth                          2.23-20    2021-05-03 [1] CRAN (R 4.1.2)
+##  knitr                               1.38       2022-03-25 [1] CRAN (R 4.1.2)
+##  labeling                            0.4.2      2020-10-20 [1] CRAN (R 4.1.0)
+##  lattice                             0.20-45    2021-09-22 [1] CRAN (R 4.1.2)
+##  latticeExtra                        0.6-29     2019-12-19 [1] CRAN (R 4.1.0)
+##  lazyeval                            0.2.2      2019-03-15 [1] CRAN (R 4.1.0)
+##  lifecycle                           1.0.1      2021-09-24 [1] CRAN (R 4.1.0)
+##  limma                               3.50.3     2022-04-07 [1] Bioconductor
+##  locfit                              1.5-9.5    2022-03-03 [1] CRAN (R 4.1.2)
+##  magrittr                          * 2.0.3      2022-03-30 [1] CRAN (R 4.1.2)
+##  maps                                3.4.0      2021-09-25 [1] CRAN (R 4.1.0)
+##  MASS                                7.3-56     2022-03-23 [1] CRAN (R 4.1.2)
+##  Matrix                              1.4-1      2022-03-23 [1] CRAN (R 4.1.2)
+##  MatrixGenerics                    * 1.6.0      2021-10-26 [1] Bioconductor
+##  matrixStats                       * 0.61.0     2021-09-17 [1] CRAN (R 4.1.0)
+##  memoise                             2.0.1      2021-11-26 [1] CRAN (R 4.1.0)
+##  mixsqp                              0.3-43     2020-05-14 [1] CRAN (R 4.1.0)
+##  munsell                             0.5.0      2018-06-12 [1] CRAN (R 4.1.0)
+##  mvtnorm                             1.1-3      2021-10-08 [1] CRAN (R 4.1.0)
+##  nlme                                3.1-157    2022-03-25 [1] CRAN (R 4.1.2)
+##  numDeriv                            2016.8-1.1 2019-06-06 [1] CRAN (R 4.1.0)
+##  org.Hs.eg.db                      * 3.14.0     2022-01-01 [1] Bioconductor
+##  patchwork                           1.1.1      2020-12-17 [1] CRAN (R 4.1.0)
+##  pillar                              1.7.0      2022-02-01 [1] CRAN (R 4.1.2)
+##  pkgconfig                           2.0.3      2019-09-22 [1] CRAN (R 4.1.0)
+##  plotrix                             3.8-2      2021-09-08 [1] CRAN (R 4.1.0)
+##  plyr                                1.8.7      2022-03-24 [1] CRAN (R 4.1.2)
+##  png                                 0.1-7      2013-12-03 [1] CRAN (R 4.1.0)
+##  polyclip                            1.10-0     2019-03-14 [1] CRAN (R 4.1.0)
+##  prettyunits                         1.1.1      2020-01-24 [1] CRAN (R 4.1.0)
+##  progress                            1.2.2      2019-05-16 [1] CRAN (R 4.1.0)
+##  proj4                               1.0-11     2022-01-31 [1] CRAN (R 4.1.2)
+##  purrr                               0.3.4      2020-04-17 [1] CRAN (R 4.1.0)
+##  qvalue                              2.26.0     2021-10-26 [1] Bioconductor
+##  R6                                  2.5.1      2021-08-19 [1] CRAN (R 4.1.0)
+##  rappdirs                            0.3.3      2021-01-31 [1] CRAN (R 4.1.0)
+##  RColorBrewer                        1.1-3      2022-04-03 [1] CRAN (R 4.1.2)
+##  Rcpp                                1.0.8.3    2022-03-17 [1] CRAN (R 4.1.2)
+##  RCurl                               1.98-1.6   2022-02-08 [1] CRAN (R 4.1.2)
+##  reactome.db                         1.77.0     2022-04-17 [1] Bioconductor
+##  ReactomePA                        * 1.38.0     2021-10-26 [1] Bioconductor
+##  reshape2                            1.4.4      2020-04-09 [1] CRAN (R 4.1.0)
+##  restfulr                            0.0.13     2017-08-06 [1] CRAN (R 4.1.0)
+##  rjson                               0.2.21     2022-01-09 [1] CRAN (R 4.1.2)
+##  rlang                               1.0.2      2022-03-04 [1] CRAN (R 4.1.2)
+##  rmarkdown                           2.13       2022-03-10 [1] CRAN (R 4.1.2)
+##  Rsamtools                           2.10.0     2021-10-26 [1] Bioconductor
+##  RSQLite                             2.2.12     2022-04-02 [1] CRAN (R 4.1.2)
+##  rstudioapi                          0.13       2020-11-12 [1] CRAN (R 4.1.0)
+##  rtracklayer                         1.54.0     2021-10-26 [1] Bioconductor
+##  Rttf2pt1                            1.3.10     2022-02-07 [1] CRAN (R 4.1.2)
+##  rvest                               1.0.2      2021-10-16 [1] CRAN (R 4.1.0)
+##  S4Vectors                         * 0.32.4     2022-03-29 [1] Bioconductor
+##  sass                                0.4.1      2022-03-23 [1] CRAN (R 4.1.2)
+##  scales                              1.2.0      2022-04-13 [1] CRAN (R 4.1.2)
+##  scatterpie                          0.1.7      2021-08-20 [1] CRAN (R 4.1.0)
+##  sessioninfo                         1.2.2      2021-12-06 [1] CRAN (R 4.1.0)
+##  shadowtext                          0.1.1      2022-01-10 [1] CRAN (R 4.1.2)
+##  ShortRead                           1.52.0     2021-10-26 [1] Bioconductor
+##  SQUAREM                             2021.1     2021-01-13 [1] CRAN (R 4.1.0)
+##  stringi                             1.7.6      2021-11-29 [1] CRAN (R 4.1.0)
+##  stringr                             1.4.0      2019-02-10 [1] CRAN (R 4.1.0)
+##  SummarizedExperiment              * 1.24.0     2021-10-26 [1] Bioconductor
+##  survival                            3.3-1      2022-03-03 [1] CRAN (R 4.1.2)
+##  svglite                             2.1.0      2022-02-03 [1] CRAN (R 4.1.2)
+##  systemfonts                         1.0.4      2022-02-11 [1] CRAN (R 4.1.2)
+##  systemPipeR                         2.0.8      2022-04-12 [1] Bioconductor
+##  tibble                              3.1.6      2021-11-07 [1] CRAN (R 4.1.0)
+##  tidygraph                           1.2.1      2022-04-05 [1] CRAN (R 4.1.2)
+##  tidyr                               1.2.0      2022-02-01 [1] CRAN (R 4.1.2)
+##  tidyselect                          1.1.2      2022-02-21 [1] CRAN (R 4.1.2)
+##  tidytree                            0.3.9      2022-03-04 [1] CRAN (R 4.1.2)
+##  treeio                              1.18.1     2021-11-14 [1] Bioconductor
+##  truncnorm                           1.0-8      2018-02-27 [1] CRAN (R 4.1.0)
+##  tweenr                              1.0.2      2021-03-23 [1] CRAN (R 4.1.0)
+##  TxDb.Hsapiens.UCSC.hg19.knownGene * 3.2.2      2022-04-14 [1] Bioconductor
+##  utf8                                1.2.2      2021-07-24 [1] CRAN (R 4.1.0)
+##  vctrs                               0.4.1      2022-04-13 [1] CRAN (R 4.1.2)
+##  vipor                               0.4.5      2017-03-22 [1] CRAN (R 4.1.0)
+##  viridis                             0.6.2      2021-10-13 [1] CRAN (R 4.1.0)
+##  viridisLite                         0.4.0      2021-04-13 [1] CRAN (R 4.1.0)
+##  webshot                             0.5.3      2022-04-14 [1] CRAN (R 4.1.2)
+##  withr                               2.5.0      2022-03-03 [1] CRAN (R 4.1.2)
+##  xfun                                0.30       2022-03-02 [1] CRAN (R 4.1.2)
+##  XML                                 3.99-0.9   2022-02-24 [1] CRAN (R 4.1.2)
+##  xml2                                1.3.3      2021-11-30 [1] CRAN (R 4.1.0)
+##  xtable                              1.8-4      2019-04-21 [1] CRAN (R 4.1.0)
+##  XVector                             0.34.0     2021-10-26 [1] Bioconductor
+##  yaml                                2.3.5      2022-02-21 [1] CRAN (R 4.1.2)
+##  yulab.utils                         0.0.4      2021-10-09 [1] CRAN (R 4.1.0)
+##  zlibbioc                            1.40.0     2021-10-26 [1] Bioconductor
+## 
+##  [1] /Library/Frameworks/R.framework/Versions/4.1/Resources/library
+## 
+## ──────────────────────────────────────────────────────────────────────────────</code></pre>
+</div>
 </div>
 
 

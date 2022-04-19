@@ -19,3 +19,9 @@ __ChIP Profiling of TF ERa in 5 Breast Cancer Cell Lines__ _(Portfolio)_
 - [View HTML page](https://c0rd3ll.github.io/portfolio-0.01/ChIP.html)
 - [View Code (Rmd)](./ChIP.Rmd)
 
+
+## Pipelines 
+
+- ChIP-seq
+
+- RNA-seq
