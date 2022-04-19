@@ -97,41 +97,70 @@ kbl(tamoxifen[["peaks"]][[1]])  %>%
 <br>
 <br>
 
-## Qualitly
+## Qualitly Check
 
-[Sample File (_Not representitative of data_)](./multiqc_report.html)
+[MultiQC Sample File (_Not representitative of data_)](./multiqc_report.html)
+
+<br>
+<br>
+<br>
 
 ## Pre-Analysis 
 
-```{r, engine = 'bash', eval = FALSE}
-bowtie2 -p 20 -x mm9_genome -U file1.fastq -S file1.sam 
+The following script takes files in /fastq folder ending in .fastq.gz and converts them into bam files 
 
-samtools view -bS file1.sam > file1.bam
-              
-samtools sort file1.bam file1_sorted
+```{r ,engine= 'bash',eval= FALSE}
+#!/bin/bash
 
-samtools index file1_sorted.bam
+# set variables
+INDEX= ./bowtie2/dm6
+DATA_DIR= ./Data/ChIP-Seq
+
+
+for f in ./fastq
+ do
+ 
+   base=$(basename $f .fastq.gz)
+   echo $base
+   echo $f
+   echo $f >> bowtie_log.txt
+   bowtie2 -x $INDEX -p 2 -U $DATA_DIR/$f 2>>bowtie_log.txt | samtools view -S -b -o $base.bam -
+   echo "sorting $base.bam"
+   samtools sort $base.bam -T $base -o $base.bam
+   echo "indexing"
+   samtools index $base.bam
+   
+done
 ```
 
 Converting BAM to BED (need this for Differential Binding Analysis)
 
 ```{r, engine = 'bash', eval = FALSE}
-bamToBed -i file_sorted.bam
+cd ./directory
+
+for x in *.bam ; do
+    echo "print current:$x";
+    bedtools bamTobed -i "$x" > "${x%.bam}.bed.gz";
+done
+
+echo "done"
 ```
 
-Using the mapped info from BAM file, we will perform peak calling using the MACS 2.0 program.If necessary
+Peak calling with MACS 2.0.
 
 ```{r, engine = 'bash', eval = FALSE}
-macs2 callpeak -t file1.bam -f BAM -g mm -n file1_label -p 1e-3 --to-large
+
+for x in *.bam ; do
+    echo "print current:$x";
+    macs2 callpeak -t ${x} -f BAM -g mm -n ${x%.bam}_label -p 1e-3 --to-large;
+done
+
+echo "done"
 ```
 
-```{r, engine = 'bash', eval = FALSE}
-macs14 -t file1.bam -f BAM -g h -n file1_label
-```
 <br>
 <br>
 <br>
-
 
 # Differential Binding Analysis
 
@@ -329,6 +358,7 @@ plotAnnoBar(list.annotations)
 __Distance to TSS Comparisons__
 
 ```{r,echo=FALSE,message=FALSE,results='hide',fig.keep='all'}
+
 # plotting distance to TSS for all cell lines in our annotation list
 plotDistToTSS(list.annotations)
 ```
@@ -343,31 +373,32 @@ plotDistToTSS(list.annotations)
 ```{r,eval = FALSE}
 #biomart
 ensembl <- useEnsembl(biomart = "genes", dataset = "hsapiens_gene_ensembl",version = 95)
-# running query: extracting ENTREZID for genes on chromosome 1 and 2
+
+# running query: extracting ENTREZID 
 genes.chr18 <- getBM(attributes= "entrezgene", filters=c("chromosome_name"), values=18, mart=ensembl)
-# reformatting output to character string (as required later on by clusterProfiler functions)
+
+# reformatting output to character string 
 genes.universe <- as.character(as.numeric(as.matrix(genes.chr18)))
 ```
 
 ```{r,eval = FALSE}
-# a: selecting annotated peaks for functional enrichment in object
+#1 selecting annotated peaks for functional enrichment 
 data.peaks_ann <- peaks.MCF7_ann
 #x <- as.data.frame(data.peaks_ann)
 
-# a: fining enriched Reactome pathways using chromosome 1 and 2 genes as a background
+#1 finding enriched Reactome pathways using chromosome 
 pathway.reac1 <- enrichPathway(as.data.frame(data.peaks_ann)$geneId, universe = genes.universe)
 
-# a: previewing enriched Reactome pathways
+#1 previewing pathways
 head(pathway.reac1)
 
-# b: selecting peaks
+#2 selecting peaks
 data.peaks <- peaks.T47D
-# b: running seq2gene function for many-to-many mapping based on sequence regions (note: no prior peaks annotations here, many-to-many mapping is done from the sequence)
+#2  seq2gene function for many-to-many mapping based on sequence regions 
 genes.m2m <- seq2gene(data.peaks, tssRegion = c(-1000, 1000), flankDistance = 3000, TxDb=txdb)
-# b: finding enriched Reactome pathways given many to many mapping and chromosome 1 and 2 genes as a background
+#2 finding enriched Reactome pathways 
 pathway.reac2 <- enrichPathway(genes.m2m, universe = genes.universe)
-# b: creating dotplot to visualise enrichment results
-
+#2 visualise enrichment results
 dotplot(pathway.reac2)
 
 ```
@@ -395,11 +426,3 @@ compMF.flr <- simplify(compMF, cutoff = 0.7, by = "p.adjust", select_fun = min, 
 # creating a dotplot on reduced GO terms
 dotplot(compMF.flr)
 ```
-
-
-```{r}
-
-```
-
-
-
