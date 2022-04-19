@@ -11,7 +11,7 @@ output:
 <br>
 <br>
 
-# Introduction {.tabset .tabset-fade .tabset-pills}
+# {.tabset .tabset-fade}
 
 ## Objective 
 
@@ -21,8 +21,9 @@ The data for ChIP-seq peak calling are stacks of aligned reads across a genome. 
 <br>
 <br>
 
-
 ## About the Data.1
+
+The dataset for this example consists of ChIPs against the transcription factor ERa using five breast cancer cell lines. Three of these cell lines are responsive to tamoxifen treatment, while two others are resistant to tamoxifen. There are eleven total sequenced libraries, at least two replicates for each of the cell lines. Of the five cell lines, two are based on MCF7 cells: the standard MCF7 tamoxifen responsive line, and MCF7 cells specially treated with tamoxifen until a tamoxifen resistant version of the cell line is obtained. For each sample, there is an associated peakset derived using the MACS peak caller[1], for a total of eleven peaksets.To save time and space in the package, only data for chromosome 18 is used for the vignette.
 
 Tamoxifen is a nonsteroidal antiestrogen that has found successful applications for each stage of breast cancer in the treatment of selected patients. Tamoxifen was originally introduced for the treatment of advanced disease in postmenopausal women; however, the drug is now also available for the palliative treatment of premenopausal women with estrogen receptor (ER) positive disease. The proven efficacy of tamoxifen and the low incidence of side effects made the drug an ideal agent to test as an adjuvant therapy for women with node-positive breast cancer. doi: 10.1016/0147-0272(92)90002-6. PMID: 1582240.
 
@@ -73,7 +74,7 @@ res <- results(ddseq)
 resDF <- as.data.frame(res)
 ```
 
-### Samples.1
+### Samples
 ```{r,echo=FALSE}
 kbl(samples)  %>%
   kable_paper() %>%
@@ -85,16 +86,20 @@ kbl(samples)  %>%
 <br>
 
 
-### Samples.2
+### BT474.1 Peaks
 ```{r,echo=FALSE}
-#kbl(head())  %>%
-#  kable_paper() %>%
-#  scroll_box(width = "100%", height = "200px")
+kbl(tamoxifen[["peaks"]][[1]])  %>%
+  kable_paper() %>%
+  scroll_box(width = "100%", height = "200px")
 ```
 
 <br>
 <br>
 <br>
+
+## Qualitly
+
+[Sample File (_Not representitative of data_)](./multiqc_report.html)
 
 ## Pre-Analysis 
 

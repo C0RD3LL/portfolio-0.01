@@ -70,9 +70,8 @@ _Reference_: https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE176221
 ### Multiqc Report
 
 
-#### [Click Here](./multiqc_report.html)
+#### [Sample File (_Not representitative of data_)](./multiqc_report.html)
 
-_Multiqc report not representative of preprocessing data for this analysis._
 
  <br> 
  <br> 

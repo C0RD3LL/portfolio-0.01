@@ -4,4 +4,4 @@ title: "About This Website"
 
 More about this website.
 
-## <br>
+[Sample File (_Not representitative of data_)](./multiqc_report.html)
