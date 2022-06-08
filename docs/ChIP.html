@@ -44,6 +44,8 @@
 <script src="site_libs/GlimmaV2-1/makeTooltip.js"></script>
 <script src="site_libs/GlimmaV2-1/saveTools.js"></script>
 <script src="site_libs/glimmaMDS-binding-2.4.0/glimmaMDS.js"></script>
+<link href="site_libs/font-awesome-5.1.0/css/all.css" rel="stylesheet" />
+<link href="site_libs/font-awesome-5.1.0/css/v4-shims.css" rel="stylesheet" />
 
 <style type="text/css">
   code{white-space: pre-wrap;}
@@ -338,25 +340,16 @@ $(document).ready(function () {
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
       </button>
-      <a class="navbar-brand" href="index.html">Cordell</a>
+      <a class="navbar-brand" href="index.html">Cordell Browne</a>
     </div>
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
         <li>
-  <a href="index.html">RNA-Seq</a>
-</li>
-<li>
-  <a href="functional.html">Functional Analysis</a>
-</li>
-<li>
-  <a href="ChIP.html">ChIP-Seq</a>
-</li>
-<li>
-  <a href="https://github.com/C0RD3LL/Portfolio">GitHub</a>
+  <a href="portfolio.html">Portfolio</a>
 </li>
 <li class="dropdown">
   <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-    Archive
+    Archived
      
     <span class="caret"></span>
   </a>
@@ -364,18 +357,27 @@ $(document).ready(function () {
     <li>
       <a href="./rnaseqv1/rna-seq.html">RNA-Seq (Original)</a>
     </li>
-    <li>
-      <a href="./bench/benchmark.html">Benchmark Experiment</a>
-    </li>
+    <li class="dropdown-header">Benchmark Experiment</li>
     <li class="dropdown-header">Wet Lab Research</li>
-    <li class="dropdown-header">Place Holder 2</li>
-    <li class="dropdown-header">Place Holder 3</li>
-    <li class="dropdown-header">Place Holder 4</li>
+    <li class="dropdown-header">Linear Regression</li>
+    <li class="dropdown-header">Neural Net</li>
+    <li class="dropdown-header">Dashboard</li>
   </ul>
 </li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
-        
+        <li>
+  <a href="https://github.com/C0RD3LL/Portfolio">
+    <span class="fa fa-github"></span>
+     
+  </a>
+</li>
+<li>
+  <a href="contact.html">
+    <span class="fa fa-envelope"></span>
+     
+  </a>
+</li>
       </ul>
     </div><!--/.nav-collapse -->
   </div><!--/.container -->
@@ -73600,8 +73602,8 @@ chr18
 <p><br> <br></p>
 <p><strong>Multidimensional scaling (MDS)</strong> is a popular approach for graphically representing relationships between objects (e.g. plots or samples) in multidimensional space. Dimension reduction via MDS is achieved by taking the original set of samples and calculating a dissimilarity (distance) measure for each pairwise comparison of samples. The samples are then usually represented graphically in two dimensions such that the distance between points on the plot approximates their multivariate dissimilarity as closely as possible.</p>
 <p><em>I recommend to color by “tissue” and shape by “condition”</em></p>
-<div id="htmlwidget-c498362873a9d693e969" style="width:800px;height:450px;" class="glimmaMDS html-widget"></div>
-<script type="application/json" data-for="htmlwidget-c498362873a9d693e969">{"x":{"data":{"mdsData":{"dim1":[-0.512857199285564,-0.590034635563711,1.48050599276988,1.18896196410124,1.28857847707895,-0.910960581260104,-0.964964695810047,1.63157682847133,1.40999971511056,-2.01948472243788,-2.00132114317467],"dim2":[-1.5143143684107,-1.6693832554104,0.776920875741672,0.721027331598259,0.598884356456865,0.702332504294507,0.281839335910233,-0.529746887935494,-0.436410147228023,0.567331087249443,0.501519167733637],"dim3":[0.346937997835066,0.342631694736901,0.697508745184214,0.494478194201397,0.629383286556575,-1.69714509056224,-1.24231219529334,-0.516381911679882,-0.600345324542354,0.813863550520265,0.731381053043406],"dim4":[-0.663815170038446,-0.604410430495303,-0.626179075478736,-0.436369895703423,-0.491499871710906,-0.787328100424526,-0.15924428091844,1.18084663070506,1.10704393620817,0.684599442711454,0.796356815145091],"dim5":[-0.138790285205448,0.0596938030018612,-0.333582019226522,0.398317991973694,0.205479665020088,-0.82456869031011,1.1262395716381,-0.277156559148325,0.020676935316413,-0.29162479517135,0.0553143821115977],"dim6":[-0.0917509597930508,0.123802242912926,-0.736553550214579,0.72175385995441,0.100290108588518,0.226837861810499,-0.383683439842663,-0.0995822876046837,0.118777851108853,-0.040566854935822,0.0606751680155896],"dim7":[-0.0340402353558764,0.0332184893292819,-0.0139935985182401,0.302005332527132,-0.277108584079739,-0.0413688857148968,0.100891414520357,0.665739963423187,-0.725864559345297,0.0646268293467084,-0.0741061661326139],"dim8":[0.187523692450502,-0.134997382416607,0.303095179425128,0.424635425764296,-0.75912369029283,-0.058886123145341,0.0192449753650488,-0.226206176671137,0.253764215070891,0.0450640060581797,-0.0541141216081294],"labels":["BT4741","BT4742","MCF71","MCF72","MCF73","T47D1","T47D2","MCF7r1","MCF7r2","ZR751","ZR752"],"Tissue":["BT474","BT474","MCF7","MCF7","MCF7","T47D","T47D","MCF7","MCF7","ZR75","ZR75"],"Factor":["ER","ER","ER","ER","ER","ER","ER","ER","ER","ER","ER"],"Condition":["Resistant","Resistant","Responsive","Responsive","Responsive","Responsive","Responsive","Resistant","Resistant","Responsive","Responsive"],"Treatment":["Full-Media","Full-Media","Full-Media","Full-Media","Full-Media","Full-Media","Full-Media","Full-Media","Full-Media","Full-Media","Full-Media"],"Peak_caller":["counts","counts","counts","counts","counts","counts","counts","counts","counts","counts","counts"],"Replicate":["1","2","1","2","3","1","2","1","2","1","2"],"sizeFactor":[0.809961019664126,0.823205624684335,0.429899304089376,0.456732255869754,0.578619105836017,0.496227809507736,1.83090873380412,0.765203859609421,0.736158303055218,0.877144536125204,3.1959394477547],"-":["0","0","0","0","0","0","0","0","0","0","0"],"- ":[0,0,0,0,0,0,0,0,0,0,0]},"eigenData":{"name":[1,2,3,4,5,6,7,8],"eigen":[0.41,0.17,0.15,0.12,0.05,0.03,0.02,0.02]},"features":{"numeric":["sizeFactor","- "],"discrete":["labels","Tissue","Factor","Condition","Treatment","Peak_caller","Replicate","-"],"all":["sizeFactor","- ","labels","Tissue","Factor","Condition","Treatment","Peak_caller","Replicate","-"]},"continuousColour":false,"dimlist":["dim1","dim2","dim3","dim4","dim5","dim6","dim7","dim8"]}},"evals":[],"jsHooks":[]}</script>
+<div id="htmlwidget-408403ecf0e9b9a160f4" style="width:800px;height:450px;" class="glimmaMDS html-widget"></div>
+<script type="application/json" data-for="htmlwidget-408403ecf0e9b9a160f4">{"x":{"data":{"mdsData":{"dim1":[-0.512857199285564,-0.590034635563711,1.48050599276988,1.18896196410124,1.28857847707895,-0.910960581260104,-0.964964695810047,1.63157682847133,1.40999971511056,-2.01948472243788,-2.00132114317467],"dim2":[-1.5143143684107,-1.6693832554104,0.776920875741672,0.721027331598259,0.598884356456865,0.702332504294507,0.281839335910233,-0.529746887935494,-0.436410147228023,0.567331087249443,0.501519167733637],"dim3":[0.346937997835066,0.342631694736901,0.697508745184214,0.494478194201397,0.629383286556575,-1.69714509056224,-1.24231219529334,-0.516381911679882,-0.600345324542354,0.813863550520265,0.731381053043406],"dim4":[-0.663815170038446,-0.604410430495303,-0.626179075478736,-0.436369895703423,-0.491499871710906,-0.787328100424526,-0.15924428091844,1.18084663070506,1.10704393620817,0.684599442711454,0.796356815145091],"dim5":[-0.138790285205448,0.0596938030018612,-0.333582019226522,0.398317991973694,0.205479665020088,-0.82456869031011,1.1262395716381,-0.277156559148325,0.020676935316413,-0.29162479517135,0.0553143821115977],"dim6":[-0.0917509597930508,0.123802242912926,-0.736553550214579,0.72175385995441,0.100290108588518,0.226837861810499,-0.383683439842663,-0.0995822876046837,0.118777851108853,-0.040566854935822,0.0606751680155896],"dim7":[-0.0340402353558764,0.0332184893292819,-0.0139935985182401,0.302005332527132,-0.277108584079739,-0.0413688857148968,0.100891414520357,0.665739963423187,-0.725864559345297,0.0646268293467084,-0.0741061661326139],"dim8":[0.187523692450502,-0.134997382416607,0.303095179425128,0.424635425764296,-0.75912369029283,-0.058886123145341,0.0192449753650488,-0.226206176671137,0.253764215070891,0.0450640060581797,-0.0541141216081294],"labels":["BT4741","BT4742","MCF71","MCF72","MCF73","T47D1","T47D2","MCF7r1","MCF7r2","ZR751","ZR752"],"Tissue":["BT474","BT474","MCF7","MCF7","MCF7","T47D","T47D","MCF7","MCF7","ZR75","ZR75"],"Factor":["ER","ER","ER","ER","ER","ER","ER","ER","ER","ER","ER"],"Condition":["Resistant","Resistant","Responsive","Responsive","Responsive","Responsive","Responsive","Resistant","Resistant","Responsive","Responsive"],"Treatment":["Full-Media","Full-Media","Full-Media","Full-Media","Full-Media","Full-Media","Full-Media","Full-Media","Full-Media","Full-Media","Full-Media"],"Peak_caller":["counts","counts","counts","counts","counts","counts","counts","counts","counts","counts","counts"],"Replicate":["1","2","1","2","3","1","2","1","2","1","2"],"sizeFactor":[0.809961019664126,0.823205624684335,0.429899304089376,0.456732255869754,0.578619105836017,0.496227809507736,1.83090873380412,0.765203859609421,0.736158303055218,0.877144536125204,3.1959394477547],"-":["0","0","0","0","0","0","0","0","0","0","0"],"- ":[0,0,0,0,0,0,0,0,0,0,0]},"eigenData":{"name":[1,2,3,4,5,6,7,8],"eigen":[0.41,0.17,0.15,0.12,0.05,0.03,0.02,0.02]},"features":{"numeric":["sizeFactor","- "],"discrete":["labels","Tissue","Factor","Condition","Treatment","Peak_caller","Replicate","-"],"all":["sizeFactor","- ","labels","Tissue","Factor","Condition","Treatment","Peak_caller","Replicate","-"]},"continuousColour":false,"dimlist":["dim1","dim2","dim3","dim4","dim5","dim6","dim7","dim8"]}},"evals":[],"jsHooks":[]}</script>
 <div id="section-1" class="section level2 tabset tabset-fade tabset-pills">
 <h2 class="tabset tabset-fade tabset-pills"></h2>
 <p><br> <br></p>
@@ -73762,7 +73764,7 @@ chr18
 ##  collate  en_US.UTF-8
 ##  ctype    en_US.UTF-8
 ##  tz       America/New_York
-##  date     2022-04-19
+##  date     2022-06-08
 ##  pandoc   2.14.0.3 @ /Applications/RStudio.app/Contents/MacOS/pandoc/ (via rmarkdown)
 ## 
 ## ─ Packages ───────────────────────────────────────────────────────────────────
