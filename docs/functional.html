@@ -1,0 +1,652 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+<meta name="author" content="Cordell Browne" />
+
+
+<title>Functional Enrichment Analysis</title>
+
+<script src="site_libs/header-attrs-2.13/header-attrs.js"></script>
+<script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/cosmo.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<script src="site_libs/htmlwidgets-1.5.4/htmlwidgets.js"></script>
+<script src="site_libs/plotly-binding-4.10.0/plotly.js"></script>
+<script src="site_libs/typedarray-0.1/typedarray.min.js"></script>
+<link href="site_libs/crosstalk-1.2.0/css/crosstalk.min.css" rel="stylesheet" />
+<script src="site_libs/crosstalk-1.2.0/js/crosstalk.min.js"></script>
+<link href="site_libs/plotly-htmlwidgets-css-2.5.1/plotly-htmlwidgets.css" rel="stylesheet" />
+<script src="site_libs/plotly-main-2.5.1/plotly-latest.min.js"></script>
+<link href="site_libs/font-awesome-5.1.0/css/all.css" rel="stylesheet" />
+<link href="site_libs/font-awesome-5.1.0/css/v4-shims.css" rel="stylesheet" />
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+<style type="text/css">code{white-space: pre;}</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+
+
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+details > summary > p:only-child {
+  display: inline;
+}
+pre code {
+  padding: 0;
+}
+</style>
+
+
+<style type="text/css">
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #adb5bd;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script type="text/javascript">
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.tab('show');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+
+  // Navbar adjustments
+  var navHeight = $(".navbar").first().height() + 15;
+  var style = document.createElement('style');
+  var pt = "padding-top: " + navHeight + "px; ";
+  var mt = "margin-top: -" + navHeight + "px; ";
+  var css = "";
+  // offset scroll position for anchor links (for fixed navbar)
+  for (var i = 1; i <= 6; i++) {
+    css += ".section h" + i + "{ " + pt + mt + "}\n";
+  }
+  style.innerHTML = "body {" + pt + "padding-bottom: 40px; }\n" + css;
+  document.head.appendChild(style);
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-bs-toggle="collapse" data-target="#navbar" data-bs-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">Cordell Browne</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="portfolio.html">Portfolio</a>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+    Archived
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="./rnaseqv1/rna-seq.html">RNA-Seq (Original)</a>
+    </li>
+    <li class="dropdown-header">Benchmark Experiment</li>
+    <li class="dropdown-header">Wet Lab Research</li>
+    <li class="dropdown-header">Linear Regression</li>
+    <li class="dropdown-header">Neural Net</li>
+    <li class="dropdown-header">Dashboard</li>
+  </ul>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="https://github.com/C0RD3LL/Portfolio">
+    <span class="fa fa-github"></span>
+     
+  </a>
+</li>
+<li>
+  <a href="contact.html">
+    <span class="fa fa-envelope"></span>
+     
+  </a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div id="header">
+
+
+
+<h1 class="title toc-ignore">Functional Enrichment Analysis</h1>
+<h4 class="author">Cordell Browne</h4>
+<h4 class="date"><a href="mailto:cordell@knights.ucf.edu" class="email">cordell@knights.ucf.edu</a></h4>
+
+</div>
+
+
+<p><br></p>
+<div id="enrichr" class="section level1">
+<h1>Enrichr</h1>
+<p>Enrichment analysis is a popular method for analyzing gene sets generated by genome-wide experiments. Enrichr currently contains a large collection of diverse gene set libraries available for analysis and download. Overall, Enrichr is a comprehensive resource for curated gene sets and a search engine that accumulates biological knowledge for further biological discoveries.</p>
+<p>Enrichr is freely available at: <a href="http://amp.pharm.mssm.edu/Enrichr" class="uri">http://amp.pharm.mssm.edu/Enrichr</a>.</p>
+<p><a href="https://cran.r-project.org/web/packages/enrichR/vignettes/enrichR.html" class="uri">https://cran.r-project.org/web/packages/enrichR/vignettes/enrichR.html</a></p>
+<pre><code>## Welcome to enrichR
+## Checking connection ...</code></pre>
+<pre><code>## Enrichr ... Connection is Live!
+## FlyEnrichr ... Connection is available!
+## WormEnrichr ... Connection is available!
+## YeastEnrichr ... Connection is available!
+## FishEnrichr ... Connection is available!
+## OxEnrichr ... Connection is available!
+## Loading required package: ggplot2
+## 
+## Attaching package: &#39;plotly&#39;
+## 
+## The following object is masked from &#39;package:ggplot2&#39;:
+## 
+##     last_plot
+## 
+## The following object is masked from &#39;package:stats&#39;:
+## 
+##     filter
+## 
+## The following object is masked from &#39;package:graphics&#39;:
+## 
+##     layout
+## 
+## Connection changed to https://maayanlab.cloud/Enrichr/
+## Connection is Live!</code></pre>
+<pre><code>## Uploading data to Enrichr... Done.
+##   Querying GO_Molecular_Function_2015... Done.
+##   Querying GO_Cellular_Component_2015... Done.
+##   Querying GO_Biological_Process_2015... Done.
+##   Querying Human_Phenotype_Ontology... Done.
+##   Querying BioPlanet_2019... Done.
+##   Querying WikiPathway_2021_Human... Done.
+##   Querying KEGG_2021_Human... Done.
+##   Querying DisGeNET... Done.
+##   Querying PheWeb_2019... Done.
+##   Querying Human_Gene_Atlas... Done.
+##   Querying Descartes_Cell_Types_and_Tissue_2021... Done.
+##   Querying ChEA_2016... Done.
+##   Querying ENCODE_and_ChEA_Consensus_TFs_from_ChIP-X... Done.
+## Parsing results... Done.</code></pre>
+<p><br></p>
+<div id="ontologies" class="section level2 tabset tabset-fade">
+<h2 class="tabset tabset-fade">Ontologies</h2>
+<p><br> The top 9 results from each of the databases of interest relating to gene ontology are displayed below. <br></p>
+<p>A common practice that is arguably quite reasonable, albeit not entirely devoid of shortcomings, is to: (a) apply an adjusted p-value (“q-value”) cutoff of 0.01-0.1 to filter enriched terms, (b) use the “combined score” output (which has been extensively shown to outperform other ranking metrics due to its inherent z-score permutation background correction on Fisher’s exact test p-value1) to sort those filtered terms, in descending order, and then (c) select top X highest ranked terms to identify significantly over-represented functional categories.</p>
+<div id="molecular-function" class="section level3">
+<h3>Molecular Function</h3>
+<div id="htmlwidget-8534198e687bf369342b" style="width:672px;height:480px;" class="plotly html-widget"></div>
+<script type="application/json" data-for="htmlwidget-8534198e687bf369342b">{"x":{"visdat":{"1fa24b8435a":["function () ","plotlyVisDat"]},"cur_data":"1fa24b8435a","attrs":{"1fa24b8435a":{"x":{},"y":{},"marker":{"color":{},"size":10,"opacity":0.9,"colorscale":"YlGnBu","colorbar":{"title":"Adj. P-Value"}},"textposition":"auto","hoverinfo":"text","hovertext":["structural constituent of epidermis (GO:0030280) <br> Adj. P-Value: 0.0814271929358222 <br> Combined Score: 1138.86372803752","chloride channel regulator activity (GO:0017081) <br> Adj. P-Value: 0.0814271929358222 <br> Combined Score: 973.89251976686","bicarbonate transmembrane transporter activity (GO:0015106) <br> Adj. P-Value: 0.0814271929358222 <br> Combined Score: 847.704661538015","neuropeptide hormone activity (GO:0005184) <br> Adj. P-Value: 0.116723790245869 <br> Combined Score: 288.716456708675","intracellular ligand-gated ion channel activity (GO:0005217) <br> Adj. P-Value: 0.116723790245869 <br> Combined Score: 273.329860838005","ion channel inhibitor activity (GO:0008200) <br> Adj. P-Value: 0.121154364325299 <br> Combined Score: 174.358108789193","channel inhibitor activity (GO:0016248) <br> Adj. P-Value: 0.121154364325299 <br> Combined Score: 167.927575299859","chloride channel activity (GO:0005254) <br> Adj. P-Value: 0.14371085803116 <br> Combined Score: 64.9619085278147","anion channel activity (GO:0005253) <br> Adj. P-Value: 0.14371085803116 <br> Combined Score: 56.3678831493627"],"alpha_stroke":1,"sizes":[10,100],"spans":[1,20],"type":"bar"}},"layout":{"margin":{"b":40,"l":60,"t":100,"r":10},"title":"GO_Molecular_Function_2015","yaxis":{"domain":[0,1],"automargin":true,"zerolinecolor":"#ffff","zerolinewidth":2,"gridcolor":"ffff","title":"","tickmode":"array","margin":{"r":700},"type":"category","categoryorder":"array","categoryarray":["anion channel activity (GO:0005253)","chloride channel activity (GO:0005254)","channel inhibitor activity (GO:0016248)","ion channel inhibitor activity (GO:0008200)","intracellular ligand-gated ion channel activity (GO:0005217)","neuropeptide hormone activity (GO:0005184)","bicarbonate transmembrane transporter activity (GO:0015106)","chloride channel regulator activity (GO:0017081)","structural constituent of epidermis (GO:0030280)"]},"xaxis":{"domain":[0,1],"automargin":true,"title":"Combined.Score"},"hovermode":"closest","showlegend":false},"source":"A","config":{"modeBarButtonsToAdd":["hoverclosest","hovercompare"],"showSendToCloud":false},"data":[{"x":[1138.86372803752,973.89251976686,847.704661538015,288.716456708675,273.329860838005,174.358108789193,167.927575299859,64.9619085278147,56.3678831493627],"y":["structural constituent of epidermis (GO:0030280)","chloride channel regulator activity (GO:0017081)","bicarbonate transmembrane transporter activity (GO:0015106)","neuropeptide hormone activity (GO:0005184)","intracellular ligand-gated ion channel activity (GO:0005217)","ion channel inhibitor activity (GO:0008200)","channel inhibitor activity (GO:0016248)","chloride channel activity (GO:0005254)","anion channel activity (GO:0005253)"],"marker":{"color":[0.0814271929358222,0.0814271929358222,0.0814271929358222,0.116723790245869,0.116723790245869,0.121154364325299,0.121154364325299,0.14371085803116,0.14371085803116],"size":10,"opacity":0.9,"colorscale":"YlGnBu","colorbar":{"title":"Adj. P-Value"},"line":{"color":"rgba(31,119,180,1)"}},"textposition":["auto","auto","auto","auto","auto","auto","auto","auto","auto"],"hoverinfo":["text","text","text","text","text","text","text","text","text"],"hovertext":["structural constituent of epidermis (GO:0030280) <br> Adj. P-Value: 0.0814271929358222 <br> Combined Score: 1138.86372803752","chloride channel regulator activity (GO:0017081) <br> Adj. P-Value: 0.0814271929358222 <br> Combined Score: 973.89251976686","bicarbonate transmembrane transporter activity (GO:0015106) <br> Adj. P-Value: 0.0814271929358222 <br> Combined Score: 847.704661538015","neuropeptide hormone activity (GO:0005184) <br> Adj. P-Value: 0.116723790245869 <br> Combined Score: 288.716456708675","intracellular ligand-gated ion channel activity (GO:0005217) <br> Adj. P-Value: 0.116723790245869 <br> Combined Score: 273.329860838005","ion channel inhibitor activity (GO:0008200) <br> Adj. P-Value: 0.121154364325299 <br> Combined Score: 174.358108789193","channel inhibitor activity (GO:0016248) <br> Adj. P-Value: 0.121154364325299 <br> Combined Score: 167.927575299859","chloride channel activity (GO:0005254) <br> Adj. P-Value: 0.14371085803116 <br> Combined Score: 64.9619085278147","anion channel activity (GO:0005253) <br> Adj. P-Value: 0.14371085803116 <br> Combined Score: 56.3678831493627"],"type":"bar","orientation":"h","error_y":{"color":"rgba(31,119,180,1)"},"error_x":{"color":"rgba(31,119,180,1)"},"xaxis":"x","yaxis":"y","frame":null}],"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.2,"selected":{"opacity":1},"debounce":0},"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot","plotly_sunburstclick"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script>
+<ol style="list-style-type: decimal">
+<li>Bicarbonate transport proteins facilitate the movement of membrane-impermeant HCO3− across membranes to accelerate disposal of waste CO2, control cellular and whole-body pH, and to regulate fluid movement and acid/base secretion. Their high metabolic rate make them of interest in squamous cell carcinomas .</li>
+<li>Chloride channels is associated with CFTR is a cyclic AMP (cAMP)-activated chloride (Cl-) channel and a regulator of outwardly rectifying Cl- channels (ORCCs) in airway epithelia (CFTR is discussed further in this analysis).</li>
+</ol>
+<ol style="list-style-type: decimal">
+<li><p><a href="https://doi.org/10.1042/BJ20081634" class="uri">https://doi.org/10.1042/BJ20081634</a></p></li>
+<li><p><a href="https://doi.org/10.1073/pnas.95.5.2674" class="uri">https://doi.org/10.1073/pnas.95.5.2674</a></p></li>
+</ol>
+</div>
+<div id="cellular-component" class="section level3">
+<h3>Cellular Component</h3>
+<div id="htmlwidget-3d655b8e03ae4e159907" style="width:672px;height:480px;" class="plotly html-widget"></div>
+<script type="application/json" data-for="htmlwidget-3d655b8e03ae4e159907">{"x":{"visdat":{"1fa21e94ba62":["function () ","plotlyVisDat"]},"cur_data":"1fa21e94ba62","attrs":{"1fa21e94ba62":{"x":{},"y":{},"marker":{"color":{},"size":10,"opacity":0.9,"colorscale":"YlGnBu","colorbar":{"title":"Adj. P-Value"}},"textposition":"auto","hoverinfo":"text","hovertext":["alpha-amino-3-hydroxy-5-methyl-4-isoxazolepropionic acid selective glutamate receptor complex (GO:0032281) <br> Adj. P-Value: 0.128229706292443 <br> Combined Score: 224.098156042853","neuron projection membrane (GO:0032589) <br> Adj. P-Value: 0.133269800757829 <br> Combined Score: 167.927575299859","ionotropic glutamate receptor complex (GO:0008328) <br> Adj. P-Value: 0.133622427466002 <br> Combined Score: 108.259234494771","chloride channel complex (GO:0034707) <br> Adj. P-Value: 0.133622427466002 <br> Combined Score: 105.422368949113","intermediate filament (GO:0005882) <br> Adj. P-Value: 0.128229706292443 <br> Combined Score: 81.9988691363917","microvillus (GO:0005902) <br> Adj. P-Value: 0.13819356378731 <br> Combined Score: 81.0585186158868","basement membrane (GO:0005604) <br> Adj. P-Value: 0.157764392217459 <br> Combined Score: 59.3524523134869","ion channel complex (GO:0034702) <br> Adj. P-Value: 0.128229706292443 <br> Combined Score: 55.1861426508222","transmembrane transporter complex (GO:1902495) <br> Adj. P-Value: 0.128229706292443 <br> Combined Score: 47.416737455113"],"alpha_stroke":1,"sizes":[10,100],"spans":[1,20],"type":"bar"}},"layout":{"margin":{"b":40,"l":60,"t":100,"r":10},"title":"GO_Cellular_Component_2015","yaxis":{"domain":[0,1],"automargin":true,"zerolinecolor":"#ffff","zerolinewidth":2,"gridcolor":"ffff","title":"","tickmode":"array","margin":{"r":700},"type":"category","categoryorder":"array","categoryarray":["transmembrane transporter complex (GO:1902495)","ion channel complex (GO:0034702)","basement membrane (GO:0005604)","microvillus (GO:0005902)","intermediate filament (GO:0005882)","chloride channel complex (GO:0034707)","ionotropic glutamate receptor complex (GO:0008328)","neuron projection membrane (GO:0032589)","alpha-amino-3-hydroxy-5-methyl-4-isoxazolepropionic acid selective glutamate receptor complex (GO:0032281)"]},"xaxis":{"domain":[0,1],"automargin":true,"title":"Combined.Score"},"hovermode":"closest","showlegend":false},"source":"A","config":{"modeBarButtonsToAdd":["hoverclosest","hovercompare"],"showSendToCloud":false},"data":[{"x":[224.098156042853,167.927575299859,108.259234494771,105.422368949113,81.9988691363917,81.0585186158868,59.3524523134869,55.1861426508222,47.416737455113],"y":["alpha-amino-3-hydroxy-5-methyl-4-isoxazolepropionic acid selective glutamate receptor complex (GO:0032281)","neuron projection membrane (GO:0032589)","ionotropic glutamate receptor complex (GO:0008328)","chloride channel complex (GO:0034707)","intermediate filament (GO:0005882)","microvillus (GO:0005902)","basement membrane (GO:0005604)","ion channel complex (GO:0034702)","transmembrane transporter complex (GO:1902495)"],"marker":{"color":[0.128229706292443,0.133269800757829,0.133622427466002,0.133622427466002,0.128229706292443,0.13819356378731,0.157764392217459,0.128229706292443,0.128229706292443],"size":10,"opacity":0.9,"colorscale":"YlGnBu","colorbar":{"title":"Adj. P-Value"},"line":{"color":"rgba(31,119,180,1)"}},"textposition":["auto","auto","auto","auto","auto","auto","auto","auto","auto"],"hoverinfo":["text","text","text","text","text","text","text","text","text"],"hovertext":["alpha-amino-3-hydroxy-5-methyl-4-isoxazolepropionic acid selective glutamate receptor complex (GO:0032281) <br> Adj. P-Value: 0.128229706292443 <br> Combined Score: 224.098156042853","neuron projection membrane (GO:0032589) <br> Adj. P-Value: 0.133269800757829 <br> Combined Score: 167.927575299859","ionotropic glutamate receptor complex (GO:0008328) <br> Adj. P-Value: 0.133622427466002 <br> Combined Score: 108.259234494771","chloride channel complex (GO:0034707) <br> Adj. P-Value: 0.133622427466002 <br> Combined Score: 105.422368949113","intermediate filament (GO:0005882) <br> Adj. P-Value: 0.128229706292443 <br> Combined Score: 81.9988691363917","microvillus (GO:0005902) <br> Adj. P-Value: 0.13819356378731 <br> Combined Score: 81.0585186158868","basement membrane (GO:0005604) <br> Adj. P-Value: 0.157764392217459 <br> Combined Score: 59.3524523134869","ion channel complex (GO:0034702) <br> Adj. P-Value: 0.128229706292443 <br> Combined Score: 55.1861426508222","transmembrane transporter complex (GO:1902495) <br> Adj. P-Value: 0.128229706292443 <br> Combined Score: 47.416737455113"],"type":"bar","orientation":"h","error_y":{"color":"rgba(31,119,180,1)"},"error_x":{"color":"rgba(31,119,180,1)"},"xaxis":"x","yaxis":"y","frame":null}],"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.2,"selected":{"opacity":1},"debounce":0},"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot","plotly_sunburstclick"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script>
+<ol style="list-style-type: decimal">
+<li><p>Alpha-amino-3-hydroxy-5-methyl-4-isoxazolepropionic acid (AMPA) receptors are responsible for the bulk of fast excitatory synaptic transmission throughout the CNS and their modulation is the ultimate mechanism that underlies much of the plasticity of excitatory transmission that is expressed in the brain. Increasing the post-synaptic response to a stimulus is achieved either through increasing the number of AMPA receptors at the post-synaptic surface or by increasing the single channel conductance of the receptors expressed. This was shown to be the basis of LTP mechanisms. More recently, it has become clear that these two apparently different mechanisms to increase AMPA receptor response can be combined, with the insertion of Ca2+ permeable AMPA receptors that have a high conductance in response to tetanic stimulation. Thus the overall conductance of a synapse may be increased by receptor insertion rather than modification of existing receptors.</p></li>
+<li><p>Intermediate filament (IF) proteins are traditionally known for their roles in fostering structural integrity in cells and tissues. In cancer, IF proteins serve as diagnostic markers, as tumor cells partially retain their original signature expression of IF proteins.The evidence already in hand establishes that IF proteins function beyond their classical roles as markers and serve as effectors of tumorgenesis</p></li>
+</ol>
+<ol style="list-style-type: decimal">
+<li><p><a href="https://doi.org/10.1073/pnas.0611698104" class="uri">https://doi.org/10.1073/pnas.0611698104</a></p></li>
+<li><p><a href="https://doi.org/10.3390/cells8050497" class="uri">https://doi.org/10.3390/cells8050497</a></p></li>
+</ol>
+</div>
+<div id="biological-process" class="section level3">
+<h3>Biological Process</h3>
+<div id="htmlwidget-70934cd8bbb7143a8529" style="width:672px;height:480px;" class="plotly html-widget"></div>
+<script type="application/json" data-for="htmlwidget-70934cd8bbb7143a8529">{"x":{"visdat":{"1fa26e2f704a":["function () ","plotlyVisDat"]},"cur_data":"1fa26e2f704a","attrs":{"1fa26e2f704a":{"x":{},"y":{},"marker":{"color":{},"size":10,"opacity":0.9,"colorscale":"YlGnBu","colorbar":{"title":"Adj. P-Value"}},"textposition":"auto","hoverinfo":"text","hovertext":["cellular ketone body metabolic process (GO:0046950) <br> Adj. P-Value: 0.0572316841777493 <br> Combined Score: 1138.86372803752","ketone body metabolic process (GO:1902224) <br> Adj. P-Value: 0.0572316841777493 <br> Combined Score: 973.89251976686","cholesterol biosynthetic process (GO:0006695) <br> Adj. P-Value: 0.0204307797899617 <br> Combined Score: 861.143135184482","embryonic body morphogenesis (GO:0010172) <br> Adj. P-Value: 0.0572316841777493 <br> Combined Score: 847.704661538015","regulation of short-term neuronal synaptic plasticity (GO:0048172) <br> Adj. P-Value: 0.0572316841777493 <br> Combined Score: 847.704661538015","sterol biosynthetic process (GO:0016126) <br> Adj. P-Value: 0.0204307797899617 <br> Combined Score: 719.759010327941","body morphogenesis (GO:0010171) <br> Adj. P-Value: 0.0619406750239418 <br> Combined Score: 668.130094535827","sperm capacitation (GO:0048240) <br> Adj. P-Value: 0.0619406750239418 <br> Combined Score: 602.214922551049","transepithelial transport (GO:0070633) <br> Adj. P-Value: 0.0619406750239418 <br> Combined Score: 602.214922551049"],"alpha_stroke":1,"sizes":[10,100],"spans":[1,20],"type":"bar"}},"layout":{"margin":{"b":40,"l":60,"t":100,"r":10},"title":"GO_Biological_Process_2015","yaxis":{"domain":[0,1],"automargin":true,"zerolinecolor":"#ffff","zerolinewidth":2,"gridcolor":"ffff","title":"","tickmode":"array","margin":{"r":700},"type":"category","categoryorder":"array","categoryarray":["sperm capacitation (GO:0048240)","transepithelial transport (GO:0070633)","body morphogenesis (GO:0010171)","sterol biosynthetic process (GO:0016126)","embryonic body morphogenesis (GO:0010172)","regulation of short-term neuronal synaptic plasticity (GO:0048172)","cholesterol biosynthetic process (GO:0006695)","ketone body metabolic process (GO:1902224)","cellular ketone body metabolic process (GO:0046950)"]},"xaxis":{"domain":[0,1],"automargin":true,"title":"Combined.Score"},"hovermode":"closest","showlegend":false},"source":"A","config":{"modeBarButtonsToAdd":["hoverclosest","hovercompare"],"showSendToCloud":false},"data":[{"x":[1138.86372803752,973.89251976686,861.143135184482,847.704661538015,847.704661538015,719.759010327941,668.130094535827,602.214922551049,602.214922551049],"y":["cellular ketone body metabolic process (GO:0046950)","ketone body metabolic process (GO:1902224)","cholesterol biosynthetic process (GO:0006695)","embryonic body morphogenesis (GO:0010172)","regulation of short-term neuronal synaptic plasticity (GO:0048172)","sterol biosynthetic process (GO:0016126)","body morphogenesis (GO:0010171)","sperm capacitation (GO:0048240)","transepithelial transport (GO:0070633)"],"marker":{"color":[0.0572316841777493,0.0572316841777493,0.0204307797899617,0.0572316841777493,0.0572316841777493,0.0204307797899617,0.0619406750239418,0.0619406750239418,0.0619406750239418],"size":10,"opacity":0.9,"colorscale":"YlGnBu","colorbar":{"title":"Adj. P-Value"},"line":{"color":"rgba(31,119,180,1)"}},"textposition":["auto","auto","auto","auto","auto","auto","auto","auto","auto"],"hoverinfo":["text","text","text","text","text","text","text","text","text"],"hovertext":["cellular ketone body metabolic process (GO:0046950) <br> Adj. P-Value: 0.0572316841777493 <br> Combined Score: 1138.86372803752","ketone body metabolic process (GO:1902224) <br> Adj. P-Value: 0.0572316841777493 <br> Combined Score: 973.89251976686","cholesterol biosynthetic process (GO:0006695) <br> Adj. P-Value: 0.0204307797899617 <br> Combined Score: 861.143135184482","embryonic body morphogenesis (GO:0010172) <br> Adj. P-Value: 0.0572316841777493 <br> Combined Score: 847.704661538015","regulation of short-term neuronal synaptic plasticity (GO:0048172) <br> Adj. P-Value: 0.0572316841777493 <br> Combined Score: 847.704661538015","sterol biosynthetic process (GO:0016126) <br> Adj. P-Value: 0.0204307797899617 <br> Combined Score: 719.759010327941","body morphogenesis (GO:0010171) <br> Adj. P-Value: 0.0619406750239418 <br> Combined Score: 668.130094535827","sperm capacitation (GO:0048240) <br> Adj. P-Value: 0.0619406750239418 <br> Combined Score: 602.214922551049","transepithelial transport (GO:0070633) <br> Adj. P-Value: 0.0619406750239418 <br> Combined Score: 602.214922551049"],"type":"bar","orientation":"h","error_y":{"color":"rgba(31,119,180,1)"},"error_x":{"color":"rgba(31,119,180,1)"},"xaxis":"x","yaxis":"y","frame":null}],"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.2,"selected":{"opacity":1},"debounce":0},"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot","plotly_sunburstclick"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script>
+</div>
+<div id="human-phenotype" class="section level3">
+<h3>Human Phenotype</h3>
+<div id="htmlwidget-923d6d9120d0396ca9d2" style="width:672px;height:480px;" class="plotly html-widget"></div>
+<script type="application/json" data-for="htmlwidget-923d6d9120d0396ca9d2">{"x":{"visdat":{"1fa2673d1c0":["function () ","plotlyVisDat"]},"cur_data":"1fa2673d1c0","attrs":{"1fa2673d1c0":{"x":{},"y":{},"marker":{"color":{},"size":10,"opacity":0.9,"colorscale":"YlGnBu","colorbar":{"title":"Adj. P-Value"}},"textposition":"auto","hoverinfo":"text","hovertext":["Rectal prolapse (HP:0002035) <br> Adj. P-Value: 0.0355230186668641 <br> Combined Score: 1138.86372803752","Ileus (HP:0002595) <br> Adj. P-Value: 0.0355230186668641 <br> Combined Score: 973.89251976686","Aplasia/Hypoplasia of the 4th metacarpal (HP:0010042) <br> Adj. P-Value: 0.0355230186668641 <br> Combined Score: 973.89251976686","Short 4th metacarpal (HP:0010044) <br> Adj. P-Value: 0.0355230186668641 <br> Combined Score: 973.89251976686","Mesomelia (HP:0003027) <br> Adj. P-Value: 0.0355230186668641 <br> Combined Score: 847.704661538015","Male infertility (HP:0003251) <br> Adj. P-Value: 0.0355230186668641 <br> Combined Score: 748.300345885436","Abnormality of the right ventricle (HP:0001707) <br> Adj. P-Value: 0.0355230186668641 <br> Combined Score: 748.300345885436","Short tibia (HP:0005736) <br> Adj. P-Value: 0.0355230186668641 <br> Combined Score: 748.300345885436","Abnormality of the 4th metacarpal (HP:0010012) <br> Adj. P-Value: 0.0355230186668641 <br> Combined Score: 668.130094535827"],"alpha_stroke":1,"sizes":[10,100],"spans":[1,20],"type":"bar"}},"layout":{"margin":{"b":40,"l":60,"t":100,"r":10},"title":"Human_Phenotype_Ontology","yaxis":{"domain":[0,1],"automargin":true,"zerolinecolor":"#ffff","zerolinewidth":2,"gridcolor":"ffff","title":"","tickmode":"array","margin":{"r":700},"type":"category","categoryorder":"array","categoryarray":["Abnormality of the 4th metacarpal (HP:0010012)","Abnormality of the right ventricle (HP:0001707)","Male infertility (HP:0003251)","Short tibia (HP:0005736)","Mesomelia (HP:0003027)","Aplasia/Hypoplasia of the 4th metacarpal (HP:0010042)","Ileus (HP:0002595)","Short 4th metacarpal (HP:0010044)","Rectal prolapse (HP:0002035)"]},"xaxis":{"domain":[0,1],"automargin":true,"title":"Combined.Score"},"hovermode":"closest","showlegend":false},"source":"A","config":{"modeBarButtonsToAdd":["hoverclosest","hovercompare"],"showSendToCloud":false},"data":[{"x":[1138.86372803752,973.89251976686,973.89251976686,973.89251976686,847.704661538015,748.300345885436,748.300345885436,748.300345885436,668.130094535827],"y":["Rectal prolapse (HP:0002035)","Ileus (HP:0002595)","Aplasia/Hypoplasia of the 4th metacarpal (HP:0010042)","Short 4th metacarpal (HP:0010044)","Mesomelia (HP:0003027)","Male infertility (HP:0003251)","Abnormality of the right ventricle (HP:0001707)","Short tibia (HP:0005736)","Abnormality of the 4th metacarpal (HP:0010012)"],"marker":{"color":[0.0355230186668641,0.0355230186668641,0.0355230186668641,0.0355230186668641,0.0355230186668641,0.0355230186668641,0.0355230186668641,0.0355230186668641,0.0355230186668641],"size":10,"opacity":0.9,"colorscale":"YlGnBu","colorbar":{"title":"Adj. P-Value"},"line":{"color":"rgba(31,119,180,1)"}},"textposition":["auto","auto","auto","auto","auto","auto","auto","auto","auto"],"hoverinfo":["text","text","text","text","text","text","text","text","text"],"hovertext":["Rectal prolapse (HP:0002035) <br> Adj. P-Value: 0.0355230186668641 <br> Combined Score: 1138.86372803752","Ileus (HP:0002595) <br> Adj. P-Value: 0.0355230186668641 <br> Combined Score: 973.89251976686","Aplasia/Hypoplasia of the 4th metacarpal (HP:0010042) <br> Adj. P-Value: 0.0355230186668641 <br> Combined Score: 973.89251976686","Short 4th metacarpal (HP:0010044) <br> Adj. P-Value: 0.0355230186668641 <br> Combined Score: 973.89251976686","Mesomelia (HP:0003027) <br> Adj. P-Value: 0.0355230186668641 <br> Combined Score: 847.704661538015","Male infertility (HP:0003251) <br> Adj. P-Value: 0.0355230186668641 <br> Combined Score: 748.300345885436","Abnormality of the right ventricle (HP:0001707) <br> Adj. P-Value: 0.0355230186668641 <br> Combined Score: 748.300345885436","Short tibia (HP:0005736) <br> Adj. P-Value: 0.0355230186668641 <br> Combined Score: 748.300345885436","Abnormality of the 4th metacarpal (HP:0010012) <br> Adj. P-Value: 0.0355230186668641 <br> Combined Score: 668.130094535827"],"type":"bar","orientation":"h","error_y":{"color":"rgba(31,119,180,1)"},"error_x":{"color":"rgba(31,119,180,1)"},"xaxis":"x","yaxis":"y","frame":null}],"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.2,"selected":{"opacity":1},"debounce":0},"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot","plotly_sunburstclick"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script>
+</div>
+</div>
+<div id="pathways" class="section level2 tabset tabset-fade">
+<h2 class="tabset tabset-fade">Pathways</h2>
+<p><br> The top 9 results from each of the databases of interest relating to molecular pathways are displayed below. <br></p>
+<div id="bioplanet-2019" class="section level3">
+<h3>BioPlanet 2019</h3>
+<div id="htmlwidget-0fa0dddcefc2d15d3923" style="width:672px;height:480px;" class="plotly html-widget"></div>
+<script type="application/json" data-for="htmlwidget-0fa0dddcefc2d15d3923">{"x":{"visdat":{"1fa227e73c93":["function () ","plotlyVisDat"]},"cur_data":"1fa227e73c93","attrs":{"1fa227e73c93":{"x":{},"y":{},"marker":{"color":{},"size":10,"opacity":0.9,"colorscale":"YlGnBu","colorbar":{"title":"Adj. P-Value"}},"textposition":"auto","hoverinfo":"text","hovertext":["Ketone body metabolism <br> Adj. P-Value: 0.059421781183048 <br> Combined Score: 2173.54503857692","Ketone body biosynthesis and degradation <br> Adj. P-Value: 0.0635463479636634 <br> Combined Score: 973.89251976686","Cystic fibrosis transmembrane conductance regulator (CFTR) and beta 2 adrenergic receptor (b2AR) pathway <br> Adj. P-Value: 0.0635463479636634 <br> Combined Score: 748.300345885436","Terpenoid backbone biosynthesis <br> Adj. P-Value: 0.0635463479636634 <br> Combined Score: 500.500391445588","ECM-receptor interaction <br> Adj. P-Value: 0.0521901664926237 <br> Combined Score: 262.118757870956","Segmentation clock <br> Adj. P-Value: 0.070730249566356 <br> Combined Score: 246.562020931719","Multi-step regulation of transcription by PITX2 <br> Adj. P-Value: 0.070730249566356 <br> Combined Score: 224.098156042853","Butanoate metabolism <br> Adj. P-Value: 0.070730249566356 <br> Combined Score: 205.00430545239","Inactivation of GSK3 by Akt causes accumulation of beta-catenin in alveolar macrophages <br> Adj. P-Value: 0.070730249566356 <br> Combined Score: 205.00430545239"],"alpha_stroke":1,"sizes":[10,100],"spans":[1,20],"type":"bar"}},"layout":{"margin":{"b":40,"l":60,"t":100,"r":10},"title":"BioPlanet_2019","yaxis":{"domain":[0,1],"automargin":true,"zerolinecolor":"#ffff","zerolinewidth":2,"gridcolor":"ffff","title":"","tickmode":"array","margin":{"r":700},"type":"category","categoryorder":"array","categoryarray":["Butanoate metabolism","Inactivation of GSK3 by Akt causes accumulation of beta-catenin in alveolar macrophages","Multi-step regulation of transcription by PITX2","Segmentation clock","ECM-receptor interaction","Terpenoid backbone biosynthesis","Cystic fibrosis transmembrane conductance regulator (CFTR) and beta 2 adrenergic receptor (b2AR) pathway","Ketone body biosynthesis and degradation","Ketone body metabolism"]},"xaxis":{"domain":[0,1],"automargin":true,"title":"Combined.Score"},"hovermode":"closest","showlegend":false},"source":"A","config":{"modeBarButtonsToAdd":["hoverclosest","hovercompare"],"showSendToCloud":false},"data":[{"x":[2173.54503857692,973.89251976686,748.300345885436,500.500391445588,262.118757870956,246.562020931719,224.098156042853,205.00430545239,205.00430545239],"y":["Ketone body metabolism","Ketone body biosynthesis and degradation","Cystic fibrosis transmembrane conductance regulator (CFTR) and beta 2 adrenergic receptor (b2AR) pathway","Terpenoid backbone biosynthesis","ECM-receptor interaction","Segmentation clock","Multi-step regulation of transcription by PITX2","Butanoate metabolism","Inactivation of GSK3 by Akt causes accumulation of beta-catenin in alveolar macrophages"],"marker":{"color":[0.059421781183048,0.0635463479636634,0.0635463479636634,0.0635463479636634,0.0521901664926237,0.070730249566356,0.070730249566356,0.070730249566356,0.070730249566356],"size":10,"opacity":0.9,"colorscale":"YlGnBu","colorbar":{"title":"Adj. P-Value"},"line":{"color":"rgba(31,119,180,1)"}},"textposition":["auto","auto","auto","auto","auto","auto","auto","auto","auto"],"hoverinfo":["text","text","text","text","text","text","text","text","text"],"hovertext":["Ketone body metabolism <br> Adj. P-Value: 0.059421781183048 <br> Combined Score: 2173.54503857692","Ketone body biosynthesis and degradation <br> Adj. P-Value: 0.0635463479636634 <br> Combined Score: 973.89251976686","Cystic fibrosis transmembrane conductance regulator (CFTR) and beta 2 adrenergic receptor (b2AR) pathway <br> Adj. P-Value: 0.0635463479636634 <br> Combined Score: 748.300345885436","Terpenoid backbone biosynthesis <br> Adj. P-Value: 0.0635463479636634 <br> Combined Score: 500.500391445588","ECM-receptor interaction <br> Adj. P-Value: 0.0521901664926237 <br> Combined Score: 262.118757870956","Segmentation clock <br> Adj. P-Value: 0.070730249566356 <br> Combined Score: 246.562020931719","Multi-step regulation of transcription by PITX2 <br> Adj. P-Value: 0.070730249566356 <br> Combined Score: 224.098156042853","Butanoate metabolism <br> Adj. P-Value: 0.070730249566356 <br> Combined Score: 205.00430545239","Inactivation of GSK3 by Akt causes accumulation of beta-catenin in alveolar macrophages <br> Adj. P-Value: 0.070730249566356 <br> Combined Score: 205.00430545239"],"type":"bar","orientation":"h","error_y":{"color":"rgba(31,119,180,1)"},"error_x":{"color":"rgba(31,119,180,1)"},"xaxis":"x","yaxis":"y","frame":null}],"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.2,"selected":{"opacity":1},"debounce":0},"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot","plotly_sunburstclick"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script>
+<ol style="list-style-type: decimal">
+<li><p>Ketone body metabolism was described before in ontolgoies their seems that some pancreatic disorders are overlapping with our disease state.</p></li>
+<li><p>CFTR is responsible for regulating the proper flow of chloride and sodium (a component of salt) in and out of the cell membranes in the lungs and other organs</p></li>
+<li><p>The PITX2 gene provides instructions for making a protein that attaches (binds) to specific regions of DNA and regulates the activity of other genes.</p></li>
+<li><p>Inactivation of GSK3 by Akt causes accumulation of beta-catenin in alveolar macrophages. GSK3 has been implicated in the development of insulin resistance, primarily based on its role in regulation of glycogen synthesis. However, GSK3 is involved in many other important signaling cascades which may regulate glucose homeostasis and the development of insulin resistance.Lrp5/β-Catenin Signaling Controls Lung Macrophage Differentiation and Inhibits Resolution of Fibrosis. This seems to be relating to CFTR.</p></li>
+</ol>
+<ol style="list-style-type: decimal">
+<li><p><a href="https://pubmed.ncbi.nlm.nih.gov/9405449/" class="uri">https://pubmed.ncbi.nlm.nih.gov/9405449/</a></p></li>
+<li><p><a href="https://medlineplus.gov/genetics/gene/pitx2/" class="uri">https://medlineplus.gov/genetics/gene/pitx2/</a></p></li>
+<li><p><a href="https://medlineplus.gov/genetics/gene/pitx2/" class="uri">https://medlineplus.gov/genetics/gene/pitx2/</a></p></li>
+<li><p><a href="https://doi.org/10.1016/j.diabres.2007.01.033" class="uri">https://doi.org/10.1016/j.diabres.2007.01.033</a></p></li>
+</ol>
+</div>
+<div id="wikipathway-2021-human" class="section level3">
+<h3>WikiPathway 2021 Human</h3>
+<div id="htmlwidget-a96af57d95b84a2938e8" style="width:672px;height:480px;" class="plotly html-widget"></div>
+<script type="application/json" data-for="htmlwidget-a96af57d95b84a2938e8">{"x":{"visdat":{"1fa24c8b04ee":["function () ","plotlyVisDat"]},"cur_data":"1fa24c8b04ee","attrs":{"1fa24c8b04ee":{"x":{},"y":{},"marker":{"color":{},"size":10,"opacity":0.9,"colorscale":"YlGnBu","colorbar":{"title":"Adj. P-Value"}},"textposition":"auto","hoverinfo":"text","hovertext":["Synthesis and Degradation of Ketone Bodies WP311 <br> Adj. P-Value: 0.0419447867174456 <br> Combined Score: 2173.54503857692","Wnt/beta-catenin signaling pathway in leukemia WP3658 <br> Adj. P-Value: 0.086884461281213 <br> Combined Score: 246.562020931719","Cholesterol metabolism (includes both Bloch and Kandutsch-Russell pathways) WP4718 <br> Adj. P-Value: 0.086884461281213 <br> Combined Score: 117.614362331671","PPAR signaling pathway WP3942 <br> Adj. P-Value: 0.086884461281213 <br> Combined Score: 71.5342665851694","ncRNAs involved in Wnt signaling in hepatocellular carcinoma WP4336 <br> Adj. P-Value: 0.086884461281213 <br> Combined Score: 51.1055990649945","Amino Acid metabolism WP3925 <br> Adj. P-Value: 0.086884461281213 <br> Combined Score: 47.3207301581073","LncRNA involvement in canonical Wnt signaling and colorectal cancer WP4258 <br> Adj. P-Value: 0.086884461281213 <br> Combined Score: 45.2695912848153","Small cell lung cancer WP4658 <br> Adj. P-Value: 0.086884461281213 <br> Combined Score: 43.9834003197661","PI3K-Akt signaling pathway WP4172 <br> Adj. P-Value: 0.086884461281213 <br> Combined Score: 36.5838109906988"],"alpha_stroke":1,"sizes":[10,100],"spans":[1,20],"type":"bar"}},"layout":{"margin":{"b":40,"l":60,"t":100,"r":10},"title":"WikiPathway_2021_Human","yaxis":{"domain":[0,1],"automargin":true,"zerolinecolor":"#ffff","zerolinewidth":2,"gridcolor":"ffff","title":"","tickmode":"array","margin":{"r":700},"type":"category","categoryorder":"array","categoryarray":["PI3K-Akt signaling pathway WP4172","Small cell lung cancer WP4658","LncRNA involvement in canonical Wnt signaling and colorectal cancer WP4258","Amino Acid metabolism WP3925","ncRNAs involved in Wnt signaling in hepatocellular carcinoma WP4336","PPAR signaling pathway WP3942","Cholesterol metabolism (includes both Bloch and Kandutsch-Russell pathways) WP4718","Wnt/beta-catenin signaling pathway in leukemia WP3658","Synthesis and Degradation of Ketone Bodies WP311"]},"xaxis":{"domain":[0,1],"automargin":true,"title":"Combined.Score"},"hovermode":"closest","showlegend":false},"source":"A","config":{"modeBarButtonsToAdd":["hoverclosest","hovercompare"],"showSendToCloud":false},"data":[{"x":[2173.54503857692,246.562020931719,117.614362331671,71.5342665851694,51.1055990649945,47.3207301581073,45.2695912848153,43.9834003197661,36.5838109906988],"y":["Synthesis and Degradation of Ketone Bodies WP311","Wnt/beta-catenin signaling pathway in leukemia WP3658","Cholesterol metabolism (includes both Bloch and Kandutsch-Russell pathways) WP4718","PPAR signaling pathway WP3942","ncRNAs involved in Wnt signaling in hepatocellular carcinoma WP4336","Amino Acid metabolism WP3925","LncRNA involvement in canonical Wnt signaling and colorectal cancer WP4258","Small cell lung cancer WP4658","PI3K-Akt signaling pathway WP4172"],"marker":{"color":[0.0419447867174456,0.086884461281213,0.086884461281213,0.086884461281213,0.086884461281213,0.086884461281213,0.086884461281213,0.086884461281213,0.086884461281213],"size":10,"opacity":0.9,"colorscale":"YlGnBu","colorbar":{"title":"Adj. P-Value"},"line":{"color":"rgba(31,119,180,1)"}},"textposition":["auto","auto","auto","auto","auto","auto","auto","auto","auto"],"hoverinfo":["text","text","text","text","text","text","text","text","text"],"hovertext":["Synthesis and Degradation of Ketone Bodies WP311 <br> Adj. P-Value: 0.0419447867174456 <br> Combined Score: 2173.54503857692","Wnt/beta-catenin signaling pathway in leukemia WP3658 <br> Adj. P-Value: 0.086884461281213 <br> Combined Score: 246.562020931719","Cholesterol metabolism (includes both Bloch and Kandutsch-Russell pathways) WP4718 <br> Adj. P-Value: 0.086884461281213 <br> Combined Score: 117.614362331671","PPAR signaling pathway WP3942 <br> Adj. P-Value: 0.086884461281213 <br> Combined Score: 71.5342665851694","ncRNAs involved in Wnt signaling in hepatocellular carcinoma WP4336 <br> Adj. P-Value: 0.086884461281213 <br> Combined Score: 51.1055990649945","Amino Acid metabolism WP3925 <br> Adj. P-Value: 0.086884461281213 <br> Combined Score: 47.3207301581073","LncRNA involvement in canonical Wnt signaling and colorectal cancer WP4258 <br> Adj. P-Value: 0.086884461281213 <br> Combined Score: 45.2695912848153","Small cell lung cancer WP4658 <br> Adj. P-Value: 0.086884461281213 <br> Combined Score: 43.9834003197661","PI3K-Akt signaling pathway WP4172 <br> Adj. P-Value: 0.086884461281213 <br> Combined Score: 36.5838109906988"],"type":"bar","orientation":"h","error_y":{"color":"rgba(31,119,180,1)"},"error_x":{"color":"rgba(31,119,180,1)"},"xaxis":"x","yaxis":"y","frame":null}],"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.2,"selected":{"opacity":1},"debounce":0},"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot","plotly_sunburstclick"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script>
+<p>Again, this brings up more Ketone body metabolism relationships correlated with our gene set.</p>
+</div>
+<div id="kegg-2021-human" class="section level3">
+<h3>KEGG 2021 Human</h3>
+<div id="htmlwidget-7d77f13548d4727a8b66" style="width:672px;height:480px;" class="plotly html-widget"></div>
+<script type="application/json" data-for="htmlwidget-7d77f13548d4727a8b66">{"x":{"visdat":{"1fa217030c57":["function () ","plotlyVisDat"]},"cur_data":"1fa217030c57","attrs":{"1fa217030c57":{"x":{},"y":{},"marker":{"color":{},"size":10,"opacity":0.9,"colorscale":"YlGnBu","colorbar":{"title":"Adj. P-Value"}},"textposition":"auto","hoverinfo":"text","hovertext":["Synthesis and degradation of ketone bodies <br> Adj. P-Value: 0.0732050521408429 <br> Combined Score: 847.704661538015","Terpenoid backbone biosynthesis <br> Adj. P-Value: 0.089564056841665 <br> Combined Score: 305.707127278926","ECM-receptor interaction <br> Adj. P-Value: 0.0437555924949972 <br> Combined Score: 246.32931092995","Butanoate metabolism <br> Adj. P-Value: 0.089564056841665 <br> Combined Score: 224.098156042853","ABC transporters <br> Adj. P-Value: 0.089564056841665 <br> Combined Score: 121.048419615512","Valine, leucine and isoleucine degradation <br> Adj. P-Value: 0.089564056841665 <br> Combined Score: 111.23047645903","Vibrio cholerae infection <br> Adj. P-Value: 0.089564056841665 <br> Combined Score: 105.422368949113","Focal adhesion <br> Adj. P-Value: 0.0732050521408429 <br> Combined Score: 79.1144431609484","PPAR signaling pathway <br> Adj. P-Value: 0.105685644294692 <br> Combined Score: 62.6144353100612"],"alpha_stroke":1,"sizes":[10,100],"spans":[1,20],"type":"bar"}},"layout":{"margin":{"b":40,"l":60,"t":100,"r":10},"title":"KEGG_2021_Human","yaxis":{"domain":[0,1],"automargin":true,"zerolinecolor":"#ffff","zerolinewidth":2,"gridcolor":"ffff","title":"","tickmode":"array","margin":{"r":700},"type":"category","categoryorder":"array","categoryarray":["PPAR signaling pathway","Focal adhesion","Vibrio cholerae infection","Valine, leucine and isoleucine degradation","ABC transporters","Butanoate metabolism","ECM-receptor interaction","Terpenoid backbone biosynthesis","Synthesis and degradation of ketone bodies"]},"xaxis":{"domain":[0,1],"automargin":true,"title":"Combined.Score"},"hovermode":"closest","showlegend":false},"source":"A","config":{"modeBarButtonsToAdd":["hoverclosest","hovercompare"],"showSendToCloud":false},"data":[{"x":[847.704661538015,305.707127278926,246.32931092995,224.098156042853,121.048419615512,111.23047645903,105.422368949113,79.1144431609484,62.6144353100612],"y":["Synthesis and degradation of ketone bodies","Terpenoid backbone biosynthesis","ECM-receptor interaction","Butanoate metabolism","ABC transporters","Valine, leucine and isoleucine degradation","Vibrio cholerae infection","Focal adhesion","PPAR signaling pathway"],"marker":{"color":[0.0732050521408429,0.089564056841665,0.0437555924949972,0.089564056841665,0.089564056841665,0.089564056841665,0.089564056841665,0.0732050521408429,0.105685644294692],"size":10,"opacity":0.9,"colorscale":"YlGnBu","colorbar":{"title":"Adj. P-Value"},"line":{"color":"rgba(31,119,180,1)"}},"textposition":["auto","auto","auto","auto","auto","auto","auto","auto","auto"],"hoverinfo":["text","text","text","text","text","text","text","text","text"],"hovertext":["Synthesis and degradation of ketone bodies <br> Adj. P-Value: 0.0732050521408429 <br> Combined Score: 847.704661538015","Terpenoid backbone biosynthesis <br> Adj. P-Value: 0.089564056841665 <br> Combined Score: 305.707127278926","ECM-receptor interaction <br> Adj. P-Value: 0.0437555924949972 <br> Combined Score: 246.32931092995","Butanoate metabolism <br> Adj. P-Value: 0.089564056841665 <br> Combined Score: 224.098156042853","ABC transporters <br> Adj. P-Value: 0.089564056841665 <br> Combined Score: 121.048419615512","Valine, leucine and isoleucine degradation <br> Adj. P-Value: 0.089564056841665 <br> Combined Score: 111.23047645903","Vibrio cholerae infection <br> Adj. P-Value: 0.089564056841665 <br> Combined Score: 105.422368949113","Focal adhesion <br> Adj. P-Value: 0.0732050521408429 <br> Combined Score: 79.1144431609484","PPAR signaling pathway <br> Adj. P-Value: 0.105685644294692 <br> Combined Score: 62.6144353100612"],"type":"bar","orientation":"h","error_y":{"color":"rgba(31,119,180,1)"},"error_x":{"color":"rgba(31,119,180,1)"},"xaxis":"x","yaxis":"y","frame":null}],"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.2,"selected":{"opacity":1},"debounce":0},"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot","plotly_sunburstclick"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script>
+</div>
+</div>
+<div id="diseasesdrugs" class="section level2 tabset tabset-fade">
+<h2 class="tabset tabset-fade">Diseases/Drugs</h2>
+<p><br> The top 9 results from each of the databases of interest relating to diseases and drugs are displayed below. <br></p>
+<div id="disgenet" class="section level3">
+<h3>DisGeNET</h3>
+<div id="htmlwidget-1ea20bf8eefb2dc5f64d" style="width:672px;height:480px;" class="plotly html-widget"></div>
+<script type="application/json" data-for="htmlwidget-1ea20bf8eefb2dc5f64d">{"x":{"visdat":{"1fa21e6b3923":["function () ","plotlyVisDat"]},"cur_data":"1fa21e6b3923","attrs":{"1fa21e6b3923":{"x":{},"y":{},"marker":{"color":{},"size":10,"opacity":0.9,"colorscale":"YlGnBu","colorbar":{"title":"Adj. P-Value"}},"textposition":"auto","hoverinfo":"text","hovertext":["Chloasma <br> Adj. P-Value: 0.00572485080987487 <br> Combined Score: 5243.18329203024","Pancreatic disorders (not diabetes) <br> Adj. P-Value: 0.00572485080987487 <br> Combined Score: 4494.8471043704","Autosomal Dominant Hereditary Pancreatitis <br> Adj. P-Value: 0.0727045577070303 <br> Combined Score: 1682.80296780194","Extensor Rigidity <br> Adj. P-Value: 0.0727045577070303 <br> Combined Score: 1682.80296780194","Extrapyramidal Rigidity <br> Adj. P-Value: 0.0727045577070303 <br> Combined Score: 1682.80296780194","Trisomy X syndrome <br> Adj. P-Value: 0.0727045577070303 <br> Combined Score: 1682.80296780194","Hypoplasia of lower limb <br> Adj. P-Value: 0.0727045577070303 <br> Combined Score: 1682.80296780194","Choledochal Cyst, Type I <br> Adj. P-Value: 0.0727045577070303 <br> Combined Score: 1682.80296780194","Choledochal Cyst, Type II <br> Adj. P-Value: 0.0727045577070303 <br> Combined Score: 1682.80296780194"],"alpha_stroke":1,"sizes":[10,100],"spans":[1,20],"type":"bar"}},"layout":{"margin":{"b":40,"l":60,"t":100,"r":10},"title":"DisGeNET","yaxis":{"domain":[0,1],"automargin":true,"zerolinecolor":"#ffff","zerolinewidth":2,"gridcolor":"ffff","title":"","tickmode":"array","margin":{"r":700},"type":"category","categoryorder":"array","categoryarray":["Autosomal Dominant Hereditary Pancreatitis","Choledochal Cyst, Type I","Choledochal Cyst, Type II","Extensor Rigidity","Extrapyramidal Rigidity","Hypoplasia of lower limb","Trisomy X syndrome","Pancreatic disorders (not diabetes)","Chloasma"]},"xaxis":{"domain":[0,1],"automargin":true,"title":"Combined.Score"},"hovermode":"closest","showlegend":false},"source":"A","config":{"modeBarButtonsToAdd":["hoverclosest","hovercompare"],"showSendToCloud":false},"data":[{"x":[5243.18329203024,4494.8471043704,1682.80296780194,1682.80296780194,1682.80296780194,1682.80296780194,1682.80296780194,1682.80296780194,1682.80296780194],"y":["Chloasma","Pancreatic disorders (not diabetes)","Autosomal Dominant Hereditary Pancreatitis","Extensor Rigidity","Extrapyramidal Rigidity","Trisomy X syndrome","Hypoplasia of lower limb","Choledochal Cyst, Type I","Choledochal Cyst, Type II"],"marker":{"color":[0.00572485080987487,0.00572485080987487,0.0727045577070303,0.0727045577070303,0.0727045577070303,0.0727045577070303,0.0727045577070303,0.0727045577070303,0.0727045577070303],"size":10,"opacity":0.9,"colorscale":"YlGnBu","colorbar":{"title":"Adj. P-Value"},"line":{"color":"rgba(31,119,180,1)"}},"textposition":["auto","auto","auto","auto","auto","auto","auto","auto","auto"],"hoverinfo":["text","text","text","text","text","text","text","text","text"],"hovertext":["Chloasma <br> Adj. P-Value: 0.00572485080987487 <br> Combined Score: 5243.18329203024","Pancreatic disorders (not diabetes) <br> Adj. P-Value: 0.00572485080987487 <br> Combined Score: 4494.8471043704","Autosomal Dominant Hereditary Pancreatitis <br> Adj. P-Value: 0.0727045577070303 <br> Combined Score: 1682.80296780194","Extensor Rigidity <br> Adj. P-Value: 0.0727045577070303 <br> Combined Score: 1682.80296780194","Extrapyramidal Rigidity <br> Adj. P-Value: 0.0727045577070303 <br> Combined Score: 1682.80296780194","Trisomy X syndrome <br> Adj. P-Value: 0.0727045577070303 <br> Combined Score: 1682.80296780194","Hypoplasia of lower limb <br> Adj. P-Value: 0.0727045577070303 <br> Combined Score: 1682.80296780194","Choledochal Cyst, Type I <br> Adj. P-Value: 0.0727045577070303 <br> Combined Score: 1682.80296780194","Choledochal Cyst, Type II <br> Adj. P-Value: 0.0727045577070303 <br> Combined Score: 1682.80296780194"],"type":"bar","orientation":"h","error_y":{"color":"rgba(31,119,180,1)"},"error_x":{"color":"rgba(31,119,180,1)"},"xaxis":"x","yaxis":"y","frame":null}],"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.2,"selected":{"opacity":1},"debounce":0},"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot","plotly_sunburstclick"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script>
+<ol style="list-style-type: decimal">
+<li><p>Chloasma is a required hypermelanosis of sun-exposed areas occurred during pregnancy and it can affect 50-70% of pregnant women.</p></li>
+<li><p>There are a variety of disorders of the pancreas (not diabetes) including acute pancreatitis, chronic pancreatitis, hereditary pancreatitis, and pancreatic cancer.</p></li>
+</ol>
+<ol style="list-style-type: decimal">
+<li><a href="https://pubmed.ncbi.nlm.nih.gov/19140277/" class="uri">https://pubmed.ncbi.nlm.nih.gov/19140277/</a></li>
+</ol>
+</div>
+<div id="pheweb-2019" class="section level3">
+<h3>PheWeb 2019</h3>
+<div id="htmlwidget-b3c47761107e5634ccb9" style="width:672px;height:480px;" class="plotly html-widget"></div>
+<script type="application/json" data-for="htmlwidget-b3c47761107e5634ccb9">{"x":{"visdat":{"1fa26525085c":["function () ","plotlyVisDat"]},"cur_data":"1fa26525085c","attrs":{"1fa26525085c":{"x":{},"y":{},"marker":{"color":{},"size":10,"opacity":0.9,"colorscale":"YlGnBu","colorbar":{"title":"Adj. P-Value"}},"textposition":"auto","hoverinfo":"text","hovertext":["Breast conditions, congenital or relating to hormones <br> Adj. P-Value: 0.0240034783596231 <br> Combined Score: 500.500391445588","Jaundice (not of newborn) <br> Adj. P-Value: 0.0240034783596231 <br> Combined Score: 425.939423953315","Heart failure with preserved EF [Diastolic heart failure] <br> Adj. P-Value: 0.0240034783596231 <br> Combined Score: 425.939423953315","Hereditary and idiopathic peripheral neuropathy <br> Adj. P-Value: 0.0240034783596231 <br> Combined Score: 395.728716189981","Hypertrophy of breast (Gynecomastia) <br> Adj. P-Value: 0.0240034783596231 <br> Combined Score: 369.139020502258","Cancer of kidney and renal pelvis <br> Adj. P-Value: 0.0240034783596231 <br> Combined Score: 324.556029146829","Nephritis and nephropathy in diseases classified elsewhere <br> Adj. P-Value: 0.0240034783596231 <br> Combined Score: 305.707127278926","Malignant neoplasm of kidney, except pelvis <br> Adj. P-Value: 0.0240034783596231 <br> Combined Score: 305.707127278926","Diseases of pancreas <br> Adj. P-Value: 0.0240034783596231 <br> Combined Score: 288.716456708675"],"alpha_stroke":1,"sizes":[10,100],"spans":[1,20],"type":"bar"}},"layout":{"margin":{"b":40,"l":60,"t":100,"r":10},"title":"PheWeb_2019","yaxis":{"domain":[0,1],"automargin":true,"zerolinecolor":"#ffff","zerolinewidth":2,"gridcolor":"ffff","title":"","tickmode":"array","margin":{"r":700},"type":"category","categoryorder":"array","categoryarray":["Diseases of pancreas","Malignant neoplasm of kidney, except pelvis","Nephritis and nephropathy in diseases classified elsewhere","Cancer of kidney and renal pelvis","Hypertrophy of breast (Gynecomastia)","Hereditary and idiopathic peripheral neuropathy","Heart failure with preserved EF [Diastolic heart failure]","Jaundice (not of newborn)","Breast conditions, congenital or relating to hormones"]},"xaxis":{"domain":[0,1],"automargin":true,"title":"Combined.Score"},"hovermode":"closest","showlegend":false},"source":"A","config":{"modeBarButtonsToAdd":["hoverclosest","hovercompare"],"showSendToCloud":false},"data":[{"x":[500.500391445588,425.939423953315,425.939423953315,395.728716189981,369.139020502258,324.556029146829,305.707127278926,305.707127278926,288.716456708675],"y":["Breast conditions, congenital or relating to hormones","Jaundice (not of newborn)","Heart failure with preserved EF [Diastolic heart failure]","Hereditary and idiopathic peripheral neuropathy","Hypertrophy of breast (Gynecomastia)","Cancer of kidney and renal pelvis","Nephritis and nephropathy in diseases classified elsewhere","Malignant neoplasm of kidney, except pelvis","Diseases of pancreas"],"marker":{"color":[0.0240034783596231,0.0240034783596231,0.0240034783596231,0.0240034783596231,0.0240034783596231,0.0240034783596231,0.0240034783596231,0.0240034783596231,0.0240034783596231],"size":10,"opacity":0.9,"colorscale":"YlGnBu","colorbar":{"title":"Adj. P-Value"},"line":{"color":"rgba(31,119,180,1)"}},"textposition":["auto","auto","auto","auto","auto","auto","auto","auto","auto"],"hoverinfo":["text","text","text","text","text","text","text","text","text"],"hovertext":["Breast conditions, congenital or relating to hormones <br> Adj. P-Value: 0.0240034783596231 <br> Combined Score: 500.500391445588","Jaundice (not of newborn) <br> Adj. P-Value: 0.0240034783596231 <br> Combined Score: 425.939423953315","Heart failure with preserved EF [Diastolic heart failure] <br> Adj. P-Value: 0.0240034783596231 <br> Combined Score: 425.939423953315","Hereditary and idiopathic peripheral neuropathy <br> Adj. P-Value: 0.0240034783596231 <br> Combined Score: 395.728716189981","Hypertrophy of breast (Gynecomastia) <br> Adj. P-Value: 0.0240034783596231 <br> Combined Score: 369.139020502258","Cancer of kidney and renal pelvis <br> Adj. P-Value: 0.0240034783596231 <br> Combined Score: 324.556029146829","Nephritis and nephropathy in diseases classified elsewhere <br> Adj. P-Value: 0.0240034783596231 <br> Combined Score: 305.707127278926","Malignant neoplasm of kidney, except pelvis <br> Adj. P-Value: 0.0240034783596231 <br> Combined Score: 305.707127278926","Diseases of pancreas <br> Adj. P-Value: 0.0240034783596231 <br> Combined Score: 288.716456708675"],"type":"bar","orientation":"h","error_y":{"color":"rgba(31,119,180,1)"},"error_x":{"color":"rgba(31,119,180,1)"},"xaxis":"x","yaxis":"y","frame":null}],"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.2,"selected":{"opacity":1},"debounce":0},"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot","plotly_sunburstclick"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script>
+</div>
+</div>
+<div id="cell-types" class="section level2 tabset tabset-fade">
+<h2 class="tabset tabset-fade">Cell Types</h2>
+<p><br> The top 9 results from each of the databases of interest relating to cell type are displayed below. <br></p>
+<div id="human-gene-atlas" class="section level3">
+<h3>Human Gene Atlas</h3>
+<div id="htmlwidget-afe30263f8f03abeda2b" style="width:672px;height:480px;" class="plotly html-widget"></div>
+<script type="application/json" data-for="htmlwidget-afe30263f8f03abeda2b">{"x":{"visdat":{"1fa265f7a024":["function () ","plotlyVisDat"]},"cur_data":"1fa265f7a024","attrs":{"1fa265f7a024":{"x":{},"y":{},"marker":{"color":{},"size":10,"opacity":0.9,"colorscale":"YlGnBu","colorbar":{"title":"Adj. P-Value"}},"textposition":"auto","hoverinfo":"text","hovertext":["colon <br> Adj. P-Value: 0.136189135769833 <br> Combined Score: 55.1861426508222","Hypothalamus <br> Adj. P-Value: 0.141172976849904 <br> Combined Score: 43.3630379504366","Skin <br> Adj. P-Value: 0.141172976849904 <br> Combined Score: 36.0063355577507","PancreaticIslet <br> Adj. P-Value: 0.141172976849904 <br> Combined Score: 31.2078528822072","Fetalliver <br> Adj. P-Value: 0.141172976849904 <br> Combined Score: 30.1715476060307","Liver <br> Adj. P-Value: 0.141172976849904 <br> Combined Score: 14.0981638238924","retina <br> Adj. P-Value: 0.203269303502826 <br> Combined Score: 13.6644961154797","Amygdala <br> Adj. P-Value: 0.27033342967019 <br> Combined Score: 6.72555216459746","SuperiorCervicalGanglion <br> Adj. P-Value: 0.381272865264302 <br> Combined Score: 2.61755116463507"],"alpha_stroke":1,"sizes":[10,100],"spans":[1,20],"type":"bar"}},"layout":{"margin":{"b":40,"l":60,"t":100,"r":10},"title":"Human_Gene_Atlas","yaxis":{"domain":[0,1],"automargin":true,"zerolinecolor":"#ffff","zerolinewidth":2,"gridcolor":"ffff","title":"","tickmode":"array","margin":{"r":700},"type":"category","categoryorder":"array","categoryarray":["SuperiorCervicalGanglion","Amygdala","retina","Liver","Fetalliver","PancreaticIslet","Skin","Hypothalamus","colon"]},"xaxis":{"domain":[0,1],"automargin":true,"title":"Combined.Score"},"hovermode":"closest","showlegend":false},"source":"A","config":{"modeBarButtonsToAdd":["hoverclosest","hovercompare"],"showSendToCloud":false},"data":[{"x":[55.1861426508222,43.3630379504366,36.0063355577507,31.2078528822072,30.1715476060307,14.0981638238924,13.6644961154797,6.72555216459746,2.61755116463507],"y":["colon","Hypothalamus","Skin","PancreaticIslet","Fetalliver","Liver","retina","Amygdala","SuperiorCervicalGanglion"],"marker":{"color":[0.136189135769833,0.141172976849904,0.141172976849904,0.141172976849904,0.141172976849904,0.141172976849904,0.203269303502826,0.27033342967019,0.381272865264302],"size":10,"opacity":0.9,"colorscale":"YlGnBu","colorbar":{"title":"Adj. P-Value"},"line":{"color":"rgba(31,119,180,1)"}},"textposition":["auto","auto","auto","auto","auto","auto","auto","auto","auto"],"hoverinfo":["text","text","text","text","text","text","text","text","text"],"hovertext":["colon <br> Adj. P-Value: 0.136189135769833 <br> Combined Score: 55.1861426508222","Hypothalamus <br> Adj. P-Value: 0.141172976849904 <br> Combined Score: 43.3630379504366","Skin <br> Adj. P-Value: 0.141172976849904 <br> Combined Score: 36.0063355577507","PancreaticIslet <br> Adj. P-Value: 0.141172976849904 <br> Combined Score: 31.2078528822072","Fetalliver <br> Adj. P-Value: 0.141172976849904 <br> Combined Score: 30.1715476060307","Liver <br> Adj. P-Value: 0.141172976849904 <br> Combined Score: 14.0981638238924","retina <br> Adj. P-Value: 0.203269303502826 <br> Combined Score: 13.6644961154797","Amygdala <br> Adj. P-Value: 0.27033342967019 <br> Combined Score: 6.72555216459746","SuperiorCervicalGanglion <br> Adj. P-Value: 0.381272865264302 <br> Combined Score: 2.61755116463507"],"type":"bar","orientation":"h","error_y":{"color":"rgba(31,119,180,1)"},"error_x":{"color":"rgba(31,119,180,1)"},"xaxis":"x","yaxis":"y","frame":null}],"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.2,"selected":{"opacity":1},"debounce":0},"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot","plotly_sunburstclick"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script>
+<p>Data is seemingly related to the GI tract .</p>
+</div>
+<div id="descartes-cell-types-and-tissue-2021" class="section level3">
+<h3>Descartes Cell Types and Tissue 2021</h3>
+<div id="htmlwidget-33d2b45a28f1fbd958f2" style="width:672px;height:480px;" class="plotly html-widget"></div>
+<script type="application/json" data-for="htmlwidget-33d2b45a28f1fbd958f2">{"x":{"visdat":{"1fa243e786dc":["function () ","plotlyVisDat"]},"cur_data":"1fa243e786dc","attrs":{"1fa243e786dc":{"x":{},"y":{},"marker":{"color":{},"size":10,"opacity":0.9,"colorscale":"YlGnBu","colorbar":{"title":"Adj. P-Value"}},"textposition":"auto","hoverinfo":"text","hovertext":["Limbic system neurons in Cerebrum <br> Adj. P-Value: 0.153660213591203 <br> Combined Score: 259.336925257011","Lymphatic endothelial cells in Heart <br> Adj. P-Value: 0.153660213591203 <br> Combined Score: 132.470525875165","Lymphatic endothelial cells in Stomach <br> Adj. P-Value: 0.153660213591203 <br> Combined Score: 132.470525875165","Inhibitory neurons in Cerebrum <br> Adj. P-Value: 0.153660213591203 <br> Combined Score: 128.462307081389","Smooth muscle cells in Intestine <br> Adj. P-Value: 0.153660213591203 <br> Combined Score: 88.6871464473845","Lymphatic endothelial cells in Lung <br> Adj. P-Value: 0.153660213591203 <br> Combined Score: 77.6543740947244","SKOR2 NPSR1 positive cells in Cerebrum <br> Adj. P-Value: 0.153660213591203 <br> Combined Score: 58.3284892331573","ELF3 AGBL2 positive cells in Heart <br> Adj. P-Value: 0.153660213591203 <br> Combined Score: 52.7644419346727","Astrocytes in Eye <br> Adj. P-Value: 0.153660213591203 <br> Combined Score: 51.9238748259637"],"alpha_stroke":1,"sizes":[10,100],"spans":[1,20],"type":"bar"}},"layout":{"margin":{"b":40,"l":60,"t":100,"r":10},"title":"Descartes_Cell_Types_and_Tissue_2021","yaxis":{"domain":[0,1],"automargin":true,"zerolinecolor":"#ffff","zerolinewidth":2,"gridcolor":"ffff","title":"","tickmode":"array","margin":{"r":700},"type":"category","categoryorder":"array","categoryarray":["Astrocytes in Eye","ELF3 AGBL2 positive cells in Heart","SKOR2 NPSR1 positive cells in Cerebrum","Lymphatic endothelial cells in Lung","Smooth muscle cells in Intestine","Inhibitory neurons in Cerebrum","Lymphatic endothelial cells in Heart","Lymphatic endothelial cells in Stomach","Limbic system neurons in Cerebrum"]},"xaxis":{"domain":[0,1],"automargin":true,"title":"Combined.Score"},"hovermode":"closest","showlegend":false},"source":"A","config":{"modeBarButtonsToAdd":["hoverclosest","hovercompare"],"showSendToCloud":false},"data":[{"x":[259.336925257011,132.470525875165,132.470525875165,128.462307081389,88.6871464473845,77.6543740947244,58.3284892331573,52.7644419346727,51.9238748259637],"y":["Limbic system neurons in Cerebrum","Lymphatic endothelial cells in Heart","Lymphatic endothelial cells in Stomach","Inhibitory neurons in Cerebrum","Smooth muscle cells in Intestine","Lymphatic endothelial cells in Lung","SKOR2 NPSR1 positive cells in Cerebrum","ELF3 AGBL2 positive cells in Heart","Astrocytes in Eye"],"marker":{"color":[0.153660213591203,0.153660213591203,0.153660213591203,0.153660213591203,0.153660213591203,0.153660213591203,0.153660213591203,0.153660213591203,0.153660213591203],"size":10,"opacity":0.9,"colorscale":"YlGnBu","colorbar":{"title":"Adj. P-Value"},"line":{"color":"rgba(31,119,180,1)"}},"textposition":["auto","auto","auto","auto","auto","auto","auto","auto","auto"],"hoverinfo":["text","text","text","text","text","text","text","text","text"],"hovertext":["Limbic system neurons in Cerebrum <br> Adj. P-Value: 0.153660213591203 <br> Combined Score: 259.336925257011","Lymphatic endothelial cells in Heart <br> Adj. P-Value: 0.153660213591203 <br> Combined Score: 132.470525875165","Lymphatic endothelial cells in Stomach <br> Adj. P-Value: 0.153660213591203 <br> Combined Score: 132.470525875165","Inhibitory neurons in Cerebrum <br> Adj. P-Value: 0.153660213591203 <br> Combined Score: 128.462307081389","Smooth muscle cells in Intestine <br> Adj. P-Value: 0.153660213591203 <br> Combined Score: 88.6871464473845","Lymphatic endothelial cells in Lung <br> Adj. P-Value: 0.153660213591203 <br> Combined Score: 77.6543740947244","SKOR2 NPSR1 positive cells in Cerebrum <br> Adj. P-Value: 0.153660213591203 <br> Combined Score: 58.3284892331573","ELF3 AGBL2 positive cells in Heart <br> Adj. P-Value: 0.153660213591203 <br> Combined Score: 52.7644419346727","Astrocytes in Eye <br> Adj. P-Value: 0.153660213591203 <br> Combined Score: 51.9238748259637"],"type":"bar","orientation":"h","error_y":{"color":"rgba(31,119,180,1)"},"error_x":{"color":"rgba(31,119,180,1)"},"xaxis":"x","yaxis":"y","frame":null}],"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.2,"selected":{"opacity":1},"debounce":0},"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot","plotly_sunburstclick"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script>
+</div>
+</div>
+<div id="transcription" class="section level2 tabset tabset-fade">
+<h2 class="tabset tabset-fade">Transcription</h2>
+<p><br> The top 9 results from each of the databases of interest relating to transcription are displayed below. <br></p>
+<div id="chea-2016" class="section level3">
+<h3>ChEA 2016</h3>
+<div id="htmlwidget-7a0b596561de956b17f6" style="width:672px;height:480px;" class="plotly html-widget"></div>
+<script type="application/json" data-for="htmlwidget-7a0b596561de956b17f6">{"x":{"visdat":{"1fa2665a6451":["function () ","plotlyVisDat"]},"cur_data":"1fa2665a6451","attrs":{"1fa2665a6451":{"x":{},"y":{},"marker":{"color":{},"size":10,"opacity":0.9,"colorscale":"YlGnBu","colorbar":{"title":"Adj. P-Value"}},"textposition":"auto","hoverinfo":"text","hovertext":["GLI1 17442700 ChIP-ChIP MESCs Mouse <br> Adj. P-Value: 0.858192951980342 <br> Combined Score: 63.7698595851189","TRIM28 21343339 ChIP-Seq HEK293 Human <br> Adj. P-Value: 0.858192951980342 <br> Combined Score: 48.0393014472086","CEBPB 26923725 Chip-Seq HEMANGIOBLAST Mouse <br> Adj. P-Value: 0.858192951980342 <br> Combined Score: 37.7566634578762","IRF1 21803131 ChIP-Seq MONOCYTES Human <br> Adj. P-Value: 0.858192951980342 <br> Combined Score: 35.7812564126655","CHD7 19251738 ChIP-ChIP MESCs Mouse <br> Adj. P-Value: 0.858192951980342 <br> Combined Score: 25.7446665914561","UBF1/2 26484160 Chip-Seq FIBROBLAST Human <br> Adj. P-Value: 0.858192951980342 <br> Combined Score: 23.4876265601391","PPARD 23208498 ChIP-Seq MDA-MB-231 Human <br> Adj. P-Value: 0.858192951980342 <br> Combined Score: 19.0092327978537","BMI1 23680149 ChIP-Seq NPCS Mouse <br> Adj. P-Value: 0.858192951980342 <br> Combined Score: 16.5068747785183","PPARD 23176727 ChIP-Seq KERATINOCYTES Mouse <br> Adj. P-Value: 0.858192951980342 <br> Combined Score: 16.2419028975948"],"alpha_stroke":1,"sizes":[10,100],"spans":[1,20],"type":"bar"}},"layout":{"margin":{"b":40,"l":60,"t":100,"r":10},"title":"ChEA_2016","yaxis":{"domain":[0,1],"automargin":true,"zerolinecolor":"#ffff","zerolinewidth":2,"gridcolor":"ffff","title":"","tickmode":"array","margin":{"r":700},"type":"category","categoryorder":"array","categoryarray":["PPARD 23176727 ChIP-Seq KERATINOCYTES Mouse","BMI1 23680149 ChIP-Seq NPCS Mouse","PPARD 23208498 ChIP-Seq MDA-MB-231 Human","UBF1/2 26484160 Chip-Seq FIBROBLAST Human","CHD7 19251738 ChIP-ChIP MESCs Mouse","IRF1 21803131 ChIP-Seq MONOCYTES Human","CEBPB 26923725 Chip-Seq HEMANGIOBLAST Mouse","TRIM28 21343339 ChIP-Seq HEK293 Human","GLI1 17442700 ChIP-ChIP MESCs Mouse"]},"xaxis":{"domain":[0,1],"automargin":true,"title":"Combined.Score"},"hovermode":"closest","showlegend":false},"source":"A","config":{"modeBarButtonsToAdd":["hoverclosest","hovercompare"],"showSendToCloud":false},"data":[{"x":[63.7698595851189,48.0393014472086,37.7566634578762,35.7812564126655,25.7446665914561,23.4876265601391,19.0092327978537,16.5068747785183,16.2419028975948],"y":["GLI1 17442700 ChIP-ChIP MESCs Mouse","TRIM28 21343339 ChIP-Seq HEK293 Human","CEBPB 26923725 Chip-Seq HEMANGIOBLAST Mouse","IRF1 21803131 ChIP-Seq MONOCYTES Human","CHD7 19251738 ChIP-ChIP MESCs Mouse","UBF1/2 26484160 Chip-Seq FIBROBLAST Human","PPARD 23208498 ChIP-Seq MDA-MB-231 Human","BMI1 23680149 ChIP-Seq NPCS Mouse","PPARD 23176727 ChIP-Seq KERATINOCYTES Mouse"],"marker":{"color":[0.858192951980342,0.858192951980342,0.858192951980342,0.858192951980342,0.858192951980342,0.858192951980342,0.858192951980342,0.858192951980342,0.858192951980342],"size":10,"opacity":0.9,"colorscale":"YlGnBu","colorbar":{"title":"Adj. P-Value"},"line":{"color":"rgba(31,119,180,1)"}},"textposition":["auto","auto","auto","auto","auto","auto","auto","auto","auto"],"hoverinfo":["text","text","text","text","text","text","text","text","text"],"hovertext":["GLI1 17442700 ChIP-ChIP MESCs Mouse <br> Adj. P-Value: 0.858192951980342 <br> Combined Score: 63.7698595851189","TRIM28 21343339 ChIP-Seq HEK293 Human <br> Adj. P-Value: 0.858192951980342 <br> Combined Score: 48.0393014472086","CEBPB 26923725 Chip-Seq HEMANGIOBLAST Mouse <br> Adj. P-Value: 0.858192951980342 <br> Combined Score: 37.7566634578762","IRF1 21803131 ChIP-Seq MONOCYTES Human <br> Adj. P-Value: 0.858192951980342 <br> Combined Score: 35.7812564126655","CHD7 19251738 ChIP-ChIP MESCs Mouse <br> Adj. P-Value: 0.858192951980342 <br> Combined Score: 25.7446665914561","UBF1/2 26484160 Chip-Seq FIBROBLAST Human <br> Adj. P-Value: 0.858192951980342 <br> Combined Score: 23.4876265601391","PPARD 23208498 ChIP-Seq MDA-MB-231 Human <br> Adj. P-Value: 0.858192951980342 <br> Combined Score: 19.0092327978537","BMI1 23680149 ChIP-Seq NPCS Mouse <br> Adj. P-Value: 0.858192951980342 <br> Combined Score: 16.5068747785183","PPARD 23176727 ChIP-Seq KERATINOCYTES Mouse <br> Adj. P-Value: 0.858192951980342 <br> Combined Score: 16.2419028975948"],"type":"bar","orientation":"h","error_y":{"color":"rgba(31,119,180,1)"},"error_x":{"color":"rgba(31,119,180,1)"},"xaxis":"x","yaxis":"y","frame":null}],"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.2,"selected":{"opacity":1},"debounce":0},"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot","plotly_sunburstclick"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script>
+<ol style="list-style-type: decimal">
+<li><p>TRIM28 (Tripartite Motif Containing 28) is a Protein Coding gene. Diseases associated with TRIM28 include Wilms Tumor 1 and Renal Wilms’ Tumor (Childhood cancer that starts in the kidneys). Among its related pathways are Gene Expression and E2F transcription factor network. Gene Ontology (GO) annotations related to this gene include <em>RNA binding and sequence-specific DNA binding</em>.</p></li>
+<li><p>IRF1 (Interferon Regulatory Factor 1) is a Protein Coding gene. Diseases associated with IRF1 include Gastric Cancer and Lung Cancer. Among its related pathways are Immune response IFN gamma signaling pathway and Bacterial infections in CF airways. Gene Ontology (GO) annotations related to this gene include <em>DNA-binding transcription factor activity and RNA polymerase II cis-regulatory region sequence-specific DNA binding</em>.</p></li>
+</ol>
+<ol style="list-style-type: decimal">
+<li><a href="https://www.genecards.org/cgi-bin/carddisp.pl?gene=TRIM28&amp;keywords=trim28" class="uri">https://www.genecards.org/cgi-bin/carddisp.pl?gene=TRIM28&amp;keywords=trim28</a></li>
+<li><a href="https://www.genecards.org/cgi-bin/carddisp.pl?gene=IRF1&amp;keywords=irf1" class="uri">https://www.genecards.org/cgi-bin/carddisp.pl?gene=IRF1&amp;keywords=irf1</a></li>
+</ol>
+</div>
+<div id="encode-and-chea-consensus-tfs-from-chip-x" class="section level3">
+<h3>ENCODE and ChEA Consensus TFs from ChIP-X”</h3>
+<div id="htmlwidget-060f9e950a618a876122" style="width:672px;height:480px;" class="plotly html-widget"></div>
+<script type="application/json" data-for="htmlwidget-060f9e950a618a876122">{"x":{"visdat":{"1fa24eff650c":["function () ","plotlyVisDat"]},"cur_data":"1fa24eff650c","attrs":{"1fa24eff650c":{"x":{},"y":{},"marker":{"color":{},"size":10,"opacity":0.9,"colorscale":"YlGnBu","colorbar":{"title":"Adj. P-Value"}},"textposition":"auto","hoverinfo":"text","hovertext":["PPARD CHEA <br> Adj. P-Value: 0.708238159420261 <br> Combined Score: 9.08931272565225","TP53 CHEA <br> Adj. P-Value: 0.708238159420261 <br> Combined Score: 7.61866254314845","YY1 CHEA <br> Adj. P-Value: 0.708238159420261 <br> Combined Score: 7.15096855572056","NANOG CHEA <br> Adj. P-Value: 0.708238159420261 <br> Combined Score: 2.67328089276896","SOX2 CHEA <br> Adj. P-Value: 0.708238159420261 <br> Combined Score: 1.63354942737644","TCF3 CHEA <br> Adj. P-Value: 0.708238159420261 <br> Combined Score: 0.965218300320014","NFE2L2 CHEA <br> Adj. P-Value: 0.708238159420261 <br> Combined Score: 0.933564941451949","AR CHEA <br> Adj. P-Value: 0.708238159420261 <br> Combined Score: 0.805073575372875","SMC3 ENCODE <br> Adj. P-Value: 0.708238159420261 <br> Combined Score: 0.681389938392351"],"alpha_stroke":1,"sizes":[10,100],"spans":[1,20],"type":"bar"}},"layout":{"margin":{"b":40,"l":60,"t":100,"r":10},"title":"ENCODE_and_ChEA_Consensus_TFs_from_ChIP-X","yaxis":{"domain":[0,1],"automargin":true,"zerolinecolor":"#ffff","zerolinewidth":2,"gridcolor":"ffff","title":"","tickmode":"array","margin":{"r":700},"type":"category","categoryorder":"array","categoryarray":["SMC3 ENCODE","AR CHEA","NFE2L2 CHEA","TCF3 CHEA","SOX2 CHEA","NANOG CHEA","YY1 CHEA","TP53 CHEA","PPARD CHEA"]},"xaxis":{"domain":[0,1],"automargin":true,"title":"Combined.Score"},"hovermode":"closest","showlegend":false},"source":"A","config":{"modeBarButtonsToAdd":["hoverclosest","hovercompare"],"showSendToCloud":false},"data":[{"x":[9.08931272565225,7.61866254314845,7.15096855572056,2.67328089276896,1.63354942737644,0.965218300320014,0.933564941451949,0.805073575372875,0.681389938392351],"y":["PPARD CHEA","TP53 CHEA","YY1 CHEA","NANOG CHEA","SOX2 CHEA","TCF3 CHEA","NFE2L2 CHEA","AR CHEA","SMC3 ENCODE"],"marker":{"color":[0.708238159420261,0.708238159420261,0.708238159420261,0.708238159420261,0.708238159420261,0.708238159420261,0.708238159420261,0.708238159420261,0.708238159420261],"size":10,"opacity":0.9,"colorscale":"YlGnBu","colorbar":{"title":"Adj. P-Value"},"line":{"color":"rgba(31,119,180,1)"}},"textposition":["auto","auto","auto","auto","auto","auto","auto","auto","auto"],"hoverinfo":["text","text","text","text","text","text","text","text","text"],"hovertext":["PPARD CHEA <br> Adj. P-Value: 0.708238159420261 <br> Combined Score: 9.08931272565225","TP53 CHEA <br> Adj. P-Value: 0.708238159420261 <br> Combined Score: 7.61866254314845","YY1 CHEA <br> Adj. P-Value: 0.708238159420261 <br> Combined Score: 7.15096855572056","NANOG CHEA <br> Adj. P-Value: 0.708238159420261 <br> Combined Score: 2.67328089276896","SOX2 CHEA <br> Adj. P-Value: 0.708238159420261 <br> Combined Score: 1.63354942737644","TCF3 CHEA <br> Adj. P-Value: 0.708238159420261 <br> Combined Score: 0.965218300320014","NFE2L2 CHEA <br> Adj. P-Value: 0.708238159420261 <br> Combined Score: 0.933564941451949","AR CHEA <br> Adj. P-Value: 0.708238159420261 <br> Combined Score: 0.805073575372875","SMC3 ENCODE <br> Adj. P-Value: 0.708238159420261 <br> Combined Score: 0.681389938392351"],"type":"bar","orientation":"h","error_y":{"color":"rgba(31,119,180,1)"},"error_x":{"color":"rgba(31,119,180,1)"},"xaxis":"x","yaxis":"y","frame":null}],"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.2,"selected":{"opacity":1},"debounce":0},"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot","plotly_sunburstclick"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script>
+<ol style="list-style-type: decimal">
+<li><p>PPARD (Peroxisome Proliferator Activated Receptor Delta) is a Protein Coding gene. Diseases associated with PPARD include Diabetic Cataract and Abdominal Obesity-Metabolic Syndrome 1. Among its related pathways are Metabolism and Pyruvate metabolism and Citric Acid (TCA) cycle. Gene Ontology (GO) annotations related to this gene include <em>DNA-binding transcription factor activity and transcription coactivator activity</em>.</p></li>
+<li><p>TP53 encodes a tumor suppressor protein containing transcriptional activation, DNA binding, and oligomerization domains. The encoded protein responds to diverse cellular stresses to regulate expression of target genes, thereby inducing cell cycle arrest, apoptosis, senescence, DNA repair, or changes in metabolism. Mutations in this gene are associated with a variety of human cancers, including hereditary cancers such as Li-Fraumeni syndrome. TP53 mutations are universal across cancer types. The loss of a tumor suppressor is most often through large deleterious events, such as frameshift mutations, or premature stop codons.</p></li>
+<li><p>YY1 (YY1 Transcription Factor) is a Protein Coding gene. Diseases associated with YY1 include Gabriele-De Vries Syndrome and Insulinoma. Among its related pathways are mTOR signaling pathway and Sterol Regulatory Element-Binding Proteins (SREBP) signalling. Gene Ontology (GO) annotations related to this gene include <em>DNA-binding transcription factor activity and transcription coactivator activity</em>.</p></li>
+</ol>
+<ol style="list-style-type: decimal">
+<li><a href="https://www.genecards.org/cgi-bin/carddisp.pl?gene=PPARD" class="uri">https://www.genecards.org/cgi-bin/carddisp.pl?gene=PPARD</a></li>
+<li><a href="https://www.genecards.org/cgi-bin/carddisp.pl?gene=TP53&amp;keywords=tp53" class="uri">https://www.genecards.org/cgi-bin/carddisp.pl?gene=TP53&amp;keywords=tp53</a></li>
+<li><a href="https://www.genecards.org/cgi-bin/carddisp.pl?gene=YY1&amp;keywords=yy1" class="uri">https://www.genecards.org/cgi-bin/carddisp.pl?gene=YY1&amp;keywords=yy1</a></li>
+</ol>
+</div>
+</div>
+</div>
+
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open');
+  });
+});
+</script>
+
+<!-- code folding -->
+
+<script>
+$(document).ready(function ()  {
+
+    // temporarily add toc-ignore selector to headers for the consistency with Pandoc
+    $('.unlisted.unnumbered').addClass('toc-ignore')
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
