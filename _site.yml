@@ -1,26 +1,25 @@
 name: "my-website"
 output_dir: docs
 navbar:
-  title: "Cordell"
+  title: "Cordell Browne"
   left:
-    - text: "RNA-Seq"
-      href: index.html
-    - text: "Functional Analysis"
-      href: functional.html
-    - text: "ChIP-Seq"
-      href: ChIP.html
-    - text: "GitHub"
-      href: https://github.com/C0RD3LL/Portfolio
-    - text: "Archive"
+    - text: "Portfolio"
+      href: portfolio.html
+    - text: "Archived"
       menu:
       - text: "RNA-Seq (Original)"
         href: ./rnaseqv1/rna-seq.html
       - text: "Benchmark Experiment"
-        href: ./bench/benchmark.html
+        href: 
       - text: "Wet Lab Research"
-      - text: "Place Holder 2"
-      - text: "Place Holder 3"
-      - text: "Place Holder 4"
+      - text: "Linear Regression"
+      - text: "Neural Net"
+      - text: "Dashboard"
+  right:
+    - href: https://github.com/C0RD3LL/Portfolio
+      icon: fa-github 
+    - href: contact.html
+      icon: fa-envelope
 
 
         

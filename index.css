@@ -1,0 +1,15 @@
+/*----------LOGO above TOC---------*/
+
+#TOC::before {
+  content: "";
+  display: block;
+  height: 200px;
+  margin: 1em 20px 20px 20px;
+  background-image: url("logo.jpeg");
+  background-size: contain;
+  background-position: center center;
+  background-repeat: no-repeat;
+  border-radius: 200%;
+}
+
+

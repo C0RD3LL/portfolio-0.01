@@ -1,7 +1,0 @@
----
-title: "About This Website"
----
-
-More about this website.
-
-[Sample File (_Not representitative of data_)](./multiqc_report.html)
