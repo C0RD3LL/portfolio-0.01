@@ -1,5 +1,5 @@
 ---
-title: "Health Insurance Price Estimator"
+title: "Health Insurance Prices in America, Visualization and Price Estimation"
 author: "Cordell Browne"
 output:
   html_document:
@@ -7,15 +7,26 @@ output:
     theme: cosmo
 ---
 
-# 1 | Introduction 
+<html>
+<head>
+    <style type="text/css">
+    
+    h1{
+    font: Arial, Geneva, Helvetica, sans-serif;
+    padding: 2px;
+    border-bottom: 1px solid #aaaaaa;
+    text-align: center;
+    }
+    
+    </style>
+</head>
+</html>
+
 
 Healthcare in the United States is organized in a complex bureaucracy. While in the rest of the world healthcare facilities are owned mostly by governments or by private sector businesses, in the US a large share of hospitals and clinics are owned by private non-profit organizations.
 
 
-Yet, the United States is the country that has the highest healthcare expenditures in the world. While these expenditures are covered in a large share by public payers as by Federal institutions, or State and local governments, they can also be covered by private insurance and individual payments.
-
-
-At the same time, unlike most developed nations, the US health system does not provide health care to its entire population. As there is no single nationwide system of health insurance, the United States primarily relies on employers who voluntarily provide health insurance coverage to their employees and dependents.
+Unlike most developed nations, the US health system does not provide health care to its entire population. As there is no single nationwide system of health insurance, the United States primarily relies on employers who voluntarily provide health insurance coverage to their employees and dependents.
 
 
 In addition, the government has programs that tend to cover healthcare expenses for the fragile parts of the society as the elderly, disabled and the poor. These programs differ from one another, and all have a specific kind of people that are subject to.
@@ -23,23 +34,19 @@ In addition, the government has programs that tend to cover healthcare expenses 
 
 Getting health insurance in the US is not an easy thing. Someone may think that once you have money everything is easy peasy, but in fact things are a bit more complicated. One must be very careful and look out to pick the right insurance.
 
-<br>
 
-![](docs/june/web/health-medical-insurance-vector-28999951.jpg)
+Insurers typically want to develop the best medical insurance products, plan a particular insurance outcome, or manage a big portfolios. For all these cases, the objective is to accurately predict insurance costs.
 
-*Context (emerge from understanding who we are working with and why they are doing what they are doing):*
+![](clinic/health-medical-insurance-vector-28999951.jpg)
 
-
-the insurer wants to develop the best medical insurance products, plan a particular insurance outcome, or manage a big portfolios. For all these cases, the objective is to accurately predict insurance costs.
-
-*Explanation of the variables of the dataset :*
+*Explanation of the variables of the data set :*
 
 
 - age: age of primary beneficiary
 
 - sex: insurance contractor gender, female, male
 
-- bmi: Body mass index, providing an understanding of body, weights that are relatively high or low relative to height, objective index of body weight(kg/m^2) using the ratio of height to weight, ideally 18.5 to 24.9
+- BMI: Body mass index, providing an understanding of body, weights that are relatively high or low relative to height, objective index of body weight(kg/m^2) using the ratio of height to weight, ideally 18.5 to 24.9
 
 - children: Number of children covered by health insurance / Number of dependents
 
@@ -54,7 +61,12 @@ the insurer wants to develop the best medical insurance products, plan a particu
 library(readr)
 library(ggplot2)
 library(DT)
-insurance <- read_csv("docs/june/web/insurance.csv")
+library(plotly)
+library(reshape2)
+library(WVPlots)
+library(psych)
+library(relaimpo)
+insurance <- read_csv("clinic/insurance.csv")
 ```
 
 <br> 
@@ -65,13 +77,57 @@ __Insurance Data__
 datatable(insurance, options = list(pageLength = 5))
 ```
 
-## 2 | Exploratory Data Analysis
-
-
-### Does Smoking Have a Price ? 
-
+<br>
 
 <br>
+
+# Exploratory Data Analysis 
+
+### What is the distribution of Medical Charges? {.tabset}
+
+- Types of Distributions: The data is  right skewed in which most patients are being charged between 2000 ~ 14000.
+ 
+ - Using Logarithms: Logarithms helps us have a normal distribution which could help us in a number of different ways such as outlier detection, implementation of statistical concepts based on the central limit theorem and for our predictive modell in the foreseen future. (We will come to this later in the kernel)
+ 
+#### Histogram
+
+```{r, echo=FALSE, message=FALSE,warning=FALSE}
+fig <- plot_ly(data = insurance,x= ~charges,type = "histogram",alpha = 0.4)%>%
+  layout(title="Distribution of Charges" )
+fig
+```
+
+#### Density Plot
+
+```{r,echo=FALSE,message=FALSE,warning=FALSE}
+
+
+gg <- ggplot(insurance,aes(x = charges)) +  
+  geom_histogram(aes(y = ..density..),  fill = '#67B7D1', alpha = 0.4) +  
+  geom_density(color = '#67B7D1') +  
+  geom_rug(color = '#67B7D1') + 
+  ylab("") + 
+  xlab("")  + theme(legend.title=element_blank()) +
+  scale_color_manual(values = c('density' = '#67B7D1'))
+
+
+ggplotly(gg)%>% 
+  layout(plot_bgcolor='#e5ecf6',title="Distrubtion of Charges",   
+             xaxis = list(   
+               title='Charges in $', 
+               zerolinecolor = '#ffff',   
+               zerolinewidth = 2,   
+               gridcolor = 'ffff'),   
+             yaxis = list(   
+               title='Density', 
+               zerolinecolor = '#ffff',   
+               zerolinewidth = 2,   
+               gridcolor = 'ffff')) 
+```
+
+<br>
+
+### Does Smoking Have a Price ? {.tabset}
 
 Smoking and health insurance don’t exactly go hand-in-hand. But understanding how one relates to the other will help you identify how tobacco use can affect your finances. You’re probably curious how smoking can affect the cost of medical coverage. You might also be wondering how insurance companies determine health insurance rates for smokers. 
 
@@ -102,6 +158,9 @@ plot_ly(alpha = 0.3) %>%
   )
 ```
 
+<br>
+<br>
+
 #### Smoking Cost Violin Plot
 
 ```{r, echo=FALSE, message=FALSE,warning=FALSE}
@@ -119,6 +178,9 @@ fig <- fig %>%
 fig
 ```
 
+<br>
+<br>
+
 #### B.M.I and Charges
 
 ```{r, echo=FALSE, message=FALSE,warning=FALSE}
@@ -127,6 +189,9 @@ fig <- plot_ly(data = insurance, x = ~bmi, y = ~charges, color = ~smoker)
 
 fig
 ```
+
+<br>
+<br>
 
 #### Age and Charges 
 
@@ -138,19 +203,20 @@ fig
 ```
 
 <br>
+<br>
 
-### Does B.M.I Play a Factor ? 
-
-
-
-![](docs/june/web/10.58.58 PM.jpeg)
+### Does B.M.I Play a Factor ? {.tabset}
 
 The Affordable Care Act changed the health insurance industry. According to the act, insurers cannot charge higher health insurance premiums to people with pre-existing medical conditions. Unfortunately, obesity is not considered a pre-existing condition, so insurers can charge higher premiums when providing health insurance for obese people. Generally, people with a body mass index (BMI) of 30 or higher can expect to pay more each month for health insurance. In some cases, health insurance for obese people costs 25 to 50 percent more than coverage for people with a BMI below 30. 
 
+- below 18.5 – you're in the underweight range
+- between 18.5 and 24.9 – you're in the healthy weight range
+- between 25 and 29.9 – you're in the overweight range
+- between 30 and 39.9 – you're in the obese range
 
 #### BMI and Charges
 
-IDK Yet
+ok
 
 #### Age and Charges 
 
@@ -159,24 +225,11 @@ fig <- plot_ly(data = insurance, x = ~age, y = ~charges, color = ~bmi)
 fig
 ```
 
-
-
-
-
-### What Region Cost Most ? 
+### What Region Cost Most ? {.tabset}
 
 
 
 Health care spending per capita varies by state. The aforementioned two factors, the price of services and the amount the services are used, also affect the average health care spending in each state. Some states have significantly lower prices for seeing a doctor or specialist than other states. Additionally, some states have a higher population of people over 65, also increasing the average costs.
-
-![](docs/june/web/hottest-real-estate-markets-2021.jpg)
-
-#### Age Distribution
-
-```{r, echo=FALSE, message=FALSE,warning=FALSE}
-fig <- plot_ly(data = insurance,x= ~age,type = "histogram")
-fig
-```
 
 #### Region and Cost Violin Pot
 
@@ -185,100 +238,229 @@ fig <- plot_ly(data = insurance, x = ~region, y = ~charges,type = 'violin')
 fig
 ```
 
-#### Region and Cost Histogram
+#### Region and Cost Histograms {.tabset}
+
+##### Total Charges per Region
 
 ```{r, echo=FALSE, message=FALSE,warning=FALSE}
-fig <- plot_ly(data = insurance, x = ~region, y = ~charges)
+fig <- plot_ly(data = insurance, x = ~region, y = ~charges) %>%
+  layout(title="Total Charges per Region")
 fig
 ```
 
-#### I
+##### Population Count by Region
 
 ```{r, echo=FALSE, message=FALSE,warning=FALSE}
-fig <- plot_ly(data = insurance,x= ~region,type = "histogram", color= ~region)
+fig <- plot_ly(data = insurance,x= ~region,type = "histogram", color= ~region)%>%
+  layout(title="Population Count by Region")
 fig
 ```
 
-#### II
+##### Count of Smoker & Non-smoker by Region
 
 ```{r, echo=FALSE, message=FALSE,warning=FALSE}
-fig <- plot_ly(data = insurance,x= ~region,type = "histogram", color= ~smoker)
+fig <- plot_ly(data = insurance,x= ~region,type = "histogram", color= ~smoker)%>%
+  layout(title="Count of Smoker & Non-smoker by Region")
 fig
 ```
 
-#### III
+##### Gender Count by Region
 
 ```{r, echo=FALSE, message=FALSE,warning=FALSE}
-fig <- plot_ly(data = insurance,x= ~region,type = "histogram", color= ~sex)
+fig <- plot_ly(data = insurance,x= ~region,type = "histogram", color= ~sex)%>%
+  layout(title="Gender Count by Region")
 fig
 ```
 
-### Which Gender Costs More ? 
 
 
+# Regression Model Building
 
-#### Cost and Gender
+```{r, message=FALSE,warning=FALSE,echo=FALSE}
+# make plot 
+p <- ggplot(insurance, aes(x = age, y = charges)) +
+ geom_point() +
+ geom_hline(yintercept = mean(insurance$charges)) + #add line representing the mean charges
+ geom_smooth(method='lm') # add regression line
 
-```{r, echo=FALSE, message=FALSE,warning=FALSE}
-plot_ly(alpha = 0.3) %>% 
-  add_histogram(data= insurance[insurance$sex == 'male',], x = ~charges, xaxis = "x1", color =~sex) %>% 
-  add_histogram(data= insurance[insurance$sex == 'female',], x = ~charges,xaxis="x2", color= ~sex) %>%
-  layout(
-    margin = list(t = 60),
-    title = "Insurance Cost and Gender",
-    xaxis = list(
-      side = "left",
-      title = "Insurance Cost"
-    ),
-    xaxis2 = list(
-      overlaying = "x",
-      position = 0.95
-    ),
-    yaxis = list(title = "Count")
-  )
+ggplotly(p)
 ```
 
-# 3 | Feature Engineering
+
+```{r}
+# simple linear regression using age as the predictor variable:
+mod1 = lm(charges ~ age, data = insurance)
+# show results:
+summary(mod1)
+```
+The above output the is the summary of our model. It starts with Call: which shows the function used as input. However we start at almost the bottom. Here you see Multiple R-squared: 0.08941. This value represents the square R between age and charges and also tells us that 8.94% of the variation in the outcome variable charges is explained by the predictor variable age. When you take the square root of square-R, you also get the correlation coefficient between age and charges.
+
+
+The last line gives us the F-ratio which is 131.2 and its p-value which is smaller than 0.001. So we know that our model with age as predictor is better than if we would use the mean charges. The output also shows the coefficients. The coefficient for age is 257.7, this means that with every increase in age (in years) the charges increase with 257.7. The intercept is at 3165.9. Thus our model for predicting charges using age becomes: charges = 3165.9 + (257.7 * age in years).
+
+
+```{r,echo=FALSE}
+n_train <- round(0.8 * nrow(insurance))
+train_indices <- sample(1:nrow(insurance), n_train)
+Data_train <- insurance[train_indices, ]
+Data_test <- insurance[-train_indices, ]
+
+formula_0 <- as.formula("charges ~ age + sex + bmi + children + smoker + region")
+```
+## Train Model {.tabset}
+
+### Set 1
+
+```{r}
+model_0 <- lm(formula_0, data = Data_train)
+summary(model_0)
+```
+
+### Set 2 
+
+```{r}
+formula_1 <- as.formula("charges ~ age + bmi + children + smoker + region")
+model_1 <- lm(formula_1, data = Data_train)
+summary(model_1)
+```
+
+##
+
+```{r,message=FALSE,warning=FALSE,echo=FALSE}
+Data_test$prediction <- predict(model_1, newdata = Data_test)
+p<- ggplot(Data_test, aes(x = prediction, y = charges)) + 
+  geom_point(color = "blue", alpha = 0.7) + 
+  geom_abline(color = "red") +
+  ggtitle("Prediction vs. Real values")
+
+ggplotly(p)
+```
+
+
+```{r,message=FALSE,warning=FALSE,echo=FALSE}
+Data_test$residuals <- Data_test$charges - Data_test$prediction
+
+p <- ggplot(data = Data_test, aes(x = prediction, y = residuals)) +
+  geom_pointrange(aes(ymin = 0, ymax = residuals), color = "blue", alpha = 0.7) +
+  geom_hline(yintercept = 0, linetype = 3, color = "red") +
+  ggtitle("Residuals vs. Linear model prediction") 
+
+ggplotly(p)
+```
+
+## Model Summaries {.tabset}
+
+### Model 1 
+```{r,echo=FALSE}
+insurance$age2 <- insurance$age^2
+insurance$bmi30 <- ifelse(insurance$bmi>=30,"yes","no")
+
+ins_model <- lm(charges ~ age + sex + bmi + children + smoker + region, data = insurance)
+summary(ins_model)
+```
+
+### Model 2
+
+```{r,echo=FALSE}
+ins_model2 <- lm(charges ~ age + age2 + children + bmi + sex + bmi30*smoker + region, data = insurance)
+summary(ins_model2)
+```
+
+### Model 3
+
+```{r,echo=FALSE}
+ins_model3<-lm(charges~age+smoker,insurance)
+summary(ins_model3)
+```
+
+## 
+
+```{r,message=FALSE,warning=FALSE,echo=FALSE}
+GainCurvePlot(Data_test, "prediction", "charges", "Model")
+```
+
+We can see the errors in the model are close to zero so model predicts quite well.
+
+
+
+
+Using just age and smoker as independent variables, we have built a model with an r-squared of 72.14% which is comparable with our first model which use all of the original variables. In regression analysis, we would want to create a model that is accurate but at the same time as simple as possible.
+
+```{r,echo=FALSE}
+intercepts<-c(coef(ins_model3)["(Intercept)"],coef(ins_model3)["(Intercept)"]+coef(ins_model3)["smokeryes"])
+
+lines.df<- data.frame(intercepts = intercepts,
+                      slopes = rep(coef(ins_model3)["age"], times= 2),
+                      smoker = levels(factor(insurance$smoker)))
+
+  
+p <- qplot(data=insurance, x=age,y=charges,color=smoker)+geom_abline(aes(intercept=intercepts,slope=slopes,color=smoker),data=lines.df)+scale_y_continuous(breaks = seq(0,65000,5000))
+
+ggplotly(p)
+```
+
+If we would visualize the most recent regression model we built, this is how it would like. As you can see, we have 2 parallel lines which indicates we have 2 different regression equations having the same slope but different intercepts. Slope of the regression lines is equal to the coefficient of the variable age (274.87). While in terms of the intercept, intercept for smokers is higher by 23,855.30 compared to non-smokers. This indicates that, on average, smokers’ medical charges is higher by about USD 24,000 adjusting for age. (Smoking is bad for your health!)
+
+```{r}
+ins_model2_shapley<-calc.relimp(ins_model2,type="lmg")
+ins_model2_shapley
+```
+
+## Variable Importance 
+
+As we have concluded, the second model has the best performance with the highest r-squared out of the 3 models we have built. We would use it to derive the variable importance of our predictors. We will use a statistical method called shapley value regression which is a solution that originated from the Game Theory concept developed by Lloyd Shapley in the 1950s. It’s aim is to fairly allocate predictor importance in regression analysis. Given n number of independent variables (IV), we will run all combination of linear regression models using this list of IVs against the dependent variable (DV) and get each model’s R-Squared. To get the importance measure of each independent variable (IV), the average contribution to the total R-squared of each IV is computed by decomposing the total R-squared and computing for the proportion marginal contribution of each IV.
+
+Let’s say we have 2 IVs A and B and a dependent variable Y. We can build 3 models as follows: 1) Y~A 2) Y~B 3) Y~A+B and each model would have their respective R-squared.
+
+To get the Shapley Value of A we have to decompose the r-squared of the third model and derive Attribute A’s marginal contribution.
+
+Shapley Value (A) = {[R-squared (AB)- R-squared (B)] + R-squared (A)}/2
+
+We have used the calc.relimp() function from the relaimpo package to determine the Shapley Value of our predictors.
+
+
+```{r,echo=FALSE}
+barplot(sort(ins_model2_shapley$lmg,decreasing = TRUE),
+        col=c(2:10),main="Relative Importance of Predictors",
+        xlab="Predictor Labels",ylab="Shapley Value Regression",font.lab=2)
+```
+
+The Shapley Value scores of each attribute shows their marginal contribution to the overall r-squared (0.8664) of the second model. So we can conclude that, on the 86.64% total variance explained by our model a little over 60% of it is due to the attribute smoker. Results also cemented our previous hypothesis that variable smoker is the singlemost important variable in predicting medical charges. If you would also notice, smoker is followed by bmi30:smoker, age2, age, and bmi30 where majority of which are variables we have derived and not included in the original dataset. Glad we have engineered those variables up! :)
+
+
+```{r,include=FALSE,eval=FALSE}
+Bob <- data.frame(age = 19,
+                  bmi = 27.9,
+                  children = 0,
+                  smoker = "yes",
+                  region = "northwest")
+
+print(paste0("Health care charges for Bob: ", round(predict(model_1, Bob), 2)))
+```
 
 ```{r}
 
 ```
 
+```{r}
+
+```
 
 ```{r}
 
 ```
 
+```{r}
+
+```
 
 ```{r}
 
 ```
 
-
 ```{r}
 
 ```
-
-
-```{r}
-
-```
-
-
-```{r}
-
-```
-
-
-```{r}
-
-```
-
-
-```{r}
-
-```
-
 
 ```{r}
 
