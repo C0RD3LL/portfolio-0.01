@@ -276,6 +276,91 @@ fig
 
 # Regression Model Building
 
+## Preparation and splitting the data {.tabset}
+
+```{r}
+n_train <- round(0.8 * nrow(insurance))
+train_indices <- sample(1:nrow(insurance), n_train)
+Data_train <- insurance[train_indices, ]
+Data_test <- insurance[-train_indices, ]
+
+
+```
+
+
+### Set 1
+
+```{r}
+formula_0 <- as.formula("charges ~ age + sex + bmi + children + smoker + region")
+model_0 <- lm(formula_0, data = Data_train)
+summary(model_0)
+```
+
+```{r, echo=FALSE}
+#Saving R-squared
+r_sq_0 <- summary(model_0)$r.squared
+#predict data on test set
+prediction_0 <- predict(model_0, newdata = Data_test)
+#calculating the residuals
+residuals_0 <- Data_test$charges - prediction_0
+#calculating Root Mean Squared Error
+rmse_0 <- sqrt(mean(residuals_0^2))
+#
+print(paste0("R-squared for first model:", round(r_sq_0, 4)))
+print(paste0("RMSE for first model: ", round(rmse_0, 2)))
+```
+
+
+### Set 2 
+
+```{r}
+formula_1 <- as.formula("charges ~ age + bmi + children + smoker + region")
+model_1 <- lm(formula_1, data = Data_train)
+summary(model_1)
+```
+
+```{r,echo=FALSE}
+#Save R-squared
+r_sq_1 <- summary(model_1)$r.squared
+#Predict data on test set
+prediction_1 <- predict(model_1, newdata = Data_test)
+#Calulate residuals
+residuals_1 <- Data_test$charges - prediction_1
+# Root mean squared Error
+rmse_1 <- sqrt(mean(residuals_1^2))
+#
+print(paste0("R-squared for new model: ", round(r_sq_1, 4)))
+print(paste0("RMSE for new model: ", round(rmse_1, 2)))
+```
+
+
+## Preparation and splitting the data (Intermediate){.tabset}
+
+### Model 2.1 
+```{r,echo=FALSE}
+insurance$age2 <- insurance$age^2
+insurance$bmi30 <- ifelse(insurance$bmi>=30,"yes","no")
+
+ins_model <- lm(charges ~ age + sex + bmi + children + smoker + region, data = insurance)
+summary(ins_model)
+```
+
+### Model 2.2
+
+```{r,echo=FALSE}
+ins_model2 <- lm(charges ~ age + age2 + children + bmi + sex + bmi30*smoker + region, data = insurance)
+summary(ins_model2)
+```
+
+### Model 2.3
+
+```{r,echo=FALSE}
+ins_model3<-lm(charges~age+smoker,insurance)
+summary(ins_model3)
+```
+
+## 
+
 ```{r, message=FALSE,warning=FALSE,echo=FALSE}
 # make plot 
 p <- ggplot(insurance, aes(x = age, y = charges)) +
@@ -293,39 +378,13 @@ mod1 = lm(charges ~ age, data = insurance)
 # show results:
 summary(mod1)
 ```
+
 The above output the is the summary of our model. It starts with Call: which shows the function used as input. However we start at almost the bottom. Here you see Multiple R-squared: 0.08941. This value represents the square R between age and charges and also tells us that 8.94% of the variation in the outcome variable charges is explained by the predictor variable age. When you take the square root of square-R, you also get the correlation coefficient between age and charges.
 
 
 The last line gives us the F-ratio which is 131.2 and its p-value which is smaller than 0.001. So we know that our model with age as predictor is better than if we would use the mean charges. The output also shows the coefficients. The coefficient for age is 257.7, this means that with every increase in age (in years) the charges increase with 257.7. The intercept is at 3165.9. Thus our model for predicting charges using age becomes: charges = 3165.9 + (257.7 * age in years).
 
-
-```{r,echo=FALSE}
-n_train <- round(0.8 * nrow(insurance))
-train_indices <- sample(1:nrow(insurance), n_train)
-Data_train <- insurance[train_indices, ]
-Data_test <- insurance[-train_indices, ]
-
-formula_0 <- as.formula("charges ~ age + sex + bmi + children + smoker + region")
-```
-## Train Model {.tabset}
-
-### Set 1
-
-```{r}
-model_0 <- lm(formula_0, data = Data_train)
-summary(model_0)
-```
-
-### Set 2 
-
-```{r}
-formula_1 <- as.formula("charges ~ age + bmi + children + smoker + region")
-model_1 <- lm(formula_1, data = Data_train)
-summary(model_1)
-```
-
-##
-
+## Model Performance 
 ```{r,message=FALSE,warning=FALSE,echo=FALSE}
 Data_test$prediction <- predict(model_1, newdata = Data_test)
 p<- ggplot(Data_test, aes(x = prediction, y = charges)) + 
@@ -348,31 +407,6 @@ p <- ggplot(data = Data_test, aes(x = prediction, y = residuals)) +
 ggplotly(p)
 ```
 
-## Model Summaries {.tabset}
-
-### Model 1 
-```{r,echo=FALSE}
-insurance$age2 <- insurance$age^2
-insurance$bmi30 <- ifelse(insurance$bmi>=30,"yes","no")
-
-ins_model <- lm(charges ~ age + sex + bmi + children + smoker + region, data = insurance)
-summary(ins_model)
-```
-
-### Model 2
-
-```{r,echo=FALSE}
-ins_model2 <- lm(charges ~ age + age2 + children + bmi + sex + bmi30*smoker + region, data = insurance)
-summary(ins_model2)
-```
-
-### Model 3
-
-```{r,echo=FALSE}
-ins_model3<-lm(charges~age+smoker,insurance)
-summary(ins_model3)
-```
-
 ## 
 
 ```{r,message=FALSE,warning=FALSE,echo=FALSE}
@@ -380,8 +414,6 @@ GainCurvePlot(Data_test, "prediction", "charges", "Model")
 ```
 
 We can see the errors in the model are close to zero so model predicts quite well.
-
-
 
 
 Using just age and smoker as independent variables, we have built a model with an r-squared of 72.14% which is comparable with our first model which use all of the original variables. In regression analysis, we would want to create a model that is accurate but at the same time as simple as possible.
@@ -427,42 +459,4 @@ barplot(sort(ins_model2_shapley$lmg,decreasing = TRUE),
 
 The Shapley Value scores of each attribute shows their marginal contribution to the overall r-squared (0.8664) of the second model. So we can conclude that, on the 86.64% total variance explained by our model a little over 60% of it is due to the attribute smoker. Results also cemented our previous hypothesis that variable smoker is the singlemost important variable in predicting medical charges. If you would also notice, smoker is followed by bmi30:smoker, age2, age, and bmi30 where majority of which are variables we have derived and not included in the original dataset. Glad we have engineered those variables up! :)
 
-
-```{r,include=FALSE,eval=FALSE}
-Bob <- data.frame(age = 19,
-                  bmi = 27.9,
-                  children = 0,
-                  smoker = "yes",
-                  region = "northwest")
-
-print(paste0("Health care charges for Bob: ", round(predict(model_1, Bob), 2)))
-```
-
-```{r}
-
-```
-
-```{r}
-
-```
-
-```{r}
-
-```
-
-```{r}
-
-```
-
-```{r}
-
-```
-
-```{r}
-
-```
-
-```{r}
-
-```
 

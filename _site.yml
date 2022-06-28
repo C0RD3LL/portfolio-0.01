@@ -18,7 +18,7 @@ navbar:
   right:
     - href: https://github.com/C0RD3LL/Portfolio
       icon: fa-github 
-    - href: contact.html
+    - href: index.html
       icon: fa-envelope
 
 
